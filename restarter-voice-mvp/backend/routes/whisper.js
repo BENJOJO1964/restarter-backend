@@ -12,4 +12,9 @@ router.post('/', upload.single('audio'), async (req, res) => {
   res.json({ text: result });
 });
 
+// GET /api/whisper
+router.get('/', (req, res) => {
+  res.send('Whisper API is working!');
+});
+
 module.exports = router;
