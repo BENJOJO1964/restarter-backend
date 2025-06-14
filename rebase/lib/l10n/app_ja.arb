@@ -5,5 +5,8 @@
   "viewRestartWall": "RestartWallを見る",
   "createMyStory": "MyStoryを作成",
   "sayYourFeeling": "あなたの気持ちを話してください",
-  "tapToRecord": "下のボタンをタップして録音開始"
+  "tapToRecord": "下のボタンをタップして録音開始",
+  "anonymous": "匿名",
+  "user": "ユーザー",
+  "noMessages": "まだメッセージがありません"
 } 

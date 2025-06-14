@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:js' as js;
 import 'dart:convert';
+import 'dart:js_util' as js_util;
+import 'dart:html' as html;
 
 class VoiceService {
   final _responseController = StreamController<String>.broadcast();
@@ -14,13 +15,15 @@ class VoiceService {
   Future<void> startRecording() async {
     if (_isRecording) return;
     _isRecording = true;
-    await js.context.callMethod('flutterRecorder.startRecording');
+    final recorder = js_util.getProperty(html.window, 'flutterRecorder');
+    await js_util.promiseToFuture(js_util.callMethod(recorder, 'startRecording', []));
   }
 
   Future<void> stopRecording() async {
     if (!_isRecording) return;
     _isRecording = false;
-    final base64 = await js.context.callMethod('flutterRecorder.stopRecording');
+    final recorder = js_util.getProperty(html.window, 'flutterRecorder');
+    final base64 = await js_util.promiseToFuture(js_util.callMethod(recorder, 'stopRecording', []));
     final bytes = base64Decode(base64 as String);
     _audioBytesController.add(bytes);
   }

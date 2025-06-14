@@ -28,6 +28,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tapToRecord => '點擊下方按鈕開始錄音';
+
+  @override
+  String get anonymous => '匿名';
+
+  @override
+  String get user => '用戶';
+
+  @override
+  String get noMessages => '目前沒有留言';
 }
 
 /// The translations for Chinese, as used in China (`zh_CN`).
@@ -54,6 +63,15 @@ class AppLocalizationsZhCn extends AppLocalizationsZh {
 
   @override
   String get tapToRecord => '点击下方按钮开始录音';
+
+  @override
+  String get anonymous => '匿名';
+
+  @override
+  String get user => '用户';
+
+  @override
+  String get noMessages => '目前没有留言';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -80,4 +98,13 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get tapToRecord => '點擊下方按鈕開始錄音';
+
+  @override
+  String get anonymous => '匿名';
+
+  @override
+  String get user => '用戶';
+
+  @override
+  String get noMessages => '目前沒有留言';
 }

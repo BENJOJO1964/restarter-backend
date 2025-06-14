@@ -1,0 +1,4 @@
+[
+  { "id": "gentle", "name": "溫柔", "description": "溫柔、體貼、安撫人心", "stylePrompt": "請用溫柔、體貼的語氣回應。" },
+  { "id": "hopeful", "name": "希望", "description": "充滿希望、鼓勵、正向", "stylePrompt": "請用充滿希望、鼓勵的語氣回應。" }
+] 

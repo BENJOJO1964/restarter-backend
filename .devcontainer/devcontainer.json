@@ -1,0 +1,17 @@
+{
+  "name": "restarter-monorepo-dev",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "context": "..",
+  "workspaceFolder": "/workspace/restarter-voice-mvp/frontend",
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "bash"
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder}/restarter-voice-mvp/frontend,target=/workspace/restarter-voice-mvp/frontend,type=bind,consistency=cached"
+  ],
+  "forwardPorts": [3000],
+  "postCreateCommand": "pnpm install",
+  "remoteUser": "node"
+}

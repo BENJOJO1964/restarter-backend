@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/echo_box_screen.dart';
+import 'screens/restart_wall_screen.dart';
+import 'screens/my_story_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +20,14 @@ final _router = GoRouter(
     GoRoute(
       path: '/echo-box',
       builder: (context, state) => const EchoBoxScreen(),
+    ),
+    GoRoute(
+      path: '/restart-wall',
+      builder: (context, state) => const RestartWallScreen(),
+    ),
+    GoRoute(
+      path: '/my-story',
+      builder: (context, state) => const MyStoryScreen(),
     ),
   ],
 );
@@ -144,16 +154,12 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                // TODO: 導航到 RestartWall
-              },
+              onPressed: () => context.go('/restart-wall'),
               child: Text(l10n.viewRestartWall),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                // TODO: 導航到 MyStory
-              },
+              onPressed: () => context.go('/my-story'),
               child: Text(l10n.createMyStory),
             ),
           ],

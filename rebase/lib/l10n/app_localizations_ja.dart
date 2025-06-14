@@ -28,4 +28,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get tapToRecord => '下のボタンをタップして録音開始';
+
+  @override
+  String get anonymous => '匿名';
+
+  @override
+  String get user => 'ユーザー';
+
+  @override
+  String get noMessages => 'まだメッセージがありません';
 }

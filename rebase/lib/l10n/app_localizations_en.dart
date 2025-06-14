@@ -28,4 +28,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tapToRecord => 'Tap the button below to start recording';
+
+  @override
+  String get anonymous => 'Anonymous';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get noMessages => 'No messages yet.';
 }

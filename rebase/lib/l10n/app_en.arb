@@ -5,5 +5,8 @@
   "viewRestartWall": "View RestartWall",
   "createMyStory": "Create MyStory",
   "sayYourFeeling": "Speak your feelings",
-  "tapToRecord": "Tap the button below to start recording"
+  "tapToRecord": "Tap the button below to start recording",
+  "anonymous": "Anonymous",
+  "user": "User",
+  "noMessages": "No messages yet."
 } 
