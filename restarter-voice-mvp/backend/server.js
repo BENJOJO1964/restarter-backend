@@ -57,6 +57,11 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   res.json({ filename: req.file.filename, originalname: req.file.originalname });
 });
 
+// 新增首頁路由，讓 / 顯示伺服器運作中
+app.get('/', (req, res) => {
+  res.send('伺服器運作正常，歡迎使用 Restarter Signaling Server！');
+});
+
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
