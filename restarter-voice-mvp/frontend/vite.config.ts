@@ -6,4 +6,11 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  preview: {
+    host: true,
+    port: 4173,
+    allowedHosts: [
+      'restarter-signaling-server-1.onrender.com'
+    ]
+  }
 }); 
