@@ -46,6 +46,7 @@ function App() {
             {user && <Route path="/ai" element={<AIStyleReply />} />}
             {user && <Route path="/tts" element={<RealisticTTS />} />}
             {user && <Route path="/whack-a-mole" element={<WhackAMole />} />}
+            {user && <Route path="/whackamole" element={<WhackAMole />} />}
             {user && <Route path="/missions" element={<Missions />} />}
             {user && <Route path="/pairtalk" element={<PairTalk />} />}
             {user && <Route path="/skillbox" element={<SkillBox />} />}

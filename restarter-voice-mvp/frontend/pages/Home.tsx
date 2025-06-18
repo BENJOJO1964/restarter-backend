@@ -77,7 +77,7 @@ export default function Home() {
       desc: {
         'zh-TW': '用AI生成你的情緒藝術圖像', 'zh-CN': '用AI生成你的情绪艺术图像', 'en': 'Generate your emotion art with AI', 'ja': 'AIで感情アートを生成', 'ko': 'AI로 감정 아트를 생성', 'vi': 'Tạo hình ảnh tình cảm của bạn bằng AI'
       },
-      path: '/journal'
+      path: '/whackamole'
     },
     {
       key: 'missions',

@@ -30,37 +30,37 @@ const INTEREST_MAP = {
   '運動': { 'zh-TW': '運動', 'zh-CN': '运动', 'en': 'Sports', 'ja': 'スポーツ', 'ko': '스포츠', 'vi': 'Thể thao' },
 };
 
-const COUNTRY_OPTIONS = {
-  'zh-TW': ['台灣', '日本', '美國'],
-  'zh-CN': ['台湾', '日本', '美国'],
-  'en': ['Taiwan', 'Japan', 'USA'],
-  'ja': ['台湾', '日本', 'アメリカ'],
-  'ko': ['대만', '일본', '미국'],
-  'vi': ['Đài Loan', 'Nhật Bản', 'Mỹ'],
-};
 const AGE_RANGE_OPTIONS = {
-  'zh-TW': ['18-25', '26-35', '36-45', '46+'],
-  'zh-CN': ['18-25', '26-35', '36-45', '46+'],
-  'en': ['18-25', '26-35', '36-45', '46+'],
-  'ja': ['18-25', '26-35', '36-45', '46+'],
-  'ko': ['18-25', '26-35', '36-45', '46+'],
-  'vi': ['18-25', '26-35', '36-45', '46+'],
+  'zh-TW': ['18-23', '24-29', '30-38', '39-45', '46-52', '53-60', '60-70', '70+'],
+  'zh-CN': ['18-23', '24-29', '30-38', '39-45', '46-52', '53-60', '60-70', '70+'],
+  'en': ['18-23', '24-29', '30-38', '39-45', '46-52', '53-60', '60-70', '70+'],
+  'ja': ['18-23', '24-29', '30-38', '39-45', '46-52', '53-60', '60-70', '70+'],
+  'ko': ['18-23', '24-29', '30-38', '39-45', '46-52', '53-60', '60-70', '70+'],
+  'vi': ['18-23', '24-29', '30-38', '39-45', '46-52', '53-60', '60-70', '70+'],
+};
+const COUNTRY_OPTIONS = {
+  'zh-TW': ['台灣', '日本', '中國大陸', '美國', '韓國', '香港', '越南', '泰國', '歐洲', '加拿大', '澳洲', '紐西蘭', '中東', '非洲'],
+  'zh-CN': ['台湾', '日本', '中国大陆', '美国', '韩国', '香港', '越南', '泰国', '欧洲', '加拿大', '澳大利亚', '新西兰', '中东', '非洲'],
+  'en': ['Taiwan', 'Japan', 'China', 'USA', 'Korea', 'Hong Kong', 'Vietnam', 'Thailand', 'Europe', 'Canada', 'Australia', 'New Zealand', 'Middle East', 'Africa'],
+  'ja': ['台湾', '日本', '中国', 'アメリカ', '韓国', '香港', 'ベトナム', 'タイ', 'ヨーロッパ', 'カナダ', 'オーストラリア', 'ニュージーランド', '中東', 'アフリカ'],
+  'ko': ['대만', '일본', '중국', '미국', '한국', '홍콩', '베트남', '태국', '유럽', '캐나다', '호주', '뉴질랜드', '중동', '아프리카'],
+  'vi': ['Đài Loan', 'Nhật Bản', 'Trung Quốc', 'Mỹ', 'Hàn Quốc', 'Hồng Kông', 'Việt Nam', 'Thái Lan', 'Châu Âu', 'Canada', 'Úc', 'New Zealand', 'Trung Đông', 'Châu Phi'],
 };
 const INTEREST_OPTIONS = {
-  'zh-TW': ['閱讀', '音樂', '運動'],
-  'zh-CN': ['阅读', '音乐', '运动'],
-  'en': ['Reading', 'Music', 'Sports'],
-  'ja': ['読書', '音楽', 'スポーツ'],
-  'ko': ['독서', '음악', '스포츠'],
-  'vi': ['Đọc sách', 'Âm nhạc', 'Thể thao'],
+  'zh-TW': ['閱讀', '音樂', '運動', '旅行', '電商', '唱歌', '電影', '電腦', '經濟', '貿易', '電玩'],
+  'zh-CN': ['阅读', '音乐', '运动', '旅行', '电商', '唱歌', '电影', '电脑', '经济', '贸易', '电玩'],
+  'en': ['Reading', 'Music', 'Sports', 'Travel', 'E-commerce', 'Singing', 'Movie', 'Computer', 'Economy', 'Trade', 'Gaming'],
+  'ja': ['読書', '音楽', 'スポーツ', '旅行', 'EC', '歌う', '映画', 'パソコン', '経済', '貿易', 'ゲーム'],
+  'ko': ['독서', '음악', '스포츠', '여행', '이커머스', '노래', '영화', '컴퓨터', '경제', '무역', '게임'],
+  'vi': ['Đọc sách', 'Âm nhạc', 'Thể thao', 'Du lịch', 'Thương mại điện tử', 'Hát', 'Phim', 'Máy tính', 'Kinh tế', 'Thương mại', 'Trò chơi điện tử'],
 };
 const EVENT_TYPE_OPTIONS = {
-  'zh-TW': ['線上', '線下'],
-  'zh-CN': ['线上', '线下'],
-  'en': ['Online', 'Offline'],
-  'ja': ['オンライン', 'オフライン'],
-  'ko': ['온라인', '오프라인'],
-  'vi': ['Trực tuyến', 'Ngoại tuyến'],
+  'zh-TW': ['經濟', '政治', '民事', '交通', '傷害', '其他'],
+  'zh-CN': ['经济', '政治', '民事', '交通', '伤害', '其他'],
+  'en': ['Economy', 'Politics', 'Civil', 'Traffic', 'Injury', 'Other'],
+  'ja': ['経済', '政治', '民事', '交通', '傷害', 'その他'],
+  'ko': ['경제', '정치', '민사', '교통', '상해', '기타'],
+  'vi': ['Kinh tế', 'Chính trị', 'Dân sự', 'Giao thông', 'Thương tích', 'Khác'],
 };
 
 export default function FriendMatch() {
@@ -110,6 +110,9 @@ export default function FriendMatch() {
 
   return (
     <div className="modern-bg" style={{ background: `url('/green_hut.png') center center / cover no-repeat`, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{width:'100%',display:'flex',justifyContent:'center',alignItems:'center',position:'fixed',top:0,left:0,zIndex:200,background:'transparent',paddingTop: '8px'}}>
+        <img src="/ctx-logo.png" alt="logo" style={{height:48}} />
+      </div>
       <div style={{position:'absolute',top:0,left:0,zIndex:100,display:'flex',alignItems:'center',padding:'18px 32px 0 32px',background:'transparent'}}>
         <button className="topbar-btn" onClick={()=>navigate('/')} style={{fontWeight:700,fontSize:18,padding:'6px 16px',borderRadius:8,border:'1.5px solid #6B5BFF',background:'#fff',color:'#6B5BFF',cursor:'pointer',transition:'background 0.18s, color 0.18s, border 0.18s', marginRight:8}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='#fff';e.currentTarget.style.color='#6B5BFF';}}>{TEXT[lang].backHome}</button>
         {window.location.pathname!=='/friend' && <button className="topbar-btn" onClick={()=>navigate(-1)} style={{fontWeight:700,fontSize:18,padding:'6px 16px',borderRadius:8,border:'1.5px solid #6B5BFF',background:'#fff',color:'#6B5BFF',cursor:'pointer',transition:'background 0.18s, color 0.18s, border 0.18s', marginLeft:8}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='#fff';e.currentTarget.style.color='#6B5BFF';}}>{TEXT[lang].back}</button>}
