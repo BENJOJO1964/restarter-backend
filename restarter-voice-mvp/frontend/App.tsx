@@ -9,7 +9,7 @@ import FriendMatch from './pages/FriendMatch';
 import InboxPage from './pages/InboxPage';
 import AIStyleReply from './pages/AIStyleReply';
 import RealisticTTS from './pages/RealisticTTS';
-import EmotionVisualLab from './pages/EmotionVisualLab';
+import WhackAMole from './pages/WhackAMole';
 import Missions from './pages/Missions';
 import PairTalk from './pages/PairTalk';
 import SkillBox from './pages/SkillBox';
@@ -45,7 +45,7 @@ function App() {
             {user && <Route path="/inbox" element={<InboxPage />} />}
             {user && <Route path="/ai" element={<AIStyleReply />} />}
             {user && <Route path="/tts" element={<RealisticTTS />} />}
-            {user && <Route path="/journal" element={<EmotionVisualLab />} />}
+            {user && <Route path="/whack-a-mole" element={<WhackAMole />} />}
             {user && <Route path="/missions" element={<Missions />} />}
             {user && <Route path="/pairtalk" element={<PairTalk />} />}
             {user && <Route path="/skillbox" element={<SkillBox />} />}

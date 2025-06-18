@@ -82,29 +82,29 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:20,marginBottom:24,marginTop:24}}>
-          <div>
-            <div style={{fontWeight:700,fontSize:24,marginBottom:4}}>{user.name}</div>
+        <div>
+          <div style={{fontWeight:700,fontSize:24,marginBottom:4}}>{user.name}</div>
             <div style={{fontSize:20,color:'#6B5BFF',fontWeight:700,background:'#e6eaff',borderRadius:6,padding:'2px 12px',display:'inline-block'}}>{TEXT[lang].level || '等級'} {achievement.level}</div>
           </div>
         </div>
-        <div style={{marginBottom:18}}>
+      <div style={{marginBottom:18}}>
           <div style={{fontSize:15,marginBottom:6,color:'#bbb'}}>{TEXT[lang].exp || '經驗值'}: {achievement.exp} / {nextLevelExp(achievement.level)}</div>
           <div style={{height:18,background:'#eee',borderRadius:9,overflow:'hidden',width:'100%',maxWidth:520,margin:'0 auto'}}>
             <div style={{height:'100%',width:`${percent}%`,background:'#6B5BFF',transition:'width 0.4s',borderRadius:9}}></div>
-          </div>
         </div>
-        <div style={{marginBottom:18}}>
-          <div style={{fontWeight:600,marginBottom:8}}>{TEXT[lang].badges || '徽章牆'}</div>
-          <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
-            {BADGES.map(badge => (
-              <div key={badge.id} style={{padding:'8px 12px',borderRadius:8,background:achievement.badges.includes(badge.id)?'#6B5BFF':'#eee',color:achievement.badges.includes(badge.id)?'#fff':'#888',fontSize:22,display:'flex',flexDirection:'column',alignItems:'center',minWidth:60}}>
-                <span style={{fontSize:28}}>{badge.icon}</span>
+      </div>
+      <div style={{marginBottom:18}}>
+        <div style={{fontWeight:600,marginBottom:8}}>{TEXT[lang].badges || '徽章牆'}</div>
+        <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+          {BADGES.map(badge => (
+            <div key={badge.id} style={{padding:'8px 12px',borderRadius:8,background:achievement.badges.includes(badge.id)?'#6B5BFF':'#eee',color:achievement.badges.includes(badge.id)?'#fff':'#888',fontSize:22,display:'flex',flexDirection:'column',alignItems:'center',minWidth:60}}>
+              <span style={{fontSize:28}}>{badge.icon}</span>
                 <span style={{fontSize:13,marginTop:2}}>{badge.name[lang]}</span>
-              </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-        {/* 測試互動：模擬獲得經驗值與徽章 */}
+      </div>
+      {/* 測試互動：模擬獲得經驗值與徽章 */}
         <div style={{marginTop:24,display:'flex',gap:12,width:'100%',justifyContent:'center'}}>
           <button
             onClick={()=>handleGainExp(50)}

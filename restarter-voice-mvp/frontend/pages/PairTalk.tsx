@@ -203,7 +203,7 @@ export default function PairTalk() {
             onMouseOver={e=>{e.currentTarget.style.background='linear-gradient(135deg, #3a2fff 60%, #0e7fd6 100%)';}}
             onMouseOut={e=>{e.currentTarget.style.background='linear-gradient(135deg, #6B5BFF 60%, #23c6e6 100%)';}}
           >{lang==='zh-TW'?'開始配對':lang==='zh-CN'?'开始配对':lang==='ja'?'マッチ開始':lang==='ko'?'매칭 시작':lang==='vi'?'Bắt đầu ghép đôi':'Start Match'}</button>
-        </div>
+            </div>
         {matching && matchResult && (
           <div style={{width:'100%',maxWidth:420,background:'#fff',borderRadius:16,padding:24,boxShadow:'0 2px 12px #6B5BFF22',marginBottom:24,position:'relative',textAlign:'center'}}>
             <div style={{fontWeight:700,fontSize:18,color:'#6B5BFF',marginBottom:8}}>{lang==='zh-TW'?'限時聊天室':lang==='zh-CN'?'限时聊天室':lang==='ja'?'タイムチャット':lang==='ko'?'타임챗':lang==='vi'?'Phòng chat giới hạn thời gian':'Timed Chat Room'}</div>
@@ -257,26 +257,26 @@ export default function PairTalk() {
                     <button onClick={()=>setShowDetail(v=>!v)} style={{ padding: '6px 18px', borderRadius: 8, fontWeight: 700, background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', cursor: 'pointer', fontSize: 15, transition: 'background 0.18s, color 0.18s, box-shadow 0.18s' }}>{showDetail ? UI_TEXT[lang]?.hide : UI_TEXT[lang]?.viewDetails}</button>
                   </td>
                 </tr>
-                {showDetail && (
+            {showDetail && (
                   <tr>
                     <td style={{ textAlign: 'center', color: '#232946', fontSize: 15, background:'#fff', borderRadius:8, padding:12, boxShadow:'0 2px 8px #6B5BFF11', border: 'none' }}>
-                      <img src={matched.avatar} alt="avatar" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: '2px solid #6B5BFF', background: '#eee', marginBottom: 6 }} />
-                      <div><b>{UI_TEXT[lang]?.nickname}：</b>{matched.nickname}</div>
-                      <div><b>{UI_TEXT[lang]?.country}：</b>{matched.country}</div>
-                      <div><b>{UI_TEXT[lang]?.age}：</b>{matched.age}</div>
-                      <div><b>{UI_TEXT[lang]?.gender}：</b>{(GENDER_LABEL[lang]?.[matched.gender] ?? '-')}</div>
-                      <div><b>{UI_TEXT[lang]?.email}：</b>{matched.email}</div>
-                      <div><b>{UI_TEXT[lang]?.interest}：</b>{matched.interest}</div>
-                      <div><b>{UI_TEXT[lang]?.eventType}：</b>{matched.eventType}</div>
-                      <div><b>{UI_TEXT[lang]?.bio}：</b>{matched.bio}</div>
+                <img src={matched.avatar} alt="avatar" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: '2px solid #6B5BFF', background: '#eee', marginBottom: 6 }} />
+                <div><b>{UI_TEXT[lang]?.nickname}：</b>{matched.nickname}</div>
+                <div><b>{UI_TEXT[lang]?.country}：</b>{matched.country}</div>
+                <div><b>{UI_TEXT[lang]?.age}：</b>{matched.age}</div>
+                <div><b>{UI_TEXT[lang]?.gender}：</b>{(GENDER_LABEL[lang]?.[matched.gender] ?? '-')}</div>
+                <div><b>{UI_TEXT[lang]?.email}：</b>{matched.email}</div>
+                <div><b>{UI_TEXT[lang]?.interest}：</b>{matched.interest}</div>
+                <div><b>{UI_TEXT[lang]?.eventType}：</b>{matched.eventType}</div>
+                <div><b>{UI_TEXT[lang]?.bio}：</b>{matched.bio}</div>
                     </td>
                   </tr>
-                )}
+            )}
                 <tr>
                   <td style={{ textAlign: 'center', padding: '8px 0', border: 'none' }}>
-                    <select value={selectedGift} onChange={e=>setSelectedGift(e.target.value)} style={{ padding: '6px 12px', borderRadius: 8, border: '1.5px solid #6B5BFF', fontSize: 18 }}>
-                      {GIFT_OPTIONS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
-                    </select>
+              <select value={selectedGift} onChange={e=>setSelectedGift(e.target.value)} style={{ padding: '6px 12px', borderRadius: 8, border: '1.5px solid #6B5BFF', fontSize: 18 }}>
+                {GIFT_OPTIONS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
+              </select>
                     <button onClick={handleSendGift} style={{ marginLeft: 8, padding: '6px 18px', borderRadius: 8, fontWeight: 700, background: 'linear-gradient(135deg, #6B5BFF 60%, #23c6e6 100%)', color: '#fff', border: 'none', fontSize: 16, transition: 'background 0.18s, box-shadow 0.18s' }}>{UI_TEXT[lang]?.sendGift}</button>
                     <button onClick={handleSendEmail} style={{ marginLeft: 8, padding: '6px 18px', borderRadius: 8, fontWeight: 700, background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', fontSize: 16, transition: 'background 0.18s, color 0.18s, box-shadow 0.18s' }}>{UI_TEXT[lang]?.sendEmail}</button>
                   </td>

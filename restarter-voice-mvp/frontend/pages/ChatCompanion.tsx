@@ -69,8 +69,8 @@ export default function ChatCompanion() {
   });
   const [isFirstChat, setIsFirstChat] = useState(() => !localStorage.getItem('aiAvatar'));
   const CHAT_TITLE: Record<string, string> = {
-    'zh-TW': '來聊天吧！',
-    'zh-CN': '来聊天吧！',
+    'zh-TW': '來聊天吧！💬',
+    'zh-CN': '來聊天吧！💬',
     'en': 'Let\'s Chat!',
     'ja': 'おしゃべりしよう！',
     'ko': '이야기하자!',

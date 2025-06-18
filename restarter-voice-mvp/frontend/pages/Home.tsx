@@ -61,7 +61,7 @@ export default function Home() {
     } else if (type === 'friend') {
       navigate('/friend');
     } else if (type === 'emotion') {
-      navigate('/EmotionVisualLab');
+      navigate('/whack-a-mole');
     }
   };
 
@@ -72,7 +72,7 @@ export default function Home() {
       key: 'journal',
       icon: '🎨',
       title: {
-        'zh-TW': '情緒圖像實驗室', 'zh-CN': '情绪图像实验室', 'en': 'Emotion Visual Lab', 'ja': '感情ビジュアルラボ', 'ko': '감정 비쥬얼 랩', 'vi': 'Phòng thí nghiệm Hình ảnh Cảm xúc'
+        'zh-TW': '打爆你+emoji', 'zh-CN': '打爆你+emoji', 'en': 'Whack-a-mole+emoji', 'ja': 'モグラ叩き+emoji', 'ko': '두더지잡기+emoji', 'vi': 'Đập chuột chũi+emoji'
       },
       desc: {
         'zh-TW': '用AI生成你的情緒藝術圖像', 'zh-CN': '用AI生成你的情绪艺术图像', 'en': 'Generate your emotion art with AI', 'ja': 'AIで感情アートを生成', 'ko': 'AI로 감정 아트를 생성', 'vi': 'Tạo hình ảnh tình cảm của bạn bằng AI'
@@ -212,7 +212,7 @@ export default function Home() {
             onClick={() => handleFeature('chat')}
           >
             <span role="img" aria-label="chat" style={{ marginRight: 2, fontSize: 22 }}>💬</span>
-            <span className="home-chat-btn-text">{t.chat}</span>
+            <span className="home-chat-btn-text">{t.chat}💬</span>
           </button>
         </div>
       </div>

@@ -1,0 +1,42 @@
+[
+  {
+    "name": {"zh-TW": "關到殘廢", "zh-CN": "关到残废", "en": "Locked Down", "ja": "監禁モグラ", "ko": "감금두더지", "vi": "Bị nhốt"},
+    "emoji": "🔒",
+    "taunts": {
+      "zh-TW": ["老子不是不想改，是關太久腿軟。", "你以為我想這樣？", "再關下去我就成仙了。", "監獄是我家。", "腿軟不是我的錯。"],
+      "en": ["Not my fault, locked too long!", "You think I want this?", "I'll become a sage soon.", "Jail is my home.", "Blame the system, not me."]
+    }
+  },
+  {
+    "name": {"zh-TW": "啥都不會", "zh-CN": "啥都不会", "en": "Useless", "ja": "何もできない", "ko": "아무것도 못함", "vi": "Vô dụng"},
+    "emoji": "😵",
+    "taunts": {
+      "zh-TW": ["啥都不會，還不是被你害的。", "我廢我驕傲。", "你行你來啊。", "我就爛。", "人生重來還是廢。"],
+      "en": ["I'm proud to be useless!", "You do it if you can!", "I'm just bad.", "Still useless in next life.", "Not my fault!"]
+    }
+  },
+  {
+    "name": {"zh-TW": "假死懶鬼", "zh-CN": "假死懒鬼", "en": "Lazy Faker", "ja": "死んだふり", "ko": "죽은척", "vi": "Giả chết"},
+    "emoji": "💀",
+    "taunts": {
+      "zh-TW": ["假死才能活下來。", "裝死保平安。", "我不是懶，我是戰略性休息。", "你打不到我。", "我在裝死。"],
+      "en": ["Playing dead saves lives.", "Strategic rest!", "Can't hit me!", "I'm not lazy, I'm smart.", "Just pretending!"]
+    }
+  },
+  {
+    "name": {"zh-TW": "狗眼看人低", "zh-CN": "狗眼看人低", "en": "Snob", "ja": "見下すモグラ", "ko": "깔보는 두더지", "vi": "Khinh người"},
+    "emoji": "👁",
+    "taunts": {
+      "zh-TW": ["狗眼看人低，看你不爽。", "你算老幾？", "別來煩我。", "你有種再打一次。", "看不起你。"],
+      "en": ["I look down on you.", "Who do you think you are?", "Don't bother me.", "Try hit me again!", "You're beneath me."]
+    }
+  },
+  {
+    "name": {"zh-TW": "看你屁事", "zh-CN": "看你屁事", "en": "None of your business", "ja": "関係ないモグラ", "ko": "상관마", "vi": "Không liên quan"},
+    "emoji": "😡",
+    "taunts": {
+      "zh-TW": ["看你屁事，少管閒事。", "你管我？", "有本事打爆我。", "你很閒嗎？", "我最討厭你這種人。"],
+      "en": ["None of your business!", "You care too much.", "Try whack me!", "You got too much time.", "I hate people like you."]
+    }
+  }
+] 
