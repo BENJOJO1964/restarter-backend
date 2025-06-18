@@ -289,7 +289,7 @@ export default function RegisterPage({ onRegister }: { onRegister: () => void })
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: `url('/city-blur.jpg') center/cover no-repeat`, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: `url('/city-blur-new.jpg') center/cover no-repeat`, position: 'relative', display: 'flex', flexDirection: 'column' }}>
       {/* 標語置中，語言切換右上 */}
       <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
         <span style={{ fontWeight: 900, fontSize: 28, color: '#ffd700', letterSpacing: 2, textShadow: '0 2px 8px #23294688', whiteSpace: 'nowrap', textAlign: 'center' }}>{SLOGAN2[lang]}</span>
