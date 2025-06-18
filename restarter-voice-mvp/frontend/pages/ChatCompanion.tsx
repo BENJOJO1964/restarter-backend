@@ -183,26 +183,32 @@ export default function ChatCompanion() {
     };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
-    setTimeout(() => fakeAIReply(userMsg.text), 400);
-    // AI 虛擬人回應
-    setIsSpeaking(true);
-    const openaiKey = process.env.REACT_APP_OPENAI_API_KEY || '';
-    const playhtKey = process.env.REACT_APP_PLAYHT_API_KEY || '';
-    const didKey = process.env.REACT_APP_DID_API_KEY || '';
-    const aiText = await generateResponse([
-      { role: 'assistant', content: '你是一個溫暖、善解人意的虛擬人，請用鼓勵、正向語氣回應。' },
-      { role: 'user', content: input },
-    ], openaiKey);
-    const ttsUrl = await speak(aiText, aiAvatar.includes('female') ? 'female' : 'male', playhtKey);
-    setAvatarAudio(ttsUrl);
-    const videoUrl = await generateTalkingFace({
-      imageUrl: aiAvatar,
-      audioUrl: ttsUrl,
-      text: aiText,
-      apiKey: didKey,
-    });
-    setAvatarVideo(videoUrl);
-    setIsSpeaking(false);
+    setAIStreaming(true);
+    try {
+      const res = await fetch('/api/gpt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input }),
+      });
+      const data = await res.json();
+      const aiText = data.result || 'AI 沒有回應';
+      const aiMsg: ChatMsg = {
+        id: Date.now().toString(),
+        text: aiText,
+        sender: 'ai',
+        status: 'done',
+      };
+      setMessages(prev => [...prev, aiMsg]);
+    } catch (e) {
+      const aiMsg: ChatMsg = {
+        id: Date.now().toString(),
+        text: 'AI 回覆失敗，請稍後再試',
+        sender: 'ai',
+        status: 'done',
+      };
+      setMessages(prev => [...prev, aiMsg]);
+    }
+    setAIStreaming(false);
   };
 
   // 根據 public/avatars/ 目錄下的實際檔名顯示頭像與名字
@@ -249,46 +255,40 @@ export default function ChatCompanion() {
     };
   };
 
+  // 語音辨識送出
   const handleSendVoice = async (inputText: string) => {
     setAIStreaming(true);
-    const aiMsg: ChatMsg = {
+    const userMsg: ChatMsg = {
       id: Date.now().toString(),
-      text: '',
-      sender: 'ai',
-      status: 'streaming',
+      text: inputText,
+      sender: 'user',
     };
-    setMessages(prev => [...prev, aiMsg]);
-    let idx = 0;
-    const openaiKey = process.env.REACT_APP_OPENAI_API_KEY || '';
-    const playhtKey = process.env.REACT_APP_PLAYHT_API_KEY || '';
-    const didKey = process.env.REACT_APP_DID_API_KEY || '';
-    const aiText = await generateResponse([
-      { role: 'assistant', content: '你是一個溫暖、善解人意的虛擬人，請用鼓勵、正向語氣回應。' },
-      { role: 'user', content: inputText },
-    ], openaiKey);
-    // 動畫顯示 AI 回覆
-    const reply = aiText;
-    aiTimeout.current = setInterval(() => {
-      idx++;
-      setMessages(prev => prev.map(m => m.id === aiMsg.id ? { ...m, text: reply.slice(0, idx) } : m));
-      if (idx >= reply.length) {
-        clearInterval(aiTimeout.current!);
-        setMessages(prev => prev.map(m => m.id === aiMsg.id ? { ...m, status: 'done' } : m));
-        setAIStreaming(false);
-      }
-    }, 40);
-    // AI 語音合成
-    setIsSpeaking(true);
-    const ttsUrl = await speak(aiText, aiAvatar.toLowerCase().includes('female') ? 'female' : 'male', playhtKey);
-    setAvatarAudio(ttsUrl);
-    const videoUrl = await generateTalkingFace({
-      imageUrl: aiAvatar,
-      audioUrl: ttsUrl,
-      text: aiText,
-      apiKey: didKey,
-    });
-    setAvatarVideo(videoUrl);
-    setIsSpeaking(false);
+    setMessages(prev => [...prev, userMsg]);
+    try {
+      const res = await fetch('/api/gpt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input: inputText }),
+      });
+      const data = await res.json();
+      const aiText = data.result || 'AI 沒有回應';
+      const aiMsg: ChatMsg = {
+        id: Date.now().toString(),
+        text: aiText,
+        sender: 'ai',
+        status: 'done',
+      };
+      setMessages(prev => [...prev, aiMsg]);
+    } catch (e) {
+      const aiMsg: ChatMsg = {
+        id: Date.now().toString(),
+        text: 'AI 回覆失敗，請稍後再試',
+        sender: 'ai',
+        status: 'done',
+      };
+      setMessages(prev => [...prev, aiMsg]);
+    }
+    setAIStreaming(false);
   };
 
   useEffect(() => {
