@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { LANGS, TEXT, useLanguage, LanguageCode } from '../shared/i18n';
+import axios from 'axios';
 
 const MOODS: Record<string, string[]> = {
   'zh-TW': ['孤獨','療癒','焦慮','希望','平靜','快樂','悲傷','勇氣'],
   'zh-CN': ['孤独','疗愈','焦虑','希望','平静','快乐','悲伤','勇气'],
   'en': ['Loneliness','Healing','Anxiety','Hope','Calm','Joy','Sadness','Courage'],
   'ja': ['孤独','癒し','不安','希望','平穏','喜び','悲しみ','勇気'],
-  'ko': ['고독', '치유', '불안', '희망', '평온', '기쁨', '슬픔', '용기'],
+  'ko': ['파랑', '보라', '분홍', '초록', '노랑', '회색', '빨강'],
   'vi': ['Đơn độc', 'Khỏi bệnh', 'Lo âu', 'Hy vọng', 'Bình yên', 'Vui vẻ', 'Buồn rầu', 'Can đảm'],
 };
 const COLORS: Record<string, string[]> = {
@@ -63,14 +64,22 @@ export default function EmotionVisualLab() {
   const [resultType, setResultType] = useState<'sentence'|'mood'>('sentence');
   const [isSubPage, setIsSubPage] = useState(false);
 
-  // 假的生成函數，實際應串接 API
   const handleGenerate = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setImgUrl('https://placehold.co/800x800?text=Emotion+Art');
-      setStylePrompt(resultType==='sentence' ? 'A soft abstract painting symbolizing deep emotional loneliness in blue tones, cinematic lighting' : 'A dreamy avatar with foggy eyes, symbolizing quiet hope, illustrated in a minimal watercolor style');
-      setLoading(false);
-    }, 1800);
+    setImgUrl('');
+    setStylePrompt('');
+    try {
+      const prompt = resultType === 'sentence'
+        ? input
+        : `${mood} in ${color} color, emotional art`;
+      const res = await axios.post('/api/generate-image', { prompt });
+      setImgUrl(res.data.imageUrl);
+      setStylePrompt(prompt);
+    } catch (err) {
+      setImgUrl('https://placehold.co/800x800?text=Error');
+      setStylePrompt('生成失敗，請稍後再試');
+    }
+    setLoading(false);
   };
 
   return (

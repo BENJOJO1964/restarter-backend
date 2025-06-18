@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signOut } from 'firebase/auth';
 import { LANGS, TEXT, useLanguage, LanguageCode } from '../shared/i18n';
 import { RecommendationList } from '../components/RecommendationList';
 import { mockUsers } from '../shared/recommendation';
+import { getFirestore, collection, getDocs, QuerySnapshot, DocumentData } from 'firebase/firestore';
+import app from '../src/firebaseConfig';
 
 const AVATAR_LIST = [
   '/avatars/male1.jpg', '/avatars/female1.jpg', '/avatars/male2.jpg', '/avatars/female2.jpg',
@@ -68,6 +70,22 @@ export default function FriendMatch() {
   const [form, setForm] = useState({ name: '', country: '', region: '', interest: '', email: '', gender: '', age: '', eventType: '' });
   const [sent, setSent] = useState(false);
   const [page, setPage] = useState(0);
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const db = getFirestore(app);
+
+  // 取得所有用戶
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(collection(db, 'users'));
+      const userList = querySnapshot.docs.map(doc => doc.data());
+      setUsers(userList);
+      setLoading(false);
+    };
+    fetchUsers();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -76,9 +94,20 @@ export default function FriendMatch() {
     setSent(true);
     setTimeout(() => setSent(false), 2000);
   };
-  const usersToShow = Array(30).fill(0).map((_, i) => ({ ...mockUsers[i % mockUsers.length], avatar: AVATAR_LIST[i % AVATAR_LIST.length], id: `u${i+1}` }));
+
+  // 根據條件過濾用戶
+  const filteredUsers = users.filter(user => {
+    if (form.gender && user.gender !== form.gender) return false;
+    if (form.age && user.age !== form.age) return false;
+    if (form.eventType && user.eventType !== form.eventType) return false;
+    if (form.country && user.country !== form.country) return false;
+    if (form.region && user.region !== form.region) return false;
+    if (form.interest && user.interest !== form.interest) return false;
+    return true;
+  });
   const pageSize = 6;
-  const pagedUsers = usersToShow.slice(page * pageSize, (page + 1) * pageSize);
+  const pagedUsers = filteredUsers.slice(page * pageSize, (page + 1) * pageSize);
+
   return (
     <div className="modern-bg" style={{ background: `url('/green_hut.png') center center / cover no-repeat`, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{position:'absolute',top:0,left:0,zIndex:100,display:'flex',alignItems:'center',padding:'18px 32px 0 32px',background:'transparent'}}>
@@ -135,19 +164,19 @@ export default function FriendMatch() {
             <div style={{ flex: 1.2, display: 'flex', flexDirection: 'column', gap: 18, justifyContent: 'flex-start' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 18 }}>
                 {pagedUsers.map(user => (
-                  <div key={user.id} style={{ background: '#fff', borderRadius: 14, padding: 20, boxShadow: '0 2px 12px #6B5BFF11', minWidth: 220, maxWidth: 260, width: '100%', display: 'flex', flexDirection: 'column', gap: 8, border: '1.5px solid #eee', position: 'relative', paddingRight: 24, paddingBottom: 32 }}>
-                    <img src={user.avatar} alt="avatar" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: '2.5px solid #6B5BFF', background: '#eee', position: 'absolute', left: 140, bottom: 18, zIndex: 1 }} />
+                  <div key={user.uid || user.id} style={{ background: '#fff', borderRadius: 14, padding: 20, boxShadow: '0 2px 12px #6B5BFF11', minWidth: 220, maxWidth: 260, width: '100%', display: 'flex', flexDirection: 'column', gap: 8, border: '1.5px solid #eee', position: 'relative', paddingRight: 24, paddingBottom: 32 }}>
+                    <img src={user.avatar || AVATAR_LIST[0]} alt="avatar" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: '2.5px solid #6B5BFF', background: '#eee', position: 'absolute', left: 140, bottom: 18, zIndex: 1 }} />
                     <div style={{ flex: 1, paddingRight: 0 }}>
                       <div style={{ fontWeight: 700, color: '#6B5BFF', fontSize: 17, whiteSpace: 'nowrap' }}>
-                        <b>{TEXT[lang].name}{TEXT[lang].colon} </b><span>{user.name}</span>
+                        <b>{TEXT[lang].name}{TEXT[lang].colon} </b><span>{user.nickname || user.name}</span>
                         <b style={{marginLeft:12}}>{TEXT[lang].gender}{TEXT[lang].colon} </b><span>{TEXT[lang][user.gender as 'male' | 'female' | 'other']}</span>
                       </div>
                       <div style={{ color: '#644F27', fontSize: 15, whiteSpace: 'nowrap', marginTop: 2 }}>
-                        <b>{TEXT[lang].country}{TEXT[lang].colon} </b>{(COUNTRY_MAP as any)[user.country]?.[lang] || user.country}
-                        <b style={{marginLeft:12}}>{TEXT[lang].city}{TEXT[lang].colon} </b>{(CITY_MAP as any)[user.region]?.[lang] || user.region}
+                        <b>{TEXT[lang].country}{TEXT[lang].colon} </b>{user.country}
+                        <b style={{marginLeft:12}}>{TEXT[lang].city}{TEXT[lang].colon} </b>{user.region}
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', color: '#614425', fontSize: 15, marginTop: 2, justifyContent: 'space-between' }}>
-                        <span><b>{TEXT[lang].interest}{TEXT[lang].colon} </b>{user.interests?.map(i => (INTEREST_MAP as any)[i]?.[lang] || i).filter(Boolean).join(', ')}</span>
+                        <span><b>{TEXT[lang].interest}{TEXT[lang].colon} </b>{user.interest}</span>
                         <span style={{marginLeft: 12}}><b>{TEXT[lang].age}{TEXT[lang].colon} </b>{user.age}</span>
                       </div>
                       <button

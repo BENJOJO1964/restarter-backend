@@ -68,13 +68,21 @@ export default function ChatCompanion() {
     return !localStorage.getItem('avatarWelcomed');
   });
   const [isFirstChat, setIsFirstChat] = useState(() => !localStorage.getItem('aiAvatar'));
+  const CHAT_TITLE: Record<string, string> = {
+    'zh-TW': '來聊天吧！',
+    'zh-CN': '来聊天吧！',
+    'en': 'Let\'s Chat!',
+    'ja': 'おしゃべりしよう！',
+    'ko': '이야기하자!',
+    'vi': 'Hãy trò chuyện!'
+  };
   const I_AM_WHO_TEXT: Record<string, string> = {
-    'zh-TW': '你想我是誰？',
-    'zh-CN': '你觉得我是谁？',
-    'en': 'Who do you think I am?',
-    'ja': '私は誰だと思う？',
-    'ko': '내가 누구라고 생각해?',
-    'vi': 'Bạn nghĩ tôi là ai?',
+    'zh-TW': '你想要我是誰？',
+    'zh-CN': '你想要我是谁？',
+    'en': 'Who do you want me to be?',
+    'ja': '私に誰になってほしい？',
+    'ko': '내가 누구이길 바라?',
+    'vi': 'Bạn muốn tôi là ai?'
   };
   const VOICE_HINT_TEXT: Record<string, string> = {
     'zh-TW': '按一下開始語音聊天...',
@@ -313,7 +321,7 @@ export default function ChatCompanion() {
       <div className="modern-container" style={{ maxWidth: 540, width: '100%', margin: '0 auto', justifyContent: 'flex-start', paddingTop: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 18 }}>
           <h2 className="modern-title" style={{ fontSize: '2.2rem', margin: 0, flex: 1, textAlign: 'center', color:'#fff', textShadow:'0 2px 16px #6B5BFF, 0 4px 32px #0008', letterSpacing:1, display:'flex',alignItems:'center',gap:8 }}>
-            💬 {TEXT[lang].chat}
+            💬 {CHAT_TITLE[langTyped as keyof typeof CHAT_TITLE]}
           </h2>
         </div>
         {/* 橢圓形頭像框與頭像選擇 */}
@@ -393,33 +401,24 @@ export default function ChatCompanion() {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 32, justifyContent: 'center' }}>
           <button
+            onClick={handleRecordVoice}
+            disabled={!aiAvatar}
             style={{
-              width: 80,
-              height: 80,
-              borderRadius: '50%',
-              background: recognizing ? 'linear-gradient(135deg, #ff5e3a 60%, #ffb47b 100%)' : 'linear-gradient(135deg, #6c63ff 60%, #23c6e6 100%)',
+              padding: '12px 24px',
+              borderRadius: 8,
+              fontWeight: 700,
+              background: !aiAvatar ? '#ccc' : 'linear-gradient(135deg, #6B5BFF 60%, #23c6e6 100%)',
               color: '#fff',
               border: 'none',
-              boxShadow: '0 2px 12px #23294633',
-              fontSize: 36,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              marginBottom: 12,
-              transition: 'background 0.2s, box-shadow 0.2s',
+              fontSize: 16,
+              cursor: !aiAvatar ? 'not-allowed' : 'pointer',
+              marginTop: 12
             }}
-            onClick={handleRecordVoice}
-            disabled={recognizing}
-            onMouseOver={e => { if (!recognizing) { e.currentTarget.style.background = 'linear-gradient(135deg, #4a3bbf 60%, #0e7fd6 100%)'; e.currentTarget.style.boxShadow = '0 4px 24px #6B5BFF55'; }}}
-            onMouseOut={e => { if (!recognizing) { e.currentTarget.style.background = 'linear-gradient(135deg, #6c63ff 60%, #23c6e6 100%)'; e.currentTarget.style.boxShadow = '0 2px 12px #23294633'; }}}
           >
-            {recognizing ? <span style={{fontSize: 38}}>■</span> : <span role="img" aria-label="mic">🎤</span>}
+            {VOICE_HINT_TEXT[lang]}
           </button>
-          {!showInput && !recording && (
-            <div style={{ color: '#fff', fontSize: 18, marginBottom: 8, textAlign: 'center', textShadow: '0 2px 8px #23294688', background: 'rgba(0,0,0,0.18)', borderRadius: 8, padding: '2px 12px', display: 'inline-block', backdropFilter: 'blur(2px)' }}>
-              {VOICE_HINT_TEXT[lang]}
-            </div>
+          {!aiAvatar && (
+            <div style={{ color: 'red', fontWeight: 700, marginTop: 8 }}>請先選擇頭像才能語音聊天</div>
           )}
         </div>
         {aiStreaming && <div style={{ color: '#6c63ff', marginTop: 10, textAlign: 'center' }}>{lang==='zh-TW'?'AI 正在回覆中，輸入新訊息可立即打斷':lang==='zh-CN'?'AI 正在回复中，输入新消息可立即打断':lang==='ja'?'AIが返信中です。新しいメッセージを入力するとすぐに中断できます':'AI is replying, type a new message to interrupt.'}</div>}
