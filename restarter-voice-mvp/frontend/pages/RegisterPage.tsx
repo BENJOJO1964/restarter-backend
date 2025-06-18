@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { getAuth, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from 'firebase/auth';
 import app from '../src/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const LANGS = [
   { code: 'zh-TW', label: '繁中' },
@@ -265,6 +267,19 @@ export default function RegisterPage({ onRegister }: { onRegister: () => void })
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: nickname });
+      // 新增：將用戶資料寫入 Firestore
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        email,
+        nickname,
+        age,
+        gender,
+        country,
+        region,
+        interest,
+        eventType,
+        createdAt: new Date().toISOString()
+      });
       // 註冊成功後清空頭像相關 localStorage
       localStorage.removeItem('aiAvatar');
       localStorage.removeItem('avatarWelcomed');
