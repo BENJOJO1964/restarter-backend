@@ -284,12 +284,19 @@ export default function SkillBox() {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
   }
+  // 假資料情境
+  const scenarios = [
+    '朋友邀請你參加運動，你想接受。',
+    '同事請你幫忙加班，你會怎麼回應？',
+    '家人問你最近過得好嗎？',
+    '陌生人向你搭訕，你會怎麼做？'
+  ];
+  const [idx, setIdx] = useState(0);
+  const [aiAnalysis, setAiAnalysis] = useState('');
   const handleSend = async () => {
-    if(!input.trim())return;
-    setAiReply(`AI分析：你的回答很棒！（mock）建議：保持自信，語氣自然。`);
-    // 完成互動給徽章與晉升
-    const promoted = addBadge();
-    if (promoted && setVideoReaction) setVideoReaction('encouragement'); // 晉升時播放影片
+    // TODO: 串接 GPT API
+    setAiAnalysis('（AI分析：這是 GPT API 回傳的分析結果）');
+    setIdx(i => (i+1)%scenarios.length);
   };
   const handleVoice = () => {
     if (!SpeechRecognition) {
@@ -357,7 +364,7 @@ export default function SkillBox() {
           <div style={{ marginBottom: 16 }}>
             <div style={{ marginTop: 8 }}>
               <span style={{ color: '#6B5BFF', fontWeight: 700 }}>{UI_TEXT[lang].scenario}:</span>
-              <span style={{ color: '#222', fontWeight: 600 }}> {scenarioText}</span>
+              <span style={{ color: '#222', fontWeight: 600 }}> {scenarios[idx]}</span>
             </div>
             <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={UI_TEXT[lang].answer} style={{ width: '100%', minHeight: 48, borderRadius: 8, border: '1px solid #ddd', padding: 10, fontSize: 16, marginTop: 8 }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
@@ -377,7 +384,7 @@ export default function SkillBox() {
                 onMouseOut={e => { e.currentTarget.style.background = '#23c6e6'; e.currentTarget.style.boxShadow = 'none'; }}
               >{UI_TEXT[lang].send}</button>
             </div>
-            {aiReply && <div style={{ background: '#f7f7ff', borderRadius: 10, padding: 14, marginTop: 16, color: '#6B5BFF', fontWeight: 700 }}>{aiReply}</div>}
+            {aiAnalysis && <div style={{ background: '#f7f7ff', borderRadius: 10, padding: 14, marginTop: 16, color: '#6B5BFF', fontWeight: 700 }}>{aiAnalysis}</div>}
           </div>
           <div style={{ marginTop: 18, width: '100%' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

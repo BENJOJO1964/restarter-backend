@@ -69,8 +69,8 @@ export default function ChatCompanion() {
   });
   const [isFirstChat, setIsFirstChat] = useState(() => !localStorage.getItem('aiAvatar'));
   const CHAT_TITLE: Record<string, string> = {
-    'zh-TW': '來聊天吧！💬',
-    'zh-CN': '來聊天吧！💬',
+    'zh-TW': '來聊天吧',
+    'zh-CN': '來聊天吧',
     'en': 'Let\'s Chat!',
     'ja': 'おしゃべりしよう！',
     'ko': '이야기하자!',
@@ -415,7 +415,7 @@ export default function ChatCompanion() {
               marginTop: 12
             }}
           >
-            {VOICE_HINT_TEXT[lang]}
+            <button className="start-voice-btn" onClick={handleRecordVoice} style={{transition:'background 0.2s, color 0.2s'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}}>按一下開始語音聊天...</button>
           </button>
           {!aiAvatar && (
             <div style={{ color: 'red', fontWeight: 700, marginTop: 8 }}>請先選擇頭像才能語音聊天</div>

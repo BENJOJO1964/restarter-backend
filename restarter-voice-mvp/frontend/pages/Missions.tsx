@@ -180,6 +180,13 @@ export default function Missions() {
   const [missionInput, setMissionInput] = useState('');
   const [records, setRecords] = useState<any[]>(JSON.parse(localStorage.getItem('missionRecords')||'[]')||[]);
   const { setVideoReaction } = useVideoReaction();
+  // 假資料
+  const [mission, setMission] = useState<string|null>(null);
+  useEffect(() => {
+    fetch('/api/mission').then(r=>r.json()).then(data=>setMission(data.mission)).catch(()=>{
+      setMission('今天主動關心一位家人，問問他們對「家庭」的看法。');
+    });
+  }, []);
 
   // 在 useEffect 中根據語言產生每日唯一任務
   useEffect(() => {

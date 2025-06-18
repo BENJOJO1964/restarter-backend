@@ -97,7 +97,7 @@ export default function PairTalk() {
   const userEmail = auth.currentUser?.email || '';
   const { lang, setLang } = useLanguage();
   const [pairs, setPairs] = useState<any[]>(JSON.parse(localStorage.getItem('pairs')||'[]')||mockPairs);
-  const [timer, setTimer] = useState(300); // 5分鐘
+  const [timer, setTimer] = useState(45*60); // 45分鐘
   const [activeId, setActiveId] = useState(pairs.find((p:any)=>p.status==='active')?.id||null);
   const [aiMsg, setAiMsg] = useState('AI：記得保持友善，互相傾聽！');
   const isSubPage = window.location.pathname !== '/';
@@ -113,6 +113,7 @@ export default function PairTalk() {
   const [hasMatched, setHasMatched] = useState(false);
   const [friends, setFriends] = useState<any[]>([]);
   const [isFriend, setIsFriend] = useState(false);
+  const user = null; // 改為 null 模擬無資料
   React.useEffect(()=>{ if(activeId){ const t = setInterval(()=>setTimer(s=>s>0?s-1:0),1000); return()=>clearInterval(t);} },[activeId]);
   React.useEffect(()=>{
     if(matching && matchResult){

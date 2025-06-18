@@ -72,7 +72,7 @@ export default function Home() {
       key: 'journal',
       icon: '🎨',
       title: {
-        'zh-TW': '打爆你+emoji', 'zh-CN': '打爆你+emoji', 'en': 'Whack-a-mole+emoji', 'ja': 'モグラ叩き+emoji', 'ko': '두더지잡기+emoji', 'vi': 'Đập chuột chũi+emoji'
+        'zh-TW': '打爆你💥', 'zh-CN': '打爆你💥', 'en': 'Whack-a-mole💥', 'ja': 'モグラ叩き💥', 'ko': '두더지잡기💥', 'vi': 'Đập chuột chũi💥'
       },
       desc: {
         'zh-TW': '用AI生成你的情緒藝術圖像', 'zh-CN': '用AI生成你的情绪艺术图像', 'en': 'Generate your emotion art with AI', 'ja': 'AIで感情アートを生成', 'ko': 'AI로 감정 아트를 생성', 'vi': 'Tạo hình ảnh tình cảm của bạn bằng AI'
