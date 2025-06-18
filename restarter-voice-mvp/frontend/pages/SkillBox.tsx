@@ -294,8 +294,18 @@ export default function SkillBox() {
   const [idx, setIdx] = useState(0);
   const [aiAnalysis, setAiAnalysis] = useState('');
   const handleSend = async () => {
-    // TODO: 串接 GPT API
-    setAiAnalysis('（AI分析：這是 GPT API 回傳的分析結果）');
+    setAiAnalysis('分析中...');
+    try {
+      const res = await fetch('/api/gpt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input }),
+      });
+      const data = await res.json();
+      setAiAnalysis(data.result || 'AI 沒有回應');
+    } catch (e) {
+      setAiAnalysis('AI 分析失敗，請稍後再試');
+    }
     setIdx(i => (i+1)%scenarios.length);
   };
   const handleVoice = () => {
