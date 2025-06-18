@@ -182,6 +182,9 @@ export default function PairTalk() {
           <option value="vi">Tiếng Việt</option>
         </select>
       </div>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 16, marginBottom: 8 }}>
+        <img src="/ctx-logo.png" alt="logo" style={{ height: 48 }} />
+      </div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 0, gap: 0, padding: 0 }}>
         <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#6B5BFF', textShadow: '0 2px 12px #6B5BFF88, 0 4px 24px #0008', letterSpacing:1, background:'#fff', borderRadius:12, boxShadow:'0 2px 12px #6B5BFF22', padding:'12px 32px', margin:0, marginBottom: 8, display:'flex',alignItems:'center',gap:12 }}>🤝 {UI_TEXT[lang]?.pairtalk}</h2>
         {mockProfiles.length === 0 && (

@@ -126,6 +126,9 @@ export default function FriendMatch() {
         </select>
       </div>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 100 }}>
+        <div style={{width:'100%',display:'flex',justifyContent:'center',alignItems:'center',marginTop:16,marginBottom:8}}>
+          <img src="/ctx-logo.png" alt="logo" style={{height:48}} />
+        </div>
         <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#6B5BFF', textShadow: '0 2px 12px #6B5BFF88, 0 4px 24px #0008', letterSpacing:1, background:'#fff', borderRadius:12, boxShadow:'0 2px 12px #6B5BFF22', padding:'12px 32px', margin:0, display:'flex',alignItems:'center',gap:12, marginBottom: 24 }}>🧑‍🤝‍🧑 {TEXT[lang].friendMatch}</h2>
         <div className="modern-container" style={{ maxWidth: 700, width: '100%', margin: '0 auto', padding: 32, display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'flex-start' }}>
           <div style={{ display: 'flex', flexDirection: 'row', gap: 32, alignItems: 'flex-start' }}>

@@ -111,6 +111,17 @@ export default function Home() {
         'zh-TW': '練習社會互動，解鎖成就', 'zh-CN': '练习社会互动，解锁成就', 'en': 'Practice social skills, unlock achievements', 'ja': '社会スキル練習で実績解除', 'ko': '사회 스킬 연습으로 성과 해제', 'vi': 'Luyện tập kỹ năng xã hội để giải phóng kết quả'
       },
       path: '/skillbox'
+    },
+    {
+      key: 'chat',
+      icon: '💬',
+      title: {
+        'zh-TW': '來聊天吧！', 'zh-CN': '来聊天吧！', 'en': 'Let\'s Chat!', 'ja': 'チャットしよう！', 'ko': '채팅하자!', 'vi': 'Cùng trò chuyện!'
+      },
+      desc: {
+        'zh-TW': '用AI虛擬人陪你聊聊', 'zh-CN': '用AI虚拟人陪你聊聊', 'en': 'Chat with AI companion', 'ja': 'AIバーチャル人とおしゃべり', 'ko': 'AI와 대화하기', 'vi': 'Trò chuyện với AI'
+      },
+      path: '/chat'
     }
   ];
 
