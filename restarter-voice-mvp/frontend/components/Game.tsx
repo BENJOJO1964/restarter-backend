@@ -84,9 +84,13 @@ function getLevelByHitRate(hitCount: number, total: number, prevLevel: number) {
   return prevLevel;
 }
 
-export default function Game() {
+interface GameProps {
+  initialTime: number;
+}
+
+export default function Game({ initialTime }: GameProps) {
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(initialTime);
   const [level, setLevel] = useState(1);
   const [currentMole, setCurrentMole] = useState(0);
   const [showEnd, setShowEnd] = useState(false);
@@ -97,7 +101,7 @@ export default function Game() {
   const [moleHitAnim, setMoleHitAnim] = useState(false);
   const [missed, setMissed] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(30);
+  const [selectedTime, setSelectedTime] = useState(initialTime);
   const [molePos, setMolePos] = useState({x: 0, y: 0});
   const [totalMoleCount, setTotalMoleCount] = useState(0);
   const [hitCount, setHitCount] = useState(0);
