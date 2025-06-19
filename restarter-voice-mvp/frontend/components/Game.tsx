@@ -255,9 +255,17 @@ export default function Game({ initialTime }: GameProps) {
   const logo = <img src="/ctx-logo.png" alt="logo" style={{height:90,position:'fixed',top:24,left:80,zIndex:100,transition:'all 0.3s'}} />;
 
   return (
-    <div className="min-h-screen bg-[url('/clay_background.png')] bg-cover bg-center relative">
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: 'url("/clay_background.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       {logo}
-      <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen pt-24">
         {/* 遊戲未開始時顯示開始按鈕與計時選擇 */}
         {!gameStarted && !showEnd && (
           <div className="mt-20 mb-10 text-center">
@@ -291,7 +299,7 @@ export default function Game({ initialTime }: GameProps) {
         
         {/* 遊戲區域 */}
         {gameStarted && (
-          <div className="relative w-[600px] h-[600px] bg-[#f0d5a3] rounded-full shadow-2xl overflow-hidden">
+          <div className="relative w-[600px] h-[600px] bg-[url('/orange-dirt.png')] bg-cover bg-center rounded-full shadow-2xl overflow-hidden">
             {/* 分數區塊 */}
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex gap-8 z-10">
               <div className="text-2xl font-black text-[#6B5BFF] bg-[#f7f7ff] rounded-xl px-6 py-2 shadow-lg">
@@ -314,6 +322,7 @@ export default function Game({ initialTime }: GameProps) {
                   top: molePos.y,
                   transition: 'all 0.15s ease-out',
                   transform: moleHitAnim ? 'scale(0.8)' : 'scale(1)',
+                  cursor: 'pointer'
                 }}
               >
                 <Hole 
