@@ -16,9 +16,9 @@ const getLevel = (score: number) => {
   return 1;
 };
 
-const HOLE_COUNT = 15; // 地鼠坑數量改為 15
-const POP_INTERVAL = 900; // ms 地鼠冒出間隔
-const MOLE_VISIBLE_TIME = 700; // ms 地鼠可見時間
+const MOLE_VISIBLE_TIME_BASE = 900; // 基礎可見時間(ms)
+const POP_INTERVAL_BASE = 700; // 基礎間隔(ms)
+const LEVELS = 6;
 
 // 低分嘲諷語
 const lowScoreInsults = [
@@ -73,11 +73,16 @@ const moleVoiceLines = {
   ]
 };
 
+function getLevelByHitRate(hitCount: number, total: number) {
+  const rate = hitCount / total;
+  if (rate > 0.9 && rate <= 1) return Math.min(LEVELS, Math.floor(rate * LEVELS) + 1);
+  return 1;
+}
+
 export default function Game() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [level, setLevel] = useState(1);
-  const [currentHole, setCurrentHole] = useState(-1);
   const [currentMole, setCurrentMole] = useState(0);
   const [showEnd, setShowEnd] = useState(false);
   const [taunt, setTaunt] = useState('');
@@ -86,8 +91,11 @@ export default function Game() {
   const [moles, setMoles] = useState<any[]>([]);
   const [moleHitAnim, setMoleHitAnim] = useState(false);
   const [missed, setMissed] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false); // 新增：遊戲是否開始
-  const [selectedTime, setSelectedTime] = useState(30); // 新增：選擇的計時秒數
+  const [gameStarted, setGameStarted] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(30);
+  const [molePos, setMolePos] = useState({x: 0, y: 0});
+  const [totalMoleCount, setTotalMoleCount] = useState(0);
+  const [hitCount, setHitCount] = useState(0);
   const timerRef = useRef<NodeJS.Timeout|null>(null);
   const popRef = useRef<NodeJS.Timeout|null>(null);
   const hideRef = useRef<NodeJS.Timeout|null>(null);
@@ -113,7 +121,7 @@ export default function Game() {
       clearInterval(timerRef.current!);
       clearInterval(popRef.current!);
       clearTimeout(hideRef.current!);
-      setCurrentHole(-1);
+      setCurrentMole(-1);
       return;
     }
     timerRef.current = setInterval(() => {
@@ -126,54 +134,59 @@ export default function Game() {
   useEffect(() => {
     if (!gameStarted || showEnd || moles.length === 0) return;
     function popMole() {
-      const hole = Math.floor(Math.random() * HOLE_COUNT);
-      const mole = Math.floor(Math.random() * moles.length);
-      setCurrentHole(hole);
-      setCurrentMole(mole);
+      // 圓盤半徑 210px，地鼠半徑 40px，避免超出
+      const r = 210;
+      const center = 300;
+      let angle = Math.random() * 2 * Math.PI;
+      let dist = Math.random() * (r - 40);
+      const x = center + dist * Math.cos(angle) - 40;
+      const y = center + dist * Math.sin(angle) - 40;
+      setMolePos({x, y});
+      setCurrentMole(Math.floor(Math.random() * moles.length));
       setMissed(false);
+      setTotalMoleCount(c => c + 1);
+      const visibleTime = Math.max(300, MOLE_VISIBLE_TIME_BASE - (level-1)*120);
       hideRef.current = setTimeout(() => {
-        setCurrentHole(-1);
-        if (!missed) setScore(s => Math.max(0, s - 1)); // 沒打到扣分
-        setTimeout(popMole, 200);
-      }, MOLE_VISIBLE_TIME);
+        setMolePos({x: -9999, y: -9999});
+        if (!missed) setScore(s => s - 1); // 沒打到扣分
+        setTimeout(popMole, Math.max(200, POP_INTERVAL_BASE - (level-1)*100));
+      }, visibleTime);
     }
     popRef.current = setTimeout(popMole, 600);
     return () => {
       clearTimeout(popRef.current!);
       clearTimeout(hideRef.current!);
     };
-  }, [showEnd, moles, gameStarted]);
+  }, [showEnd, moles, gameStarted, level]);
 
-  // 分數升級
+  // 分數升級與命中率
   useEffect(() => {
-    const newLevel = getLevel(score);
+    if (totalMoleCount === 0) return;
+    const newLevel = getLevelByHitRate(hitCount, totalMoleCount);
     setLevel(newLevel);
-  }, [score]);
+  }, [hitCount, totalMoleCount]);
 
   // 點擊地鼠
   const handleHit = async () => {
     setScore(s => s + 1);
+    setHitCount(c => c + 1);
     setMissed(true);
     setMoleHitAnim(true);
     setTimeout(() => setMoleHitAnim(false), 200);
-    setCurrentHole(-1); // 點到就縮回去
+    setMolePos({x: -9999, y: -9999});
     const lang = localStorage.getItem('lang') || 'zh-TW';
-    // 低分時顯示低分嘲諷語
     if (score < 40) {
       setTaunt(lowScoreInsults[Math.floor(Math.random() * lowScoreInsults.length)]);
     } else {
-      // 地鼠專屬語音台詞
       const moleName = moles[currentMole]?.name?.[lang] || moles[currentMole]?.name?.['zh-TW'] || '';
       const voiceLines = moleVoiceLines[moleName as keyof typeof moleVoiceLines] || [];
       if (voiceLines.length > 0) {
         setTaunt(voiceLines[Math.floor(Math.random() * voiceLines.length)]);
       } else {
-        // fallback: moles.json taunt
         const taunts = moles[currentMole]?.taunts?.[lang] || moles[currentMole]?.taunts?.['zh-TW'] || [];
         setTaunt(taunts[Math.floor(Math.random() * taunts.length)] || '');
       }
     }
-    // 多語系音效
     try {
       const soundUrl = await getMoleSound(lang);
       const audio = new window.Audio(soundUrl);
@@ -188,8 +201,9 @@ export default function Game() {
     setLevel(1);
     setShowEnd(false);
     setTaunt('');
-    setCurrentHole(-1);
     setGameStarted(false);
+    setTotalMoleCount(0);
+    setHitCount(0);
   };
 
   // 開始遊戲
@@ -199,7 +213,6 @@ export default function Game() {
     setLevel(1);
     setShowEnd(false);
     setTaunt('');
-    setCurrentHole(-1);
     setGameStarted(true);
   };
 
@@ -230,20 +243,12 @@ export default function Game() {
           <button style={{ fontSize: 18, fontWeight: 700, color: '#fff', background:'#6B5BFF', borderRadius:10, padding:'8px 18px', border:'none', boxShadow:'0 2px 12px #6B5BFF33', cursor:'pointer' }} onClick={()=>setShowRanking(true)}>排行榜</button>
         </div>
         )}
-        {/* 大圓盤+15個坑 */}
+        {/* 圓盤+隨機地鼠 */}
         {gameStarted && (
-        <div style={{ width: 600, height: 600, borderRadius: '50%', background: '#c2b280', boxShadow: '0 4px 32px #61442522', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', marginBottom: 32 }}>
-          {Array.from({length: HOLE_COUNT}).map((_, i) => {
-            const angle = (i / HOLE_COUNT) * 2 * Math.PI;
-            const r = 250;
-            const cx = 300 + r * Math.cos(angle - Math.PI/2);
-            const cy = 300 + r * Math.sin(angle - Math.PI/2);
-            return (
-              <div key={i} style={{ position: 'absolute', left: cx-40, top: cy-40, width: 80, height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Hole active={i===currentHole} mole={{name:moles[currentMole]?.name?.[localStorage.getItem('lang')||'zh-TW']||'',emoji:moles[currentMole]?.emoji||''}} onHit={handleHit} hitAnim={moleHitAnim && i===currentHole} />
-              </div>
-            );
-          })}
+        <div style={{ width: 600, height: 600, borderRadius: '50%', background: `url('/orange-dirt.png') center/cover no-repeat`, boxShadow: '0 4px 32px #61442522', position: 'relative', marginBottom: 32 }}>
+          <div style={{ position: 'absolute', left: molePos.x, top: molePos.y, zIndex: 2 }}>
+            <Hole active={true} mole={{name:moles[currentMole]?.name?.[localStorage.getItem('lang')||'zh-TW']||'',emoji:moles[currentMole]?.emoji||''}} onHit={handleHit} hitAnim={moleHitAnim} />
+          </div>
         </div>
         )}
         {/* 嘲諷語 */}
