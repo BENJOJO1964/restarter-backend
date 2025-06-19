@@ -76,9 +76,10 @@ const moleVoiceLines = {
 function getLevelByHitRate(hitCount: number, total: number, prevLevel: number) {
   if (total === 0) return 1;
   const rate = hitCount / total;
-  if (rate > 0.9) {
+  
+  if (rate > 0.9) {  // 命中率 > 90%，升級
     return Math.min(6, prevLevel + 1);
-  } else if (rate <= 0.4) {
+  } else if (rate <= 0.4) {  // 命中率 <= 40%，降級
     return Math.max(1, prevLevel - 1);
   }
   return prevLevel;
@@ -92,7 +93,7 @@ export default function Game({ initialTime }: GameProps) {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [level, setLevel] = useState(1);
-  const [currentMole, setCurrentMole] = useState(0);
+  const [currentMole, setCurrentMole] = useState(-1);
   const [showEnd, setShowEnd] = useState(false);
   const [taunt, setTaunt] = useState('');
   const [showRanking, setShowRanking] = useState(false);
@@ -100,9 +101,9 @@ export default function Game({ initialTime }: GameProps) {
   const [moles, setMoles] = useState<any[]>([]);
   const [moleHitAnim, setMoleHitAnim] = useState(false);
   const [missed, setMissed] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(true);
   const [selectedTime, setSelectedTime] = useState(initialTime);
-  const [molePos, setMolePos] = useState({x: 0, y: 0});
+  const [molePos, setMolePos] = useState({x: -9999, y: -9999});
   const [totalMoleCount, setTotalMoleCount] = useState(0);
   const [hitCount, setHitCount] = useState(0);
   const timerRef = useRef<NodeJS.Timeout|null>(null);
@@ -139,34 +140,53 @@ export default function Game({ initialTime }: GameProps) {
     return () => clearInterval(timerRef.current!);
   }, [timeLeft, gameStarted]);
 
-  // 地鼠隨機出現與自動縮回
+  // 修改地鼠出現邏輯
   useEffect(() => {
     if (!gameStarted || showEnd || moles.length === 0) return;
+    
     function popMole() {
-      // 圓盤半徑 210px，地鼠半徑 40px，避免超出
-      const r = 210;
-      const center = 300;
-      let angle = Math.random() * 2 * Math.PI;
-      let dist = Math.random() * (r - 40);
-      const x = center + dist * Math.cos(angle) - 40;
-      const y = center + dist * Math.sin(angle) - 40;
+      const r = 210;  // 圓盤半徑
+      const center = 300;  // 中心點
+      const angle = Math.random() * 2 * Math.PI;
+      const dist = Math.random() * (r - 40);  // 考慮地鼠大小
+      
+      // 確保地鼠完全在可見區域內
+      const x = Math.max(0, Math.min(600, center + dist * Math.cos(angle) - 40));
+      const y = Math.max(0, Math.min(600, center + dist * Math.sin(angle) - 40));
+      
       setMolePos({x, y});
       setCurrentMole(Math.floor(Math.random() * moles.length));
       setMissed(false);
       setTotalMoleCount(c => c + 1);
+      
+      // 根據等級調整地鼠可見時間
       const visibleTime = Math.max(300, MOLE_VISIBLE_TIME_BASE - (level-1)*120);
+      
       hideRef.current = setTimeout(() => {
         setMolePos({x: -9999, y: -9999});
-        if (!missed) setScore(s => s - 1); // 沒打到扣分
-        setTimeout(popMole, Math.max(200, POP_INTERVAL_BASE - (level-1)*100));
+        if (!missed) {
+          setScore(s => s - 1);  // 沒打到就扣一分
+          // 根據命中率更新嘲諷語
+          const currentHitRate = hitCount / (totalMoleCount + 1);  // +1 是因為當前這一下還沒計入 totalMoleCount
+          if (currentHitRate <= 0.4) {
+            setTaunt(lowScoreInsults[Math.floor(Math.random() * lowScoreInsults.length)]);
+          }
+        }
+        
+        // 根據等級調整出現間隔
+        const interval = Math.max(200, POP_INTERVAL_BASE - (level-1)*100);
+        popRef.current = setTimeout(popMole, interval);
       }, visibleTime);
     }
+    
+    // 初始延遲後開始遊戲
     popRef.current = setTimeout(popMole, 600);
+    
     return () => {
-      clearTimeout(popRef.current!);
-      clearTimeout(hideRef.current!);
+      if (popRef.current) clearTimeout(popRef.current);
+      if (hideRef.current) clearTimeout(hideRef.current);
     };
-  }, [showEnd, moles, gameStarted, level]);
+  }, [showEnd, moles, gameStarted, level, missed, hitCount, totalMoleCount]);
 
   // 分數升級與命中率
   useEffect(() => {
@@ -176,16 +196,22 @@ export default function Game({ initialTime }: GameProps) {
 
   // 點擊地鼠
   const handleHit = async () => {
-    setScore(s => s + 1);
+    setScore(s => s + 1);  // 打中就加一分
     setHitCount(c => c + 1);
     setMissed(true);
     setMoleHitAnim(true);
     setTimeout(() => setMoleHitAnim(false), 200);
     setMolePos({x: -9999, y: -9999});
     const lang = localStorage.getItem('lang') || 'zh-TW';
-    if (score < 40) {
+    
+    // 根據命中率選擇嘲諷語
+    const hitRate = (hitCount + 1) / (totalMoleCount || 1);  // +1 是因為當前這一下還沒計入 hitCount
+    
+    if (hitRate <= 0.4) {  // 命中率 <= 40%，最嚴厲的嘲諷
       setTaunt(lowScoreInsults[Math.floor(Math.random() * lowScoreInsults.length)]);
-    } else {
+    } else if (hitRate > 0.9) {  // 命中率 > 90%，誇獎台詞
+      setTaunt("太厲害了！你是打地鼠界的超級英雄！");
+    } else {  // 一般情況，顯示地鼠台詞
       const moleName = moles[currentMole]?.name?.[lang] || moles[currentMole]?.name?.['zh-TW'] || '';
       const voiceLines = moleVoiceLines[moleName as keyof typeof moleVoiceLines] || [];
       if (voiceLines.length > 0) {
@@ -195,6 +221,7 @@ export default function Game({ initialTime }: GameProps) {
         setTaunt(taunts[Math.floor(Math.random() * taunts.length)] || '');
       }
     }
+
     try {
       const soundUrl = await getMoleSound(lang);
       const audio = new window.Audio(soundUrl);
@@ -228,55 +255,94 @@ export default function Game({ initialTime }: GameProps) {
   const logo = <img src="/ctx-logo.png" alt="logo" style={{height:90,position:'fixed',top:24,left:80,zIndex:100,transition:'all 0.3s'}} />;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fff', position: 'relative' }}>
+    <div className="min-h-screen bg-[url('/clay_background.png')] bg-cover bg-center relative">
       {logo}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+      <div className="flex flex-col items-center justify-center min-h-screen">
         {/* 遊戲未開始時顯示開始按鈕與計時選擇 */}
         {!gameStarted && !showEnd && (
-          <div style={{ marginTop: 80, marginBottom: 40, textAlign: 'center' }}>
-            <div style={{ fontSize: 28, fontWeight: 700, marginBottom: 24 }}>選擇遊戲時間</div>
-            <div style={{ display: 'flex', gap: 24, justifyContent: 'center', marginBottom: 32 }}>
-              <button onClick={()=>setSelectedTime(30)} style={{ fontSize: 22, padding: '10px 32px', borderRadius: 12, border: selectedTime===30?'2px solid #614425':'2px solid #ccc', background: selectedTime===30?'#f7e7c1':'#fff', color:'#614425', fontWeight:700, cursor:'pointer', transition:'all 0.2s' }}>30秒</button>
-              <button onClick={()=>setSelectedTime(60)} style={{ fontSize: 22, padding: '10px 32px', borderRadius: 12, border: selectedTime===60?'2px solid #614425':'2px solid #ccc', background: selectedTime===60?'#f7e7c1':'#fff', color:'#614425', fontWeight:700, cursor:'pointer', transition:'all 0.2s' }}>60秒</button>
+          <div className="mt-20 mb-10 text-center">
+            <div className="text-2xl font-bold mb-6 text-[#614425]">選擇遊戲時間</div>
+            <div className="flex gap-6 justify-center mb-8">
+              <button 
+                onClick={()=>setSelectedTime(30)} 
+                className={`text-xl px-8 py-3 rounded-xl border-2 ${
+                  selectedTime===30 ? 'border-[#614425] bg-[#f7e7c1]' : 'border-gray-300 bg-white'
+                } text-[#614425] font-bold cursor-pointer transition-all`}
+              >
+                30秒
+              </button>
+              <button 
+                onClick={()=>setSelectedTime(60)}
+                className={`text-xl px-8 py-3 rounded-xl border-2 ${
+                  selectedTime===60 ? 'border-[#614425] bg-[#f7e7c1]' : 'border-gray-300 bg-white'
+                } text-[#614425] font-bold cursor-pointer transition-all`}
+              >
+                60秒
+              </button>
             </div>
-            <button onClick={handleStart} style={{ fontSize: 28, padding: '16px 64px', borderRadius: 16, background: '#a97c50', color: '#fff', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 2px 12px #61442533', transition:'all 0.2s', marginTop: 16 }} onMouseOver={e=>e.currentTarget.style.background='#614425'} onMouseOut={e=>e.currentTarget.style.background='#a97c50'}>開始</button>
+            <button 
+              onClick={handleStart}
+              className="text-2xl px-16 py-4 rounded-xl bg-[#a97c50] text-white font-black border-none cursor-pointer shadow-lg hover:bg-[#614425] transition-all mt-4"
+            >
+              開始
+            </button>
           </div>
         )}
-        {/* 分數區塊 */}
+        
+        {/* 遊戲區域 */}
         {gameStarted && (
-        <div style={{ display: 'flex', gap: 32, marginBottom: 24, marginTop: 32, alignItems: 'center' }}>
-          <div style={{ fontSize: 28, fontWeight: 900, color: '#6B5BFF', background:'#f7f7ff', borderRadius:12, padding:'8px 24px', boxShadow:'0 2px 12px #6B5BFF22' }}>分數: {score}</div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#614425', background:'#fffbe6', borderRadius:12, padding:'8px 18px', boxShadow:'0 2px 12px #FFD70022' }}>等級: {level}</div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#fff', background:'#23c6e6', borderRadius:12, padding:'8px 18px', boxShadow:'0 2px 12px #23c6e622' }}>倒數: {timeLeft}s</div>
-          <button style={{ fontSize: 18, fontWeight: 700, color: '#fff', background:'#6B5BFF', borderRadius:10, padding:'8px 18px', border:'none', boxShadow:'0 2px 12px #6B5BFF33', cursor:'pointer' }} onClick={()=>setShowRanking(true)}>排行榜</button>
-        </div>
-        )}
-        {/* 圓盤+隨機地鼠 */}
-        {gameStarted && (
-        <div style={{ width: 600, height: 600, borderRadius: '50%', background: `url('/orange-dirt.png') center/cover no-repeat`, boxShadow: '0 4px 32px #61442522', position: 'relative', marginBottom: 32 }}>
-          <div style={{ position: 'absolute', left: molePos.x, top: molePos.y, zIndex: 2 }}>
-            <Hole active={true} mole={{name:moles[currentMole]?.name?.[localStorage.getItem('lang')||'zh-TW']||'',emoji:moles[currentMole]?.emoji||''}} onHit={handleHit} hitAnim={moleHitAnim} />
+          <div className="relative w-[600px] h-[600px] bg-[#f0d5a3] rounded-full shadow-2xl overflow-hidden">
+            {/* 分數區塊 */}
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex gap-8 z-10">
+              <div className="text-2xl font-black text-[#6B5BFF] bg-[#f7f7ff] rounded-xl px-6 py-2 shadow-lg">
+                分數: {score}
+              </div>
+              <div className="text-xl font-bold text-[#614425] bg-[#fffbe6] rounded-xl px-4 py-2 shadow-lg">
+                等級: {level}
+              </div>
+              <div className="text-xl font-bold text-white bg-[#23c6e6] rounded-xl px-4 py-2 shadow-lg">
+                倒數: {timeLeft}s
+              </div>
+            </div>
+            
+            {/* 地鼠 */}
+            {currentMole >= 0 && moles[currentMole] && (
+              <div
+                style={{
+                  position: 'absolute',
+                  left: molePos.x,
+                  top: molePos.y,
+                  transition: 'all 0.15s ease-out',
+                  transform: moleHitAnim ? 'scale(0.8)' : 'scale(1)',
+                }}
+              >
+                <Hole 
+                  active={true}
+                  mole={{
+                    name: moles[currentMole]?.name?.[localStorage.getItem('lang')||'zh-TW'] || '',
+                    emoji: moles[currentMole]?.emoji || ''
+                  }}
+                  onHit={handleHit}
+                  hitAnim={moleHitAnim}
+                />
+              </div>
+            )}
+            
+            {/* 嘲諷文字 */}
+            {taunt && (
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-xl font-bold text-[#614425] bg-white/80 px-6 py-3 rounded-full shadow-lg">
+                {taunt}
+              </div>
+            )}
           </div>
-        </div>
         )}
-        {/* 嘲諷語 */}
-        <div style={{ minHeight: 32, fontSize: 22, color: '#b00', fontWeight: 700, marginBottom: 18 }}>{taunt}</div>
+        
         {/* 結束畫面 */}
-        {showEnd && <EndScreen score={score} onRestart={handleRestart} />}
-        {/* 排行榜彈窗 */}
-        {showRanking && (
-          <div style={{ position:'fixed', top:0, left:0, width:'100vw', height:'100vh', background:'rgba(0,0,0,0.18)', zIndex:2000, display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <div style={{ background:'#fff', borderRadius:24, padding:32, minWidth:320, maxWidth:420, boxShadow:'0 4px 24px #0002', textAlign:'center', position:'relative' }}>
-              <button onClick={()=>setShowRanking(false)} style={{ position:'absolute', top:12, right:18, background:'none', border:'none', fontSize:26, color:'#6B4F27', cursor:'pointer', fontWeight:900 }}>×</button>
-              <div style={{ fontWeight:700, color:'#6B4F27', fontSize:22, marginBottom:18 }}>排行榜</div>
-              <ol style={{ textAlign:'left', margin:'0 auto 18px auto', maxWidth:280 }}>
-                {ranking.map((r, i) => (
-                  <li key={i} style={{ fontSize:18, marginBottom:4 }}>{i+1}. {r.name} - <span style={{ fontWeight:700, color:'#6B5BFF' }}>{r.score}</span></li>
-                ))}
-              </ol>
-              <button onClick={()=>setShowRanking(false)} style={{ padding:'8px 24px', borderRadius:8, background:'#6B5BFF', color:'#fff', border:'none', fontWeight:700, fontSize:16, marginTop:8 }}>關閉</button>
-            </div>
-          </div>
+        {showEnd && (
+          <EndScreen
+            score={score}
+            onRestart={handleRestart}
+          />
         )}
       </div>
     </div>
