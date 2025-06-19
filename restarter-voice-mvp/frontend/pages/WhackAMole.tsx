@@ -18,7 +18,7 @@ export default function WhackAMoleStart() {
   };
 
   return (
-    <div className="bg-[url('/clay_background_crack.png')] bg-cover bg-center min-h-screen flex flex-col justify-between items-center py-12 px-4 animate-pulse">
+    <div className="bg-[url('/clay_background.png')] bg-cover bg-center min-h-screen flex flex-col justify-between items-center py-12 px-4 animate-pulse">
       {/* Title */}
       <h1 className="text-4xl sm:text-6xl font-extrabold text-red-700 text-center drop-shadow-lg mb-10 animate-bounce tracking-wider" style={{textShadow:'2px 2px 8px #fff8, 0 0 16px #b94a1f'}}>今天就讓怒氣出拳！</h1>
 
