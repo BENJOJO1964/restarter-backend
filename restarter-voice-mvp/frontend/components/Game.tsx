@@ -73,10 +73,15 @@ const moleVoiceLines = {
   ]
 };
 
-function getLevelByHitRate(hitCount: number, total: number) {
+function getLevelByHitRate(hitCount: number, total: number, prevLevel: number) {
+  if (total === 0) return 1;
   const rate = hitCount / total;
-  if (rate > 0.9 && rate <= 1) return Math.min(LEVELS, Math.floor(rate * LEVELS) + 1);
-  return 1;
+  if (rate > 0.9) {
+    return Math.min(6, prevLevel + 1);
+  } else if (rate <= 0.4) {
+    return Math.max(1, prevLevel - 1);
+  }
+  return prevLevel;
 }
 
 export default function Game() {
@@ -162,8 +167,7 @@ export default function Game() {
   // 分數升級與命中率
   useEffect(() => {
     if (totalMoleCount === 0) return;
-    const newLevel = getLevelByHitRate(hitCount, totalMoleCount);
-    setLevel(newLevel);
+    setLevel(prev => getLevelByHitRate(hitCount, totalMoleCount, prev));
   }, [hitCount, totalMoleCount]);
 
   // 點擊地鼠
