@@ -1,6 +1,16 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
+
+// 使用環境變量配置Firebase
+let serviceAccount;
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+  // 從環境變量讀取服務帳戶密鑰
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} else {
+  // 本地開發時使用文件
+  serviceAccount = require('./serviceAccountKey.json');
+}
+
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
