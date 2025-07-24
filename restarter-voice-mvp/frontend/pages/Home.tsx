@@ -747,9 +747,9 @@ export default function Home() {
             <div style={{ marginBottom: 20 }}>
               <span style={{ color: '#232946', fontWeight: 500, fontSize: 14, lineHeight: 1.6 }}>
                 {lang === 'zh-TW'
-                  ? 'Restarter™ 重啟人生的平台，在這裡你絕不會被標籤，只被理解與支持。讓AI陪你對話、練習挑戰、交朋友，找到信任與改變的力量。'
+                  ? 'Restarter™ 重啟人生的平台，在這裡你絕不會被標籤，只被理解與支持。讓AI陪你對話、練習挑戰、交朋友，找到信任與改變的力量，你可以放心說出自己的故事與心情，釋放不滿有解方，天下沒有解決不了的難題。'
                   : lang === 'zh-CN'
-                  ? 'Restarter™ 重启人生的平台，在这里你绝不会被标签，只被理解与支持。让AI陪你对话、练习挑战、交朋友，找到信任与改变的力量。'
+                  ? 'Restarter™ 重启人生的平台，在这里你绝不会被标签，只被理解与支持。让AI陪你对话、练习挑战、交朋友，找到信任与改变的力量，你可以放心说出自己的故事与心情，释放不满有解方，天下没有解决不了的难题。'
                   : lang === 'en'
                   ? 'Restarter™ is a platform for restarting your life. Here, you will never be labeled, only understood and supported.'
                   : lang === 'ja'
@@ -925,9 +925,9 @@ export default function Home() {
               <div style={{ width: '100%', textAlign: 'center', margin: '0 auto', marginBottom: 24 }}>
                 <span style={{ color: '#232946', fontWeight: 500, fontSize: 16, lineHeight: 1.7, letterSpacing: 0.5 }}>
                   {lang === 'zh-TW'
-                    ? 'Restarter™ 重啟人生的平台，在這裡你絕不會被標籤，只被理解與支持。讓AI陪你對話、練習挑戰、交朋友，找到信任與改變的力量。你可以放心說出自己的故事與心情，釋放不滿有解方，天下沒有解決不了的難題。'
+                    ? 'Restarter™ 重啟人生的平台，在這裡你絕不會被標籤，只被理解與支持。讓AI陪你對話、練習挑戰、交朋友，找到信任與改變的力量，你可以放心說出自己的故事與心情，釋放不滿有解方，天下沒有解決不了的難題。'
                     : lang === 'zh-CN'
-                    ? 'Restarter™ 重启人生的平台，在这里你绝不会被标签，只被理解与支持。让AI陪你对话、练习挑战、交朋友，找到信任与改变的力量。你可以放心说出自己的故事与心情，释放不满有解方，天下没有解决不了的难题。'
+                    ? 'Restarter™ 重启人生的平台，在这里你绝不会被标签，只被理解与支持。让AI陪你对话、练习挑战、交朋友，找到信任与改变的力量，你可以放心说出自己的故事与心情，释放不满有解方，天下没有解决不了的难题。'
                     : lang === 'en'
                     ? 'Restarter™ is a platform for restarting your life. Here, you will never be labeled, only understood and supported. Let AI accompany you in conversations, practice challenges, make friends, and find the power of trust and change. You can safely share your stories and feelings—here, you are understood and never alone.'
                     : lang === 'ja'
