@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { usePermission } from '../hooks/usePermission';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
 
-const SIGNAL_SERVER_URL = 'ws://localhost:3001'; // 後端 WebSocket 信令伺服器
+const SIGNAL_SERVER_URL = 'wss://restarter-backend-6e9s.onrender.com'; // 後端 WebSocket 信令伺服器
 
 // 新增 props 型別
 interface VideoChatProps {

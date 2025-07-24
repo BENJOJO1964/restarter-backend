@@ -9,7 +9,7 @@ export function useWS() {
 export default function WebSocketProvider({ children }: { children: React.ReactNode }) {
   const wsRef = useRef<WebSocket|null>(null);
   useEffect(() => {
-    wsRef.current = new WebSocket('ws://localhost:3001');
+    wsRef.current = new WebSocket('wss://restarter-backend-6e9s.onrender.com');
     return () => wsRef.current?.close();
   }, []);
   return <WSContext.Provider value={wsRef.current}>{children}</WSContext.Provider>;
