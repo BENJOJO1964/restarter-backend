@@ -874,16 +874,17 @@ export default function RegisterPage() {
   };
 
   async function handleNicknameBlur() {
-    if (!validateNickname(nickname)) {
+    const nickname = nicknameInputRef.current?.value?.trim();
+    if (!nickname) {
       setNicknameCheck('invalid');
-      setNicknameCheckMsg('❌你的輸入不符合格式，請重新輸入（6-16位，必須有英文和數字）');
+      setNicknameCheckMsg('請輸入暱稱');
       setTimeout(() => { nicknameInputRef.current?.focus(); }, 100);
       return;
     }
     setNicknameCheck('checking');
     setNicknameCheckMsg('檢查中...');
     try {
-      const res = await fetch(`/api/check-username?name=${encodeURIComponent(nickname)}`);
+      const res = await fetch(`https://restarter-backend-6e9s.onrender.com/api/check-username?name=${encodeURIComponent(nickname)}`);
       const data = await res.json();
       if (data.exists) {
         setNicknameCheck('exists');
