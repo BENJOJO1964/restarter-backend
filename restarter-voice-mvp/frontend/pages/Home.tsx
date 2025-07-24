@@ -7,6 +7,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { SubscriptionModal } from '../components/SubscriptionModal';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
 import { useTestMode } from '../App';
+import WeatherWidget from '../components/WeatherWidget';
 
 import type { LanguageCode } from '../contexts/LanguageContext';
 
@@ -172,15 +173,15 @@ const PROFILE_MANAGEMENT_TEXT = {
 };
 
 const MEMBER_BENEFITS_TEXT = {
-  'zh-TW': '會員權益',
-  'zh-CN': '会员权益',
-  'en': 'Member Benefits',
-  'ja': '会員特典',
-  'ko': '회원 혜택',
-  'th': 'สิทธิ์สมาชิก',
-  'vi': 'Quyền lợi thành viên',
-  'ms': 'Faedah Ahli',
-  'la': 'Beneficia Sodalis',
+  'zh-TW': '訂閱方案',
+  'zh-CN': '订阅方案',
+  'en': 'Subscription Plans',
+  'ja': 'サブスクリプションプラン',
+  'ko': '구독 플랜',
+  'th': 'แผนการสมัครสมาชิก',
+  'vi': 'Gói Đăng Ký',
+  'ms': 'Pelan Langganan',
+  'la': 'Plana Subscriptionis',
 };
 
 export default function Home() {
@@ -720,6 +721,11 @@ export default function Home() {
         // 手機版主內容
         <div style={{ width: '100vw', minHeight: '100vh', background: `url('/plains.png') center center/cover no-repeat`, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 100 }}>
           
+          {/* 手機版天氣組件 */}
+          <div style={{ width: '100%', padding: '0 16px', marginBottom: 16 }}>
+            <WeatherWidget />
+          </div>
+          
           {/* 手機版主標題區域 */}
           <div style={{ width: '100%', padding: '20px 16px', textAlign: 'center' }}>
             <div style={{ marginBottom: 16 }}>
@@ -879,6 +885,11 @@ export default function Home() {
               <img src="/ctx-logo.png" className="fixed-logo-img" style={{ marginBottom: 0, width: 182, height: 182, cursor: 'pointer', marginTop: '-40px' }} onClick={() => navigate('/')} />
             </div>
             <div className="column-content" style={{ justifyContent: 'center', alignItems: 'center', height: '100%', paddingTop: 48 }}>
+              {/* 天氣組件 */}
+              <div style={{ marginBottom: 20, width: '100%', maxWidth: 300 }}>
+                <WeatherWidget />
+              </div>
+              
               {/* 恢復主標語、主標題、說明等重要文字內容 */}
               <div
                 style={{
@@ -1035,7 +1046,6 @@ export default function Home() {
           <div className="home-right-col" style={{ flex: 1, minWidth: 320, maxWidth: 520, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 120, zIndex: 2 }}>
             {/* 新增：上方按鈕區塊 */}
             <div style={{ display: 'flex', gap: 18, marginBottom: 18, justifyContent: 'center', width: '100%' }}>
-              <button onClick={() => navigate('/profile')} style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 10, fontWeight: 700, fontSize: 18, padding: '10px 28px', boxShadow: '0 2px 8px #6B5BFF22', cursor: 'pointer' }}>{PROFILE_MANAGEMENT_TEXT[lang]}</button>
               <a href="/plans" style={{ background: '#6B5BFF', color: '#fff', fontWeight: 700, fontSize: 18, padding: '10px 28px', borderRadius: 10, boxShadow: '0 2px 8px #6B5BFF33', textDecoration: 'none', border: '2px solid #6B5BFF', cursor: 'pointer' }}>{MEMBER_BENEFITS_TEXT[lang]}</a>
             </div>
             <img src="/hero-mic.jpg" className="home-mic-img" style={{ marginBottom: 0, height: 'calc(100vh - 180px)', maxHeight: 520, minHeight: 320, width: '100%', objectFit: 'contain', background: '#232946' }} />

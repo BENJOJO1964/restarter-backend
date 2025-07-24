@@ -78,6 +78,7 @@ const sendMessageRouter = require('./routes/send-message');
 const moodRouter = require('./routes/mood');
 const feedbackRouter = require('./routes/feedback');
 const subscriptionRouter = require('./routes/subscription');
+const weatherRouter = require('./routes/weather');
 
 app.use(express.json());
 app.use('/api/tts', ttsRouter);
@@ -94,6 +95,7 @@ app.use('/api/send-message', sendMessageRouter);
 app.use('/api/mood', moodRouter);
 app.use('/api/feedback', feedbackRouter);
 app.use('/api/subscription', subscriptionRouter);
+app.use('/api/weather', weatherRouter);
 
 // 後端只提供API，不提供靜態文件
 app.get('/', (req, res) => {
@@ -114,7 +116,8 @@ app.get('/', (req, res) => {
       '/api/send-message',
       '/api/mood',
       '/api/feedback',
-      '/api/subscription'
+      '/api/subscription',
+      '/api/weather'
     ]
   });
 });

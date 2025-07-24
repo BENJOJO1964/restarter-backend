@@ -21,10 +21,10 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   if (!isOpen) return null;
 
   const planNames = {
-    basic: '基礎版',
-    advanced: '進階版',
-    professional: '專業版',
-    unlimited: '無限版'
+    basic: '基礎版 (NT$ 149/月)',
+    advanced: '進階版 (NT$ 249/月)',
+    professional: '專業版 (NT$ 349/月)',
+    unlimited: '無限版 (NT$ 499/月)'
   };
 
   return (

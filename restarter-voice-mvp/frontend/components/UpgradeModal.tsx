@@ -21,19 +21,25 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
       name: '基礎版',
       price: 'NT$ 149',
       tokens: '50K',
-      features: ['語音功能', 'AI 聊天', '語音轉文字', '文字轉語音']
+      features: ['語音功能', 'AI 聊天', '語音轉文字', '文字轉語音', '用戶互動: 100次/月']
     },
     advanced: {
       name: '進階版',
       price: 'NT$ 249',
       tokens: '100K',
-      features: ['所有基礎版功能', '更多 Token', '優先支援']
+      features: ['所有基礎版功能', '更多 Token', '用戶互動: 300次/月', '優先支援']
     },
     professional: {
       name: '專業版',
       price: 'NT$ 349',
       tokens: '200K',
-      features: ['所有進階版功能', '無限語音功能', '專屬客服']
+      features: ['所有進階版功能', '用戶互動: 800次/月', '專屬客服']
+    },
+    unlimited: {
+      name: '無限版',
+      price: 'NT$ 499',
+      tokens: '500K',
+      features: ['所有專業版功能', '無限制用戶互動', '最高優先級支援']
     }
   };
 

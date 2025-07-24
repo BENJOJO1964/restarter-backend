@@ -2,86 +2,75 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 
-// 收費標準配置
+// 收費標準配置 - 更新為最新方案
 const SUBSCRIPTION_PLANS: Record<string, SubscriptionPlan> = {
-  monthly: {
-    name: '基礎版訂閱',
-    price: 'NT$ 199',
+  basic: {
+    name: '基礎版',
+    price: 'NT$ 149',
     period: '/月',
     features: [
-      '每日10次配對、可主動加好友、私訊',
-      '每日5次心情記錄、拼圖、基礎成就',
-      '每日5次AI任務、基礎任務、基礎徽章',
-      '每日10次發文、留言、收藏、互動',
-      '每日5次農場互動、基礎作物/道具',
-      '每日3次社會互動練習、基礎模擬',
-      '每日3次參加、可發出/接受幫助、互動',
-      '每日10次AI對話、基礎分析、基礎推薦'
+      '🤖 AI Token 限制: 50K tokens/月',
+      '👥 用戶互動: 100次/月',
+      '💬 留言/里程碑/AI聊天: 各30次/月',
+      '🎯 基礎功能: 300次/月',
+      '⚡ Token 用完僅暫停語音功能'
     ],
     // 實際付款連結（需要後續設定）
-    stripeLink: 'https://buy.stripe.com/your_monthly_basic_link',
-    paypalLink: 'https://www.paypal.com/your_monthly_basic_link',
-    ecpayLink: 'https://payment.ecpay.com.tw/your_monthly_basic_link',
-    newebpayLink: 'https://ccore.newebpay.com/your_monthly_basic_link'
+    stripeLink: 'https://buy.stripe.com/your_basic_monthly_link',
+    paypalLink: 'https://www.paypal.com/your_basic_monthly_link',
+    ecpayLink: 'https://payment.ecpay.com.tw/your_basic_monthly_link',
+    newebpayLink: 'https://ccore.newebpay.com/your_basic_monthly_link'
   },
-  monthlyPro: {
-    name: '進階版訂閱',
-    price: 'NT$ 299',
+  advanced: {
+    name: '進階版',
+    price: 'NT$ 249',
     period: '/月',
     features: [
-      '無限配對、主動加好友、私訊、群組',
-      '無限心情記錄、拼圖、完整成就、進階分析',
-      '無限AI任務、進階任務、專屬徽章、成就牆',
-      '無限發文、留言、收藏、互動、高質量內容',
-      '無限農場互動、高級作物/道具、專屬活動',
-      '無限社會互動練習、進階模擬、成就牆',
-      '無限參加、可發出/接受幫助、互動、專屬小組',
-      '無限AI對話、深度分析、個人化推薦、高額度API'
+      '🤖 AI Token 限制: 100K tokens/月',
+      '👥 用戶互動: 300次/月',
+      '💬 留言/里程碑/AI聊天: 各80次/月',
+      '🎯 基礎功能: 600次/月',
+      '⚡ Token 用完僅暫停語音功能'
     ],
     // 實際付款連結（需要後續設定）
-    stripeLink: 'https://buy.stripe.com/your_monthly_pro_link',
-    paypalLink: 'https://www.paypal.com/your_monthly_pro_link',
-    ecpayLink: 'https://payment.ecpay.com.tw/your_monthly_pro_link',
-    newebpayLink: 'https://ccore.newebpay.com/your_monthly_pro_link'
+    stripeLink: 'https://buy.stripe.com/your_advanced_monthly_link',
+    paypalLink: 'https://www.paypal.com/your_advanced_monthly_link',
+    ecpayLink: 'https://payment.ecpay.com.tw/your_advanced_monthly_link',
+    newebpayLink: 'https://ccore.newebpay.com/your_advanced_monthly_link'
   },
-  yearly: {
-    name: '基礎版年費',
-    price: 'NT$ 1,999',
-    period: '/年',
-    originalPrice: 'NT$ 2,388',
-    discount: '省 NT$ 389',
+  professional: {
+    name: '專業版',
+    price: 'NT$ 349',
+    period: '/月',
     features: [
-      '所有基礎版月費功能 + 年費專屬優惠',
-      '每日15次配對（比月費多5次）',
-      '每日8次心情記錄（比月費多3次）',
-      '每日8次AI任務（比月費多3次）',
-      '優先客服支援',
-      '年費專屬徽章與成就'
+      '🤖 AI Token 限制: 200K tokens/月',
+      '👥 用戶互動: 800次/月',
+      '💬 留言/里程碑/AI聊天: 各150次/月',
+      '🎯 基礎功能: 1000次/月',
+      '⚡ Token 用完僅暫停語音功能'
     ],
     // 實際付款連結（需要後續設定）
-    stripeLink: 'https://buy.stripe.com/your_yearly_basic_link',
-    paypalLink: 'https://www.paypal.com/your_yearly_basic_link',
-    ecpayLink: 'https://payment.ecpay.com.tw/your_yearly_basic_link',
-    newebpayLink: 'https://ccore.newebpay.com/your_yearly_basic_link'
+    stripeLink: 'https://buy.stripe.com/your_professional_monthly_link',
+    paypalLink: 'https://www.paypal.com/your_professional_monthly_link',
+    ecpayLink: 'https://payment.ecpay.com.tw/your_professional_monthly_link',
+    newebpayLink: 'https://ccore.newebpay.com/your_professional_monthly_link'
   },
-  yearlyPro: {
-    name: '進階版年費',
-    price: 'NT$ 2,999',
-    period: '/年',
-    originalPrice: 'NT$ 3,588',
-    discount: '省 NT$ 589',
+  unlimited: {
+    name: '無限版',
+    price: 'NT$ 499',
+    period: '/月',
     features: [
-      '所有進階版月費功能 + 年費專屬優惠',
-      '最高優先級客服支援',
-      '專屬年費會員活動',
-      '年費專屬徽章與成就',
-      '高額度API（每月100萬tokens）、專屬AI模型'
+      '🤖 AI Token 限制: 500K tokens/月',
+      '♾️ 用戶互動: 無限制',
+      '♾️ 留言/里程碑/AI聊天: 無限制',
+      '♾️ 基礎功能: 無限制',
+      '⚡ 僅受 Token 上限限制'
     ],
     // 實際付款連結（需要後續設定）
-    stripeLink: 'https://buy.stripe.com/your_yearly_pro_link',
-    paypalLink: 'https://www.paypal.com/your_yearly_pro_link',
-    ecpayLink: 'https://payment.ecpay.com.tw/your_yearly_pro_link',
-    newebpayLink: 'https://ccore.newebpay.com/your_yearly_pro_link'
+    stripeLink: 'https://buy.stripe.com/your_unlimited_monthly_link',
+    paypalLink: 'https://www.paypal.com/your_unlimited_monthly_link',
+    ecpayLink: 'https://payment.ecpay.com.tw/your_unlimited_monthly_link',
+    newebpayLink: 'https://ccore.newebpay.com/your_unlimited_monthly_link'
   }
 };
 
@@ -103,7 +92,7 @@ export default function Upgrade() {
   const auth = getAuth();
   const user = auth.currentUser;
   const [showModal, setShowModal] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState('monthly');
+  const [selectedPlan, setSelectedPlan] = useState('basic');
   const [selectedPayment, setSelectedPayment] = useState('stripe');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [paymentResult, setPaymentResult] = useState<any>(null);
@@ -174,10 +163,10 @@ export default function Upgrade() {
   // 獲取方案價格
   const getPlanPrice = (plan: string): number => {
     const prices: { [key: string]: number } = {
-      'monthly': 199,
-      'monthlyPro': 299,
-      'yearly': 1999,
-      'yearlyPro': 2999
+      'basic': 149,
+      'advanced': 249,
+      'professional': 349,
+      'unlimited': 499
     };
     return prices[plan] || 0;
   };
@@ -185,10 +174,10 @@ export default function Upgrade() {
   // 獲取方案名稱
   const getPlanName = (plan: string): string => {
     const names: { [key: string]: string } = {
-      'monthly': '基礎版月費',
-      'monthlyPro': '進階版月費',
-      'yearly': '基礎版年費',
-      'yearlyPro': '進階版年費'
+      'basic': '基礎版',
+      'advanced': '進階版',
+      'professional': '專業版',
+      'unlimited': '無限版'
     };
     return names[plan] || plan;
   };
