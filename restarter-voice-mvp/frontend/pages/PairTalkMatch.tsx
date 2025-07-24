@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signOut } from 'firebase/auth';
-
-const TEXT: Record<string, { title: string; today: string; guide: string; input: string; send: string; history: string; backHome: string }> = {
+import { useLanguage } from '../contexts/LanguageContext';
+import { LanguageSelector } from '../components/LanguageSelector';
+const TEXT: Record<string, { title: string; today: string; guide: string; input: string; send: string; history: string }> = {
   'zh-TW': {
     title: 'PairTalk 配對',
     today: '今日配對對象：',
@@ -10,7 +11,6 @@ const TEXT: Record<string, { title: string; today: string; guide: string; input:
     input: '輸入訊息...',
     send: '送出',
     history: '訊息列表',
-    backHome: '登出',
   },
   'zh-CN': {
     title: 'PairTalk 配对',
@@ -19,7 +19,6 @@ const TEXT: Record<string, { title: string; today: string; guide: string; input:
     input: '输入信息...',
     send: '送出',
     history: '信息列表',
-    backHome: '登出',
   },
   'en': {
     title: 'PairTalk Match',
@@ -28,7 +27,6 @@ const TEXT: Record<string, { title: string; today: string; guide: string; input:
     input: 'Enter message...',
     send: 'Send',
     history: 'Message List',
-    backHome: '登出',
   },
   'ja': {
     title: 'ペアトーク',
@@ -37,25 +35,6 @@ const TEXT: Record<string, { title: string; today: string; guide: string; input:
     input: 'メッセージを入力...',
     send: '送信',
     history: 'メッセージ一覧',
-    backHome: '登出',
-  },
-  'ko': {
-    title: '페어톡 매칭',
-    today: '오늘의 매칭: ',
-    guide: '안내 질문: 오늘 무엇에 대해 이야기하고 싶으신가요?',
-    input: '메시지 입력...',
-    send: '보내기',
-    history: '메시지 목록',
-    backHome: '登出',
-  },
-  'vi': {
-    title: 'Kết bạn PairTalk',
-    today: 'Đối tượng hôm nay: ',
-    guide: 'Câu hỏi gợi ý: Hôm nay bạn muốn nói chuyện về điều gì?',
-    input: 'Nhập tin nhắn...',
-    send: 'Gửi',
-    history: 'Danh sách tin nhắn',
-    backHome: '登出',
   },
 };
 
@@ -68,7 +47,7 @@ export default function PairTalkMatch() {
   return (
     <div>
       <div style={{position:'absolute',top:0,left:0,width:'100%',zIndex:100,display:'flex',justifyContent:'space-between',alignItems:'center',padding:'18px 32px 0 32px',boxSizing:'border-box',background:'transparent'}}>
-        <button onClick={()=>navigate('/')} style={{background:'none',border:'none',color:'#6c63ff',fontWeight:700,fontSize:18,cursor:'pointer'}}>{t.backHome}</button>
+        <button onClick={()=>navigate('/')} style={{background:'none',border:'none',color:'#6c63ff',fontWeight:700,fontSize:18,cursor:'pointer'}}>← 返回首頁</button>
         <div style={{display:'flex',gap:12,marginRight:8}}>
           <button className="topbar-btn" onClick={async()=>{await signOut(auth);localStorage.clear();window.location.href='/'}}>登出</button>
           <select className="topbar-select" value={lang} onChange={e=>{localStorage.setItem('lang',e.target.value);window.location.reload();}}>

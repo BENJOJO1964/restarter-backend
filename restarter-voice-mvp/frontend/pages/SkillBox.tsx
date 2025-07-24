@@ -1,410 +1,398 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 import { getAuth, signOut } from 'firebase/auth';
-import VideoReactionPlayer, { VideoReactionType } from '../components/VideoReactionPlayer';
 import { useVideoReaction } from '../components/VideoReactionContext';
-import { generateResponse } from '../lib/ai/generateResponse';
-import { useUserStatus } from '../hooks/useUserStatus';
-import { LANGS, TEXT, useLanguage, LanguageCode } from '../shared/i18n';
-const BADGES = ['🦸‍♂️','🦸‍♀️','🦹‍♂️','🦹‍♀️'];
-const SUBTITLE: Record<string, string> = {
-  'zh-TW': '每天一點小練習，解鎖你的社交技能 ✨',
-  'zh-CN': '每天一点小练习，解锁你的社交技能 ✨',
-  'en': 'A little practice every day unlocks your social skills ✨',
-  'ja': '毎日少し練習して、あなたのソーシャルスキルを解放しよう ✨',
-};
-const PICK_SCENARIO: Record<string, string> = {
-  'zh-TW': '選擇情境',
-  'zh-CN': '选择情境',
-  'en': 'Pick a scenario',
-  'ja': 'シナリオを選択',
-};
-const UNLOCKED_BADGES: Record<string, string> = {
-  'zh-TW': '已解鎖徽章',
-  'zh-CN': '已解锁徽章',
-  'en': 'Unlocked Badges',
-  'ja': '獲得したバッジ',
-};
-const NO_BADGE: Record<string, string> = {
-  'zh-TW': '尚未獲得徽章',
-  'zh-CN': '尚未获得徽章',
-  'en': 'No badges yet',
-  'ja': 'まだバッジがありません',
-};
-const YOUR_ANSWER: Record<string, string> = {
-  'zh-TW': '你的回答...',
-  'zh-CN': '你的回答...',
-  'en': 'Your answer...',
-  'ja': 'あなたの答え...',
-  'ko': '당신의 답변...',
-  'vi': 'Câu trả lời của bạn...',
-};
-const VOICE_BTN: Record<string, string> = {
-  'zh-TW': '🎤語音',
-  'zh-CN': '🎤语音',
-  'en': '🎤 Voice',
-  'ja': '🎤音声',
-  'ko': '🎤 음성',
-  'vi': '🎤 Giọng nói',
-};
-const VOICE_RECORDING: Record<string, string> = {
-  'zh-TW': '🎤錄音中...',
-  'zh-CN': '🎤录音中...',
-  'en': '🎤 Recording...',
-  'ja': '🎤録音中...',
-  'ko': '🎤 녹음 중...',
-  'vi': '🎤 Đang ghi âm...',
-};
-const SEND_BTN: Record<string, string> = {
-  'zh-TW': '送出',
-  'zh-CN': '送出',
-  'en': 'Send',
-  'ja': '送信',
-  'ko': '보내기',
-  'vi': 'Gửi',
-};
-// AI情緒標籤對應影片
-const EMOTION_TO_REACTION: { [k: string]: VideoReactionType } = {
-  'joy': 'joy',
-  'gratitude': 'joy',
-  'encouragement': 'encouragement',
-  'motivation': 'motivation',
-  'reproach': 'reproach',
-  'disappointment': 'disappointment',
-  'lost': 'lost',
-  'breakthrough': 'breakthrough',
-  'clarity': 'clarity',
-  'sadness': 'disappointment',
-  'anger': 'reproach',
-  'neutral': 'encouragement',
-  'reluctance': 'reluctance',
-  'confusion': 'confusion',
-  'affection': 'affection',
-  'regret': 'regret',
-  'admiration': 'admiration',
-  'teasing': 'teasing',
-};
-// 多語言情境題庫模板與細節
-const SCENARIO_TEMPLATES = {
-  'zh-TW': [
-    '你遇到一位{relation}，請主動{action}。',
-    '朋友邀請你參加{event}，你想{response}。',
-    '你今天心情{emotion}，請和朋友分享原因。',
-    '你需要請求{relation}幫忙，請表達你的需求。',
-    '你和朋友有意見不同，請試著表達你的看法。',
-    '你想鼓勵一位{relation}，請說一句鼓勵的話。',
-    '你收到一份禮物，請表達你的感謝。',
-    '你想拒絕一個邀約，請禮貌地說明理由。',
-    '你想認識新朋友，請自我介紹。',
-    '你想安慰一位{relation}，請說一句安慰的話。',
-  ],
-  'zh-CN': [
-    '你遇到一位{relation}，请主动{action}。',
-    '朋友邀请你参加{event}，你想{response}。',
-    '你今天心情{emotion}，请和朋友分享原因。',
-    '你需要请求{relation}帮忙，请表达你的需求。',
-    '你和朋友有意见不同，请试着表达你的看法。',
-    '你想鼓励一位{relation}，请说一句鼓励的话。',
-    '你收到一份礼物，请表达你的感谢。',
-    '你想拒绝一个邀约，请礼貌地说明理由。',
-    '你想认识新朋友，请自我介绍。',
-    '你想安慰一位{relation}，请说一句安慰的话。',
-  ],
-  'en': [
-    'You meet a {relation}, please {action} them.',
-    'A friend invites you to a {event}, you want to {response}.',
-    'You feel {emotion} today. Please share the reason with a friend.',
-    'You need to ask a {relation} for help. Please express your need.',
-    'You have a different opinion from a friend. Please express your view.',
-    'You want to encourage a {relation}. Please say something encouraging.',
-    'You received a gift. Please express your gratitude.',
-    'You want to decline an invitation. Please politely explain your reason.',
-    'You want to make a new friend. Please introduce yourself.',
-    'You want to comfort a {relation}. Please say something comforting.',
-  ],
-  'ja': [
-    '{relation}に会いました。まず{action}してください。',
-    '友達に{event}に誘われました。あなたは{response}したいです。',
-    '今日は{emotion}な気分です。友達に理由を話してください。',
-    '{relation}に助けを求めたいです。自分の気持ちを伝えてください。',
-    '友達と意見が違います。自分の考えを伝えてください。',
-    '{relation}を励ましたいです。励ましの言葉をかけてください。',
-    'プレゼントをもらいました。感謝の気持ちを伝えてください。',
-    '誘いを断りたいです。丁寧に理由を説明してください。',
-    '新しい友達を作りたいです。自己紹介してください。',
-    '{relation}を慰めたいです。慰めの言葉をかけてください。',
-  ],
-  'ko': [
-    '{relation}에 만났습니다. 먼저 {action}해주세요.',
-    '{relation}에게 {event}에 초대되었습니다. 당신은 {response}하고 싶습니다.',
-    '{emotion} 기분이 오늘입니다. 친구에게 이유를 말해주세요.',
-    '{relation}에 도움을 요청하고 싶습니다. 스스로 기분을 전달해주세요.',
-    '친구와 의견이 다릅니다. 스스로 생각을 전달해주세요.',
-    '{relation}을 위로하고 싶습니다. 위로하는 말을 해주세요.',
-    '선물을 받았습니다. 감사의 마음을 전달해주세요.',
-    '초대를 거절하고 싶습니다. 친절하게 이유를 설명해주세요.',
-    '새로운 친구를 만들고 싶습니다. 자기소개해주세요.',
-    '{relation}을 위로하고 싶습니다. 위로하는 말을 해주세요.',
-  ],
-  'vi': [
-    'Bạn đã gặp {relation}. Hãy {action} đầu tiên.',
-    'Bạn đã được mời tham gia {event} bởi {relation}. Bạn muốn {response}.',
-    'Hôm nay bạn cảm thấy {emotion}. Hãy chia sẻ lý do với một người bạn.',
-    'Bạn cần hỏi {relation} về sự giúp đỡ. Hãy thể hiện nhu cầu của bạn.',
-    'Bạn có ý kiến khác với {relation}. Hãy thể hiện quan điểm của bạn.',
-    'Bạn muốn khích lệ {relation}. Hãy nói một câu khích lệ.',
-    'Bạn đã nhận được một món quà. Hãy thể hiện cảm tình cảm thành kết quả.',
-    'Bạn không muốn chấp nhận mời. Hãy giải thích lý do tự nhiên.',
-    'Bạn muốn làm mới một người bạn. Hãy tự giới thiệu.',
-    'Bạn muốn an ủi {relation}. Hãy nói một câu an ủi.',
-  ],
-};
-const RELATIONS = {
-  'zh-TW': ['同事', '鄰居', '家人', '朋友', '老師', '同學', '主管', '陌生人'],
-  'zh-CN': ['同事', '邻居', '家人', '朋友', '老师', '同学', '上司', '陌生人'],
-  'en': ['colleague', 'neighbor', 'family member', 'friend', 'teacher', 'classmate', 'boss', 'stranger'],
-  'ja': ['同僚', '隣人', '家族', '友達', '先生', 'クラスメート', '上司', '知らない人'],
-  'ko': ['동료', '이웃', '가족', '친구', '선생님', '동급생', '상사', '낯선 사람'],
-  'vi': ['đồng nghiệp', 'hàng xóm', 'thành viên gia đình', 'bạn bè', 'giáo viên', 'bạn cùng lớp', 'sếp', 'người lạ'],
-};
-const ACTIONS = {
-  'zh-TW': ['打招呼', '微笑', '自我介紹', '問候', '表達關心'],
-  'zh-CN': ['打招呼', '微笑', '自我介绍', '问候', '表达关心'],
-  'en': ['greet', 'smile', 'introduce yourself', 'say hello', 'show care'],
-  'ja': ['挨拶する', '微笑む', '自己紹介する', '声をかける', '気遣う'],
-  'ko': ['인사하기', '미소 짓기', '자기소개', '안부 묻기', '관심 표현하기'],
-  'vi': ['chào hỏi', 'mỉm cười', 'giới thiệu bản thân', 'chào hỏi', 'thể hiện sự quan tâm'],
-};
-const EVENTS = {
-  'zh-TW': ['聚會', '運動', '晚餐', '電影', '旅行', '讀書會'],
-  'zh-CN': ['聚会', '运动', '晚餐', '电影', '旅行', '读书会'],
-  'en': ['party', 'sports', 'dinner', 'movie', 'trip', 'book club'],
-  'ja': ['パーティー', 'スポーツ', '夕食', '映画', '旅行', '読書会'],
-  'ko': ['파티', '운동', '저녁 식사', '영화', '여행', '독서 모임'],
-  'vi': ['tiệc tùng', 'thể thao', 'bữa tối', 'phim ảnh', 'du lịch', 'câu lạc bộ sách'],
-};
-const RESPONSES = {
-  'zh-TW': ['答應', '婉拒', '考慮', '推遲', '接受'],
-  'zh-CN': ['答应', '婉拒', '考虑', '推迟', '接受'],
-  'en': ['accept', 'decline', 'consider', 'postpone', 'agree'],
-  'ja': ['受ける', '断る', '考える', '延期する', '同意する'],
-  'ko': ['수락', '거절', '고려', '연기', '동의'],
-  'vi': ['chấp nhận', 'từ chối', 'xem xét', 'hoãn lại', 'đồng ý'],
-};
-const EMOTIONS = {
-  'zh-TW': ['開心', '緊張', '感動', '難過', '興奮', '平靜', '焦慮', '自信', '感恩', '驕傲', '放鬆', '期待', '好奇'],
-  'zh-CN': ['开心', '紧张', '感动', '难过', '兴奋', '平静', '焦虑', '自信', '感恩', '骄傲', '放松', '期待', '好奇'],
-  'en': ['happy', 'nervous', 'touched', 'sad', 'excited', 'calm', 'anxious', 'confident', 'grateful', 'proud', 'relaxed', 'expectant', 'curious'],
-  'ja': ['嬉しい', '緊張', '感動', '悲しい', 'ワクワク', '穏やか', '不安', '自信', '感謝', '誇り', 'リラックス', '期待', '好奇心'],
-  'ko': ['기쁨', '긴장', '감동', '슬픔', '흥분', '평정', '긴장', '자신감', '감사', '자랑', '편안함', '기대', '호기심'],
-  'vi': ['vui mừng', 'căng thẳng', 'cảm động', 'buồn', 'hào hứng', 'bình tĩnh', 'căng thẳng', 'tự tin', 'cảm ơn', 'tự hào', 'thoải mái', 'mong đợi', 'tò mò'],
-};
-const REQUESTS = {
-  'zh-TW': ['借錢', '幫忙搬家', '協助找工作', '照顧寵物', '陪伴聊天', '幫忙修電腦', '一起運動', '借用物品', '幫忙準備報告', '協助照顧家人'],
-  'zh-CN': ['借钱', '帮忙搬家', '协助找工作', '照顾宠物', '陪伴聊天', '帮忙修电脑', '一起运动', '借用物品', '帮忙准备报告', '协助照顾家人'],
-  'en': ['borrow money', 'help move', 'find a job', 'pet sitting', 'have a chat', 'fix a computer', 'work out together', 'borrow something', 'prepare a report', 'take care of family'],
-  'ja': ['お金を借りる', '引っ越しを手伝う', '仕事探しを手伝う', 'ペットの世話', '話し相手になる', 'パソコン修理を頼む', '一緒に運動する', '物を借りる', 'レポート作成を手伝う', '家族の世話を頼む'],
-  'ko': ['돈 빌리기', '이사 도와주기', '취업 도와주기', '애완 돌보기', '이야기 하는 사람', '컴퓨터 고치기 도와주기', '함께 운동하기', '물건 빌리기', '보고서 준비하기', '가족 돌보기'],
-  'vi': ['vay tiền', 'giúp đỡ chuyển đi', 'giúp đỡ tìm việc', 'chăm sóc thú cưng', 'nói chuyện với người bạn', 'giúp sửa máy tính', 'cùng làm thể thao', 'mượn đồ', 'chuẩn bị báo cáo', 'chăm sóc gia đình'],
-};
-// 根據日期和 lang 產生唯一情境
-function seededRandom(seed: number) { let x = Math.sin(seed) * 10000; return x - Math.floor(x); }
-function generateScenario(lang: 'zh-TW'|'zh-CN'|'en'|'ja'|'ko'|'vi', dateStr: string) {
-  const dateSeed = parseInt(dateStr.replace(/-/g, ''), 10);
-  const templates = SCENARIO_TEMPLATES[lang];
-  const tIdx = Math.floor(seededRandom(dateSeed) * templates.length);
-  let template = templates[tIdx];
-  const relation = RELATIONS[lang][Math.floor(seededRandom(dateSeed+1) * RELATIONS[lang].length)];
-  const action = ACTIONS[lang][Math.floor(seededRandom(dateSeed+2) * ACTIONS[lang].length)];
-  const event = EVENTS[lang][Math.floor(seededRandom(dateSeed+3) * EVENTS[lang].length)];
-  const response = RESPONSES[lang][Math.floor(seededRandom(dateSeed+4) * RESPONSES[lang].length)];
-  const emotion = EMOTIONS[lang][Math.floor(seededRandom(dateSeed+5) * EMOTIONS[lang].length)];
-  const request = REQUESTS[lang][Math.floor(seededRandom(dateSeed+6) * REQUESTS[lang].length)];
-  // 讓請求情境更具體
-  if (template.includes('請求{relation}幫忙')) {
-    template = template.replace('請求{relation}幫忙', `請求{relation}幫忙${request}`);
+import { VideoReactionType } from '../components/VideoReactionPlayer';
+import { useLanguage } from '../contexts/LanguageContext';
+import { LanguageSelector } from '../components/LanguageSelector';
+type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'th' | 'vi' | 'ms' | 'la';
+
+const LANGS: { code: LanguageCode; label: string }[] = [
+  { code: 'zh-TW', label: '繁中' },
+  { code: 'zh-CN', label: '简中' },
+  { code: 'en', label: 'EN' },
+  { code: 'ja', label: '日本語' },
+  { code: 'ko', label: '한국어' },
+  { code: 'th', label: 'ภาษาไทย' },
+  { code: 'vi', label: 'Tiếng Việt' },
+  { code: 'ms', label: 'Bahasa Melayu' },
+  { code: 'la', label: 'Latīna' },
+];
+
+const UI_TEXT = {
+  backToHome: { 'zh-TW': '← 返回', 'zh-CN': '← 返回', 'ja': '← 戻る', 'en': '← Back', 'ko': '← 뒤로', 'th': '← กลับ', 'vi': '← Quay lại', 'ms': '← Kembali', 'la': '← Redire' },
+  logout: { 'zh-TW': '登出', 'zh-CN': '登出', 'ja': 'ログアウト', 'en': 'Logout', 'ko': '로그아웃', 'th': 'ออกจากระบบ', 'vi': 'Đăng xuất', 'ms': 'Log keluar', 'la': 'Exire' },
+  pageTitle: { 
+    'zh-TW': '情境模擬室 SkillBox', 
+    'zh-CN': '情境模拟室 SkillBox', 
+    'en': 'SkillBox Scenario Room', 
+    'ja': 'シナリオ練習室 SkillBox', 
+    'ko': '상황 시뮬레이션실 SkillBox', 
+    'th': 'ห้องจำลองสถานการณ์ SkillBox', 
+    'vi': 'Phòng mô phỏng tình huống SkillBox', 
+    'ms': 'Bilik Senario SkillBox', 
+    'la': 'Camera Scaenarii SkillBox' 
+  },
+  subtitle: { 
+    'zh-TW': '在這裡磨練你的對話技巧，應對各種挑戰。', 
+    'zh-CN': '在这里磨练你的对话技巧，应对各种挑战。', 
+    'en': 'Hone your conversation skills here for any challenge.', 
+    'ja': 'ここで会話スキルを磨き、様々な挑戦に備えましょう。', 
+    'ko': '여기서 대화 기술을 연마하여 모든 도전에 대비하세요.', 
+    'th': 'ฝึกฝนทักษะการสนทนาของคุณที่นี่เพื่อรับมือกับทุกความท้าทาย', 
+    'vi': 'Rèn luyện kỹ năng trò chuyện của bạn ở đây cho mọi thử thách.', 
+    'ms': 'Asah kemahiran perbualan anda di sini untuk sebarang cabaran.', 
+    'la': 'Hic peritiam colloquii tui exacue ad quamvis provocationem.' 
+  },
+  selectScenario: { 
+    'zh-TW': '選擇一個情境開始練習', 
+    'zh-CN': '选择一个情境开始练习', 
+    'en': 'Select a scenario to start practicing', 
+    'ja': '練習を始めるシナリオを選択してください', 
+    'ko': '연습을 시작할 시나리오를 선택하세요', 
+    'th': 'เลือกสถานการณ์เพื่อเริ่มฝึก', 
+    'vi': 'Chọn một kịch bản để bắt đầu luyện tập', 
+    'ms': 'Pilih senario untuk mula berlatih', 
+    'la': 'Scaenarium elige ut exercere incipias' 
+  },
+  startPractice: { 
+    'zh-TW': '進入模擬', 
+    'zh-CN': '进入模拟', 
+    'en': 'Enter Simulation', 
+    'ja': 'シミュレーションに入る', 
+    'ko': '시뮬레이션 시작', 
+    'th': 'เข้าสู่การจำลอง', 
+    'vi': 'Vào mô phỏng', 
+    'ms': 'Masuk Simulasi', 
+    'la': 'Intra Simulationem' 
+  },
+  scenarioTitle: {
+    'zh-TW': '情境',
+    'zh-CN': '情境',
+    'en': 'Scenario',
+    'ja': 'シナリオ',
+    'ko': '시나리오',
+    'th': 'สถานการณ์',
+    'vi': 'Kịch bản',
+    'ms': 'Senario',
+    'la': 'Scaenarium',
+  },
+  scenarioDesc: {
+    'zh-TW': '描述',
+    'zh-CN': '描述',
+    'en': 'Description',
+    'ja': '説明',
+    'ko': '설명',
+    'th': 'คำอธิบาย',
+    'vi': 'Mô tả',
+    'ms': 'Penerangan',
+    'la': 'Descriptio',
+  },
+  scenarioDifficulty: {
+    'zh-TW': '難度',
+    'zh-CN': '难度',
+    'en': 'Difficulty',
+    'ja': '難易度',
+    'ko': '난이도',
+    'th': 'ความยาก',
+    'vi': 'Độ khó',
+    'ms': 'Kesukaran',
+    'la': 'Difficultas',
+  },
+  cancelButton: {
+    'zh-TW': '取消',
+    'zh-CN': '取消',
+    'en': 'Cancel',
+    'ja': 'キャンセル',
+    'ko': '취소',
+    'th': 'ยกเลิก',
+    'vi': 'Hủy',
+    'ms': 'Batal',
+    'la': 'Abstinere'
   }
-  if (template.includes('请求{relation}帮忙')) {
-    template = template.replace('请求{relation}帮忙', `请求{relation}帮忙${request}`);
-  }
-  if (template.includes('ask a {relation} for help')) {
-    template = template.replace('ask a {relation} for help', `ask a {relation} to help you ${request}`);
-  }
-  if (template.includes('{relation}に助けを求めたいです')) {
-    template = template.replace('{relation}に助けを求めたいです', `{relation}に${request}を頼みたいです`);
-  }
-  return template
-    .replace('{relation}', relation)
-    .replace('{action}', action)
-    .replace('{event}', event)
-    .replace('{response}', response)
-    .replace('{emotion}', emotion);
-}
-// 動態展示徽章/成就
-function renderAchievements(badgeCount:number, lang:string) {
-  const trophy = Math.floor(badgeCount/10);
-  const crown = Math.floor(trophy/10);
-  const castle = Math.floor(crown/10);
-  const palace = Math.floor(castle/10);
-  const badge = badgeCount%10;
-  const trophyR = trophy%10;
-  const crownR = crown%10;
-  const castleR = castle%10;
-  return (
-    <div style={{display:'flex',alignItems:'center',gap:4,flexWrap:'wrap',marginTop:8}}>
-      {[...Array(badge)].map((_,i)=>(<span key={'b'+i} style={{fontSize:28}}>🦸‍♂️</span>))}
-      {[...Array(trophyR)].map((_,i)=>(<span key={'t'+i} style={{fontSize:28}}>🏆</span>))}
-      {[...Array(crownR)].map((_,i)=>(<span key={'c'+i} style={{fontSize:28}}>👑</span>))}
-      {[...Array(castleR)].map((_,i)=>(<span key={'s'+i} style={{fontSize:28}}>🏯</span>))}
-      {[...Array(palace)].map((_,i)=>(<span key={'p'+i} style={{fontSize:32}}>🏰🫅</span>))}
-    </div>
-  );
-}
-// SkillBox 主體
+};
+
+export type Scenario = {
+    id: string;
+    title: string;
+    description: string;
+    category?: string;
+    difficulty: string;
+    emoji?: string;
+    tags?: string[];
+    tone?: string;
+    system_prompt?: string;
+    starting_line?: string;
+};
+
 export default function SkillBox() {
   const navigate = useNavigate();
   const auth = getAuth();
-  const { lang, setLang } = useLanguage();
-  const today = new Date().toISOString().slice(0, 10);
-  const scenarioText = generateScenario(lang, today);
-  const [input, setInput] = useState('');
-  const [aiReply, setAiReply] = useState('');
-  const { badges, rank, promotion, addBadge } = useUserStatus();
-  const [recording, setRecording] = useState(false);
-  const { setVideoReaction } = useVideoReaction();
-  const [speechError, setSpeechError] = useState('');
-  const [recognizing, setRecognizing] = useState(false);
-  const [lastTranscript, setLastTranscript] = useState('');
-  // 在組件頂部定義 SpeechRecognition 與 recognition
-  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-  let recognition: any = null;
-  if (SpeechRecognition) {
-    recognition = new SpeechRecognition();
-    recognition.lang = lang;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+  const { lang: contextLang } = useLanguage();
+  const lang = (contextLang as LanguageCode) || (localStorage.getItem('lang') as LanguageCode) || 'zh-TW';
+  const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null);
+  const [scenarios, setScenarios] = useState<Scenario[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
+
+  useEffect(() => {
+    const fetchScenarios = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/locales/${lang}/scenarios.json`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch scenarios');
+        }
+        const data = await response.json();
+        setScenarios(data);
+      } catch (error) {
+        console.error("Error fetching scenarios:", error);
+        setScenarios([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchScenarios();
+  }, [lang]);
+
+  const handleScenarioClick = (scenario: Scenario) => {
+    setSelectedScenario(scenario);
+    setSelectedScenarioId(scenario.id);
+    setShowModal(true);
+  };
+
+  const handleStartPractice = () => {
+    if (selectedScenarioId) {
+      navigate(`/skillbox/${selectedScenarioId}`);
+    } else {
+      alert(UI_TEXT.selectScenario[lang]);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedScenario(null);
+    setSelectedScenarioId(null);
+  };
+
+  if (loading) {
+      return <div>Loading scenarios...</div>;
   }
-  // 假資料情境
-  const scenarios = [
-    '朋友邀請你參加運動，你想接受。',
-    '同事請你幫忙加班，你會怎麼回應？',
-    '家人問你最近過得好嗎？',
-    '陌生人向你搭訕，你會怎麼做？'
-  ];
-  const [idx, setIdx] = useState(0);
-  const [aiAnalysis, setAiAnalysis] = useState('');
-  const handleSend = async () => {
-    setAiAnalysis('分析中...');
-    try {
-      const res = await fetch('/api/gpt', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input }),
-      });
-      const data = await res.json();
-      setAiAnalysis(data.result || 'AI 沒有回應');
-    } catch (e) {
-      setAiAnalysis('AI 分析失敗，請稍後再試');
-    }
-    setIdx(i => (i+1)%scenarios.length);
-  };
-  const handleVoice = () => {
-    if (!SpeechRecognition) {
-      setSpeechError(lang==='zh-TW'?'此瀏覽器不支援語音辨識，請改用 Chrome/Edge。':lang==='zh-CN'?'此浏览器不支持语音识别，请改用 Chrome/Edge。':lang==='ja'?'このブラウザは音声認識に対応していません。Chrome/Edgeを使ってください。':'This browser does not support speech recognition. Please use Chrome/Edge.');
-      return;
-    }
-    setSpeechError('');
-    setRecognizing(true);
-    setLastTranscript('');
-    try {
-      recognition.start();
-    } catch (e) {
-      setSpeechError(lang==='zh-TW'?'請允許麥克風權限，並確認沒有其他錄音程式正在使用麥克風。':lang==='zh-CN'?'请允许麦克风权限，并确认没有其他录音程序正在使用麦克风。':lang==='ja'?'マイクの権限を許可し、他の録音アプリが使っていないか確認してください。':'Please allow microphone permission and make sure no other app is using the mic.');
-      setRecognizing(false);
-    }
-  };
-  // 多語言情緒分析
-  async function detectEmotionByAI(text: string, lang: string, apiKey: string): Promise<VideoReactionType> {
-    const prompt = {
-      'zh-TW': `請判斷下列用戶輸入的主要情緒，只回傳一個英文單字（joy, gratitude, encouragement, motivation, reproach, disappointment, lost, breakthrough, clarity, sadness, anger, neutral, reluctance, confusion, affection, regret, admiration, teasing）\n用戶輸入：${text}`,
-      'zh-CN': `请判断下列用户输入的主要情绪，只返回一个英文单词（joy, gratitude, encouragement, motivation, reproach, disappointment, lost, breakthrough, clarity, sadness, anger, neutral, reluctance, confusion, affection, regret, admiration, teasing）\n用户输入：${text}`,
-      'en': `Please judge the main emotion of the following user input. Only return one English word (joy, gratitude, encouragement, motivation, reproach, disappointment, lost, breakthrough, clarity, sadness, anger, neutral, reluctance, confusion, affection, regret, admiration, teasing)\nUser input: ${text}`,
-      'ja': `次のユーザー入力の主な感情を判断してください。英語の単語1つだけ返してください（joy, gratitude, encouragement, motivation, reproach, disappointment, lost, breakthrough, clarity, sadness, anger, neutral, reluctance, confusion, affection, regret, admiration, teasing）\nユーザー入力：${text}`,
-    }[lang] || text;
-    try {
-      const emotion = await generateResponse([
-        { role: 'assistant', content: '你是一個情緒分析助手，只回傳一個英文情緒單字。' },
-        { role: 'user', content: prompt },
-      ], apiKey);
-      const key = emotion.trim().toLowerCase();
-      return EMOTION_TO_REACTION[key] || 'encouragement';
-    } catch {
-      return 'encouragement';
-    }
-  }
-  const UI_TEXT: Record<string, { home: string; backHome: string; skillbox: string; scenario: string; send: string; achievements: string; voice: string; answer: string }> = {
-    'zh-TW': { home: '首頁', backHome: '返回首頁', skillbox: '情境模擬室', scenario: '情境', send: '送出', achievements: '成就', voice: '語音', answer: '你的回答...' },
-    'zh-CN': { home: '首页', backHome: '返回首页', skillbox: '情境模拟室', scenario: '情境', send: '送出', achievements: '成就', voice: '语音', answer: '你的回答...' },
-    'en': { home: 'Home', backHome: 'Back to Home', skillbox: 'SkillBox', scenario: 'Scenario', send: 'Send', achievements: 'Achievements', voice: 'Voice', answer: 'Your answer...' },
-    'ja': { home: 'ホームへ戻る', backHome: 'ホームへ戻る', skillbox: 'スキルボックス', scenario: 'シナリオ', send: '送信', achievements: '実績', voice: '音声', answer: 'あなたの答え...' },
-    'ko': { home: '홈으로', backHome: '홈으로', skillbox: '스킬박스', scenario: '상황', send: '보내기', achievements: '업적', voice: '음성', answer: '당신의 답변...' },
-    'vi': { home: 'Trang chủ', backHome: 'Trang chủ', skillbox: 'Phòng thí nghiệm Kỹ năng', scenario: 'Tình huống', send: 'Gửi', achievements: 'Thành tích', voice: 'Giọng nói', answer: 'Câu trả lời của bạn...' },
-  };
+
   return (
-    <div className="modern-bg" style={{ background: `url('/donkey.png') center center / cover no-repeat`, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{position:'absolute',top:0,left:0,zIndex:100,display:'flex',alignItems:'center',padding:'18px 32px 0 32px',background:'transparent',gap:12}}>
-        <button className="topbar-btn" onClick={()=>navigate('/')} style={{fontWeight:700,fontSize:18,padding:'6px 16px',borderRadius:8,border:'1.5px solid #6B5BFF',background:'#fff',color:'#6B5BFF',cursor:'pointer',transition:'background 0.18s, color 0.18s, border 0.18s'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='#fff';e.currentTarget.style.color='#6B5BFF';}}>{UI_TEXT[lang].backHome}</button>
-      </div>
-      <div style={{position:'absolute',top:0,right:0,zIndex:100,display:'flex',alignItems:'center',padding:'18px 32px 0 32px',background:'transparent',gap:12}}>
-        <button className="topbar-btn" onClick={async()=>{await signOut(auth);localStorage.clear();window.location.href='/';}} style={{fontWeight:700,fontSize:18,padding:'6px 16px',borderRadius:8,border:'1.5px solid #6B5BFF',background:'#fff',color:'#6B5BFF',cursor:'pointer',transition:'background 0.18s, color 0.18s, border 0.18s'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='#fff';e.currentTarget.style.color='#6B5BFF';}}>{String(lang)==='zh-TW'?'登出':String(lang)==='zh-CN'?'登出':String(lang)==='ja'?'ログアウト':String(lang)==='ko'?'로그아웃':String(lang)==='vi'?'Đăng xuất':'Logout'}</button>
-        <select className="topbar-select" value={lang} onChange={e=>{localStorage.setItem('lang',e.target.value);window.location.reload();}} style={{padding:'6px 14px',borderRadius:8,fontWeight:600,border:'1.5px solid #6B5BFF',color:'#6B5BFF',background:'#fff',cursor:'pointer',transition:'background 0.18s, color 0.18s, border 0.18s'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='#fff';e.currentTarget.style.color='#6B5BFF';}}>
-          <option value="zh-TW">繁中</option>
-          <option value="zh-CN">简中</option>
-          <option value="en">EN</option>
-          <option value="ja">日文</option>
-          <option value="ko">한국어</option>
-          <option value="vi">Tiếng Việt</option>
-        </select>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-        <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#6B5BFF', textShadow: '0 2px 12px #6B5BFF88, 0 4px 24px #0008', letterSpacing:1, background:'#fff', borderRadius:12, boxShadow:'0 2px 12px #6B5BFF22', padding:'12px 32px', margin:0, marginBottom: 24, display:'flex',alignItems:'center',gap:12 }}>🛠️ {UI_TEXT[lang].skillbox}</h2>
-        <div style={{ maxWidth: 540, width: '100%', background: '#fff', borderRadius: 16, padding: 32, boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 8, display:'flex',alignItems:'center',gap:8, color:'#6B5BFF', textShadow:'0 2px 12px #6B5BFF88, 0 4px 24px #0008', letterSpacing:1 }}>🛠️ {UI_TEXT[lang].skillbox}</h2>
-          <div style={{ fontSize: 18, color: '#614425', fontWeight: 700, marginBottom: 18, display:'flex',alignItems:'center',gap:8 }}>{SUBTITLE[lang]}</div>
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ marginTop: 8 }}>
-              <span style={{ color: '#6B5BFF', fontWeight: 700 }}>{UI_TEXT[lang].scenario}:</span>
-              <span style={{ color: '#222', fontWeight: 600 }}> {scenarios[idx]}</span>
-            </div>
-            <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={UI_TEXT[lang].answer} style={{ width: '100%', minHeight: 48, borderRadius: 8, border: '1px solid #ddd', padding: 10, fontSize: 16, marginTop: 8 }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
-              <button 
-                onClick={handleVoice} 
-                style={{ borderRadius: '50%', width: 36, height: 36, background: '#6B5BFF', color: '#fff', border: 'none', fontSize: 18, transition: 'background 0.18s, box-shadow 0.18s' }}
-                onMouseOver={e => { e.currentTarget.style.background = '#4a3bbf'; e.currentTarget.style.boxShadow = '0 2px 12px #6B5BFF55'; }}
-                onMouseOut={e => { e.currentTarget.style.background = '#6B5BFF'; e.currentTarget.style.boxShadow = 'none'; }}
+    <div className="modern-bg" style={{ background: `url('/plains.png') center center / cover no-repeat fixed`, minHeight: '100vh', width:'100vw', overflow:'hidden', position:'relative' }}>
+      {/* Top Bar 獨立卡片 - 與挑戰任務相同格式 */}
+      <div
+          style={{
+              width: '100%',
+              maxWidth: 700,
+              margin: '20px auto 20px auto',
+              padding: '16px 24px',
+              background: 'rgba(255,255,255,0.95)',
+              borderRadius: 16,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              position: 'relative',
+          }}
+      >
+          <button
+              onClick={() => navigate('/')}
+              style={{
+                  fontWeight: 700,
+                  fontSize: 16,
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  border: '1.5px solid #6B5BFF',
+                  background: '#fff',
+                  color: '#6B5BFF',
+                  cursor: 'pointer',
+                  minWidth: 80,
+              }}
+          >
+              {UI_TEXT.backToHome[lang]}
+          </button>
+          <h1 style={{ 
+              fontWeight: 900, 
+              fontSize: 18, 
+              color: '#6B5BFF', 
+              margin: 0, 
+              lineHeight: 1,
+              textShadow: '0 2px 8px #6B5BFF88',
+              textAlign: 'center',
+              flex: 1,
+          }}>
+              <span role="img" aria-label="skillbox">🛠️</span> {UI_TEXT.pageTitle[lang]}
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <button
+                  onClick={async () => { await signOut(auth); localStorage.clear(); window.location.href = '/'; }}
+                  style={{
+                      fontWeight: 700,
+                      fontSize: 16,
+                      padding: '8px 16px',
+                      borderRadius: 8,
+                      border: '1.5px solid #6B5BFF',
+                      background: '#fff',
+                      color: '#6B5BFF',
+                      cursor: 'pointer',
+                      minWidth: 80,
+                  }}
               >
-                {recording ? VOICE_RECORDING[lang] : VOICE_BTN[lang]}
+                  {UI_TEXT.logout[lang]}
               </button>
-              {speechError && <div style={{ color: '#d32f2f', marginTop: 6, fontSize: 15 }}>{speechError}</div>}
-              <button 
-                onClick={handleSend} 
-                style={{ borderRadius: 8, background: '#23c6e6', color: '#fff', border: 'none', fontWeight: 700, padding: '6px 18px', transition: 'background 0.18s, box-shadow 0.18s' }}
-                onMouseOver={e => { e.currentTarget.style.background = '#1ba3c2'; e.currentTarget.style.boxShadow = '0 2px 12px #23c6e655'; }}
-                onMouseOut={e => { e.currentTarget.style.background = '#23c6e6'; e.currentTarget.style.boxShadow = 'none'; }}
-              >{UI_TEXT[lang].send}</button>
-            </div>
-            {aiAnalysis && <div style={{ background: '#f7f7ff', borderRadius: 10, padding: 14, marginTop: 16, color: '#6B5BFF', fontWeight: 700 }}>{aiAnalysis}</div>}
+              <div style={{ width: 80 }}>
+                  <LanguageSelector style={{ width: '100%' }} />
+              </div>
           </div>
-          <div style={{ marginTop: 18, width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <b style={{ minWidth: 64, textAlign: 'left', fontSize: 22, color: '#6B5BFF', textShadow: '0 2px 8px #6B5BFF33, 0 4px 16px #0002', fontWeight: 900, letterSpacing: 1 }}>{UI_TEXT[lang].achievements}:</b>
-              {renderAchievements(badges, lang)}
-              <span style={{marginLeft:12, fontSize:20}}>{rank?.icon} {rank?.name_zh}</span>
-            </div>
+      </div>
+      {/* 內容區塊可捲動，並自動下移不被頂部按鈕遮住 */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', padding: '24px', marginTop: 20, minHeight:'calc(100vh - 120px)', overflowY:'auto' }}>
+        <div style={{ fontSize: 18, color: '#4A4A4A', fontWeight: 500, marginBottom: 24, textAlign:'center', background:'rgba(255,255,255,0.7)', padding:'8px 16px', borderRadius:8 }}>{UI_TEXT.subtitle[lang]}</div>
+        
+        <div style={{ maxWidth: 800, width: '100%', background: '#fff', borderRadius: 16, padding: '24px 32px', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <h3 style={{ fontSize: 24, fontWeight: 700, color: '#6B5BFF', marginBottom: 24 }}>{UI_TEXT.selectScenario[lang]}</h3>
+          
+          <div style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px' }}>
+            {scenarios.map(scenario => (
+              <div 
+                key={scenario.id}
+                onClick={() => handleScenarioClick(scenario)}
+                style={{ 
+                  background: selectedScenarioId === scenario.id ? 'linear-gradient(135deg, #6B5BFF 0%, #4D8FFF 100%)' : '#f7f7ff', 
+                  color: selectedScenarioId === scenario.id ? '#fff' : '#4A4A4A',
+                  borderRadius: 12, 
+                  padding: 20, 
+                  boxShadow: selectedScenarioId === scenario.id ? '0 8px 24px #6B5BFF66' : '0 4px 12px #0000001a', 
+                  cursor: 'pointer', 
+                  transition: 'all 0.3s ease',
+                  border: selectedScenarioId === scenario.id ? '2px solid #fff' : '2px solid transparent',
+                  transform: selectedScenarioId === scenario.id ? 'translateY(-5px)' : 'none',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center'
+                }}
+              >
+                <div style={{ fontSize: 48, marginBottom: 12 }}>{scenario.emoji}</div>
+                <h4 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 8px 0' }}>{scenario.title}</h4>
+                <p style={{ fontSize: 14, margin: '0 0 12px 0', opacity: 0.8, minHeight: '40px' }}>{scenario.description}</p>
+                <div style={{ fontWeight: 600, fontSize: 14, padding: '4px 12px', borderRadius: 16, background: selectedScenarioId === scenario.id ? 'rgba(255,255,255,0.2)' : 'rgba(107, 91, 255, 0.1)', color: selectedScenarioId === scenario.id ? '#fff' : '#6B5BFF' }}>
+                    {UI_TEXT.scenarioDifficulty[lang]}: {scenario.difficulty}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+      {/* 浮窗模態框 */}
+      {showModal && selectedScenario && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+          onClick={handleCloseModal}
+        >
+          <div 
+            style={{
+              background: '#fff',
+              borderRadius: 16,
+              padding: '32px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              maxWidth: 400,
+              width: '90%',
+              textAlign: 'center',
+              position: 'relative'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 關閉按鈕 */}
+            <button
+              onClick={handleCloseModal}
+              style={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                background: 'none',
+                border: 'none',
+                fontSize: 24,
+                cursor: 'pointer',
+                color: '#999',
+                width: 32,
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              ×
+            </button>
+
+            <div style={{ fontSize: 48, marginBottom: 16 }}>{selectedScenario.emoji}</div>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: '#6B5BFF', margin: '0 0 8px 0' }}>{selectedScenario.title}</h3>
+            <p style={{ fontSize: 14, color: '#666', margin: '0 0 16px 0', lineHeight: 1.5 }}>{selectedScenario.description}</p>
+            
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <button
+                onClick={handleCloseModal}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: 8,
+                  border: '1px solid #ddd',
+                  background: '#f8f9fa',
+                  color: '#666',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#e9ecef'}
+                onMouseOut={(e) => e.currentTarget.style.background = '#f8f9fa'}
+              >
+                {UI_TEXT.cancelButton[lang] || '取消'}
+              </button>
+              <button
+                onClick={handleStartPractice}
+                style={{
+                  padding: '10px 24px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #6B5BFF 0%, #4D8FFF 100%)',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  transition: 'all 0.2s',
+                  boxShadow: '0 4px 12px rgba(107, 91, 255, 0.3)'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                {UI_TEXT.startPractice[lang]}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      <Footer />
     </div>
   );
 } 

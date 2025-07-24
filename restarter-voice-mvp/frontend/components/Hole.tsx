@@ -1,31 +1,42 @@
 import React from 'react';
 
-type Mole = {
+interface MoleType {
   name: string;
   emoji: string;
-};
+}
 
-type HoleProps = {
-  active: boolean;
-  mole: Mole;
+interface HoleProps {
+  mole: MoleType | null;
   onHit: () => void;
-  hitAnim: boolean;
-};
+}
 
-export default function Hole({ active, mole, onHit, hitAnim }: HoleProps) {
+const Hole: React.FC<HoleProps> = ({ mole, onHit }) => {
+  const isVisible = mole !== null;
+
   return (
-    <div className="relative w-16 h-16 flex items-center justify-center">
-      {active ? (
-        <button
-          className={`w-14 h-14 rounded-full bg-yellow-200 border-4 border-yellow-400 flex flex-col items-center justify-center text-3xl shadow-lg transition-transform duration-150 ${hitAnim ? 'scale-125 animate-bounce' : ''}`}
-          onClick={onHit}
-        >
-          <span>{mole.emoji}</span>
-          <span className="text-xs font-bold text-gray-700">{mole.name}</span>
-        </button>
-      ) : (
-        <div className="w-14 h-14 rounded-full bg-gray-300 border-4 border-gray-400" />
-      )}
+    <div className="relative w-32 h-32 md:w-48 md:h-48">
+      {/* Hole background */}
+      <div className={`absolute bottom-0 w-full h-1/2 bg-black rounded-full transition-transform duration-300 ${isVisible ? 'scale-105' : ''}`}>
+        <div className="absolute inset-0 bg-gray-800 rounded-full transform scale-90"></div>
+      </div>
+      
+      {/* Mole */}
+      <div
+        className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-24 md:w-36 md:h-36 transition-transform duration-300 ease-out cursor-pointer ${
+          isVisible ? 'translate-y-0' : 'translate-y-full'
+        }`}
+        onClick={isVisible ? onHit : undefined}
+      >
+        <div className="relative w-full h-full flex items-center justify-center">
+          {isVisible && (
+            <div className="text-6xl md:text-8xl transition-transform transform hover:scale-110 active:scale-95">
+              {mole.emoji}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
-} 
+};
+
+export default Hole; 

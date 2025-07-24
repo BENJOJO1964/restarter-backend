@@ -5,9 +5,12 @@ import { generateResponse } from '../lib/ai/generateResponse';
 import { speak } from '../lib/ai/speak';
 import { generateTalkingFace } from '../lib/ai/talkingFace';
 import { getAuth, signOut } from 'firebase/auth';
-import { LANGS, TEXT, useLanguage, LanguageCode } from '../shared/i18n';
-import { RecommendationList } from '../components/RecommendationList';
-import { mockUsers } from '../shared/recommendation';
+import { useLanguage } from '../contexts/LanguageContext';
+import { LanguageSelector } from '../components/LanguageSelector';
+import Footer from '../components/Footer';
+import { TokenRenewalModal } from '../components/TokenRenewalModal';
+import { UpgradeModal } from '../components/UpgradeModal';
+import { usePermission } from '../hooks/usePermission';
 
 interface ChatMsg {
   id: string;
@@ -17,6 +20,260 @@ interface ChatMsg {
   audio?: string;
 }
 
+type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'vi' | 'th' | 'la' | 'ms';
+
+const LANGS: { code: LanguageCode; label: string }[] = [
+  { code: 'zh-TW', label: '繁中' },
+  { code: 'zh-CN', label: '简中' },
+  { code: 'en', label: 'EN' },
+  { code: 'ja', label: '日本語' },
+  { code: 'ko', label: '한국어' },
+  { code: 'vi', label: 'Tiếng Việt' },
+  { code: 'th', label: 'ไทย' },
+  { code: 'la', label: 'Latina' },
+  { code: 'ms', label: 'Bahasa Melayu' },
+];
+
+const AVATAR_FILES = [
+  'Annie.png', 'berlex.png', 'Bray.png', 'Cayly.png', 'Derxl.png', 'El.png',
+  'Fenny.png', 'Gily.png', 'Henny.png', 'Jesy.png', 'Karl.png', 'michy.png',
+  'Mily.png', 'Neysher.png', 'sandy.png', 'Sherl.png', 'Shu.png', 'Shyly.png'
+];
+
+const AVATAR_LIST = AVATAR_FILES.map(f => `/avatars/${f}`);
+const AVATAR_NAMES = AVATAR_FILES.map(f => f.replace(/\.png$/i, ''));
+
+const TEXTS: Record<LanguageCode, any> = {
+  'zh-TW': {
+    friend: '朋友',
+    avatarTitle: '選我做你的朋友',
+    companionPhrase: ['🕊️ 守在海這端，', '我都聽著呢。'],
+    changeAvatar: '更換我的頭像',
+    aiReplyTemplate: (text: string) => `AI陪聊：我明白你的意思，「${text}」，讓我再多聽你說說...`,
+    aiSystemPrompt: '你是一個溫暖、善解人意的虛擬人，請用鼓勵、正向語氣回應。',
+    speechErrorBrowser: '此瀏覽器不支援語音辨識，請改用 Chrome/Edge。',
+    speechErrorFail: '語音辨識失敗，請再試一次。',
+    speechErrorNoDetect: '沒有偵測到語音，請再試一次。',
+    logout: '登出',
+    inputPlaceholder: '或者，直接輸入文字... (Enter 送出)',
+    welcome: (name: string) => `嗨，${name}，我是你的 AI 朋友，你可以開始跟我說話囉！`,
+    welcomePickAvatar: (name: string) => `嗨，${name}，先幫我選個頭像後我們再輕鬆自在，天南地北痛快聊...`,
+    welcomeChat: (avatar: string, name: string) => `${avatar}說：嗨，${name}，今天想聊點什麼呢？`,
+    whoAmI: '你想我是誰？',
+    tapToTalk: '按一下開始語音聊天...',
+    aiReplying: 'AI 正在回覆中，輸入新訊息可立即打斷',
+    recognizing: '正在辨識中...',
+  },
+  'zh-CN': {
+    friend: '朋友',
+    avatarTitle: '选我做你的朋友',
+    companionPhrase: ['🕊️ 守在海这端，', '我都听着呢。'],
+    changeAvatar: '更换我的头像',
+    aiReplyTemplate: (text: string) => `AI陪聊：我明白你的意思，"${text}"，让我再多听你聊聊...`,
+    aiSystemPrompt: '你是一个温暖、善解人意的虚拟人，请用鼓励、正向语气回应。',
+    speechErrorBrowser: '此浏览器不支持语音识别，请改用 Chrome/Edge。',
+    speechErrorFail: '语音识别失败，请再试一次。',
+    speechErrorNoDetect: '没有检测到语音，请再试一次。',
+    logout: '登出',
+    inputPlaceholder: '或者，直接输入文字... (Enter 发送)',
+    welcome: (name: string) => `嗨，${name}，我是你的 AI 朋友，你可以开始跟我说话啰！`,
+    welcomePickAvatar: (name: string) => `嗨，${name}，先帮我选个头像后我们再轻松自在，天南地北畅快聊...`,
+    welcomeChat: (avatar: string, name:string) => `${avatar}说：嗨，${name}，今天想聊点什么呢？`,
+    whoAmI: '你想我是谁？',
+    tapToTalk: '点一下开始语音聊天...',
+    aiReplying: 'AI 正在回复中，输入新消息可立即打断',
+    recognizing: '正在识别中...',
+  },
+  'en': {
+    friend: 'Friend',
+    avatarTitle: 'Pick Me as Your Friend',
+    companionPhrase: ["🕊️ I'm here by the sea,", "I'm listening."],
+    changeAvatar: 'Change My Avatar',
+    aiReplyTemplate: (text: string) => `AI Chat: I understand what you mean, "${text}", let me hear more from you...`,
+    aiSystemPrompt: 'You are a warm, empathetic virtual person. Please respond in an encouraging and positive tone.',
+    speechErrorBrowser: 'This browser does not support speech recognition. Please use Chrome/Edge.',
+    speechErrorFail: 'Speech recognition failed, please try again.',
+    speechErrorNoDetect: 'No speech detected, please try again.',
+    logout: 'Logout',
+    inputPlaceholder: 'Or, type text directly... (Enter to send)',
+    welcome: (name: string) => `Hi, ${name}, I'm your AI friend. You can start talking to me now!`,
+    welcomePickAvatar: (name: string) => `Hi, ${name}, pick my avatar and let's chat freely!`,
+    welcomeChat: (avatar: string, name: string) => `${avatar}: Hi, ${name}, what do you want to talk about today?`,
+    whoAmI: 'Who do you want me to be?',
+    tapToTalk: 'Tap to start voice chat...',
+    aiReplying: 'AI is replying, type a new message to interrupt.',
+    recognizing: 'Recognizing...',
+  },
+  'ja': {
+    friend: '友達',
+    avatarTitle: '友達に選んでね',
+    companionPhrase: ['🕊️ この海辺で待ってるよ、', 'ずっと聞いているから。'],
+    changeAvatar: 'アバターを変更',
+    aiReplyTemplate: (text: string) => `AIチャット：あなたの言うこと、「${text}」、わかります。もっと聞かせてください...`,
+    aiSystemPrompt: 'あなたは温かく、共感的なバーチャルパーソンです。励ましとポジティブなトーンで応答してください。',
+    speechErrorBrowser: 'このブラウザは音声認識に対応していません。Chrome/Edgeを使用してください。',
+    speechErrorFail: '音声認識に失敗しました。もう一度お試しください。',
+    speechErrorNoDetect: '音声が検出されませんでした。もう一度お試しください。',
+    logout: 'ログアウト',
+    inputPlaceholder: 'あるいは、直接テキストを入力... (Enterで送信)',
+    welcome: (name: string) => `こんにちは、${name}さん。あなたのAIの友達です。さあ、話しましょう！`,
+    welcomePickAvatar: (name: string) => `やあ、${name}、まずは私のアバターを選んでから、気軽に何でも話そう！`,
+    welcomeChat: (avatar: string, name: string) => `${avatar}：やあ、${name}、今日は何を話そうか？`,
+    whoAmI: '私が誰であってほしいですか？',
+    tapToTalk: 'タップして音声チャット開始',
+    aiReplying: 'AIが返信中です。新しいメッセージを入力するとすぐに中断できます',
+    recognizing: '認識中...',
+  },
+  'ko': {
+    friend: '친구',
+    avatarTitle: '나를 친구로 선택해줘',
+    companionPhrase: ['🕊️ 바다 이편에서 지키고 있을게,', '다 듣고 있어.'],
+    changeAvatar: '내 아바타 변경',
+    aiReplyTemplate: (text: string) => `AI 채팅: 무슨 말인지 알겠어, "${text}", 더 얘기해줘...`,
+    aiSystemPrompt: '당신은 따뜻하고 공감 능력이 뛰어난 가상 인간입니다. 격려하고 긍정적인 톤으로 응답해주세요.',
+    speechErrorBrowser: '이 브라우저는 음성 인식을 지원하지 않습니다. Chrome/Edge를 사용해주세요.',
+    speechErrorFail: '음성 인식이 실패했습니다. 다시 시도해주세요.',
+    speechErrorNoDetect: '음성이 감지되지 않았습니다. 다시 시도해주세요.',
+    logout: '로그아웃',
+    inputPlaceholder: '아니면, 직접 텍스트를 입력하세요... (Enter로 전송)',
+    welcome: (name: string) => `안녕, ${name}. 나는 너의 AI 친구야. 이제 나에게 말을 걸 수 있어!`,
+    welcomePickAvatar: (name: string) => `안녕, ${name}. 먼저 내 아바타를 고르고 자유롭게 얘기하자!`,
+    welcomeChat: (avatar: string, name: string) => `${avatar}: 안녕, ${name}, 오늘 무슨 얘기하고 싶어?`,
+    whoAmI: '내가 누구였으면 좋겠어?',
+    tapToTalk: '탭하여 음성 채팅 시작...',
+    aiReplying: 'AI가 답장 중입니다. 새 메시지를 입력하여 중단할 수 있습니다.',
+    recognizing: '인식 중...',
+  },
+  'vi': {
+    friend: 'Bạn bè',
+    avatarTitle: 'Chọn tôi làm bạn của bạn',
+    companionPhrase: ['🕊️ Em ở đây bên bờ biển,', 'Em đang lắng nghe đây.'],
+    changeAvatar: 'Thay đổi Avatar của tôi',
+    aiReplyTemplate: (text: string) => `Trò chuyện AI: Tôi hiểu ý bạn, "${text}", hãy cho tôi nghe thêm...`,
+    aiSystemPrompt: 'Bạn là một người ảo ấm áp, đồng cảm. Vui lòng trả lời bằng giọng điệu khích lệ và tích cực.',
+    speechErrorBrowser: 'Trình duyệt này không hỗ trợ nhận dạng giọng nói. Vui lòng sử dụng Chrome/Edge.',
+    speechErrorFail: 'Nhận dạng giọng nói thất bại, vui lòng thử lại.',
+    speechErrorNoDetect: 'Không phát hiện thấy giọng nói, vui lòng thử lại.',
+    logout: 'Đăng xuất',
+    inputPlaceholder: 'Hoặc, nhập văn bản trực tiếp... (Enter để gửi)',
+    welcome: (name: string) => `Chào, ${name}. Tôi là người bạn AI của bạn. Bây giờ bạn có thể bắt đầu nói chuyện với tôi!`,
+    welcomePickAvatar: (name: string) => `Chào, ${name}, hãy chọn avatar của tôi và chúng ta hãy trò chuyện thoải mái!`,
+    welcomeChat: (avatar: string, name: string) => `${avatar}: Chào, ${name}, hôm nay bạn muốn nói về điều gì?`,
+    whoAmI: 'Bạn muốn tôi là ai?',
+    tapToTalk: 'Nhấn để bắt đầu trò chuyện thoại...',
+    aiReplying: 'AI đang trả lời, nhập tin nhắn mới để ngắt.',
+    recognizing: 'Đang nhận dạng...',
+  },
+  'th': {
+    friend: 'เพื่อน',
+    avatarTitle: 'เลือกฉันเป็นเพื่อนของคุณ',
+    companionPhrase: ['🕊️ ฉันอยู่ที่นี่ริมทะเล,', 'ฉันกำลังฟังอยู่'],
+    changeAvatar: 'เปลี่ยนอวตารของฉัน',
+    aiReplyTemplate: (text: string) => `แชท AI: ฉันเข้าใจที่คุณหมายถึง, "${text}", เล่าให้ฉันฟังอีกสิ...`,
+    aiSystemPrompt: 'คุณเป็นบุคคลเสมือนที่อบอุ่นและเข้าอกเข้าใจ โปรดตอบกลับด้วยน้ำเสียงที่ให้กำลังใจและเป็นบวก',
+    speechErrorBrowser: 'เบราว์เซอร์นี้ไม่รองรับการจำแนกเสียงพูด กรุณาใช้ Chrome/Edge',
+    speechErrorFail: 'การจำแนกเสียงพูดล้มเหลว กรุณาลองอีกครั้ง',
+    speechErrorNoDetect: 'ไม่พบเสียงพูด กรุณาลองอีกครั้ง',
+    logout: 'ออกจากระบบ',
+    inputPlaceholder: 'หรือพิมพ์ข้อความโดยตรง... (Enter เพื่อส่ง)',
+    welcome: (name: string) => `สวัสดี, ${name}. ฉันคือเพื่อน AI ของคุณ คุณสามารถเริ่มคุยกับฉันได้เลย!`,
+    welcomePickAvatar: (name: string) => `สวัสดี, ${name}, เลือกอวตารของฉันแล้วมาคุยกันอย่างอิสระ!`,
+    welcomeChat: (avatar: string, name: string) => `${avatar}: สวัสดี, ${name}, วันนี้คุณอยากคุยเรื่องอะไร?`,
+    whoAmI: 'คุณอยากให้ฉันเป็นใคร?',
+    tapToTalk: 'แตะเพื่อเริ่มแชทด้วยเสียง...',
+    aiReplying: 'AI กำลังตอบกลับ, พิมพ์ข้อความใหม่เพื่อขัดจังหวะ',
+    recognizing: 'กำลังจดจำ...',
+  },
+  'la': {
+    friend: 'Amicus',
+    avatarTitle: 'Elige Me ut Amicum Tuum',
+    companionPhrase: ['🕊️ Hic adsum ad mare,', 'Audio.'],
+    changeAvatar: 'Muta Imaginem Meam',
+    aiReplyTemplate: (text: string) => `AI Curabitur: Intellego quid velis, "${text}", sine me plura a te audire...`,
+    aiSystemPrompt: 'Tu es persona virtualis calida et empathetica. Quaeso responde sono hortanti et positivo.',
+    speechErrorBrowser: 'Hic navigator recognitionem vocis non sustinet. Quaeso utere Chrome/Edge.',
+    speechErrorFail: 'Recognitio vocis defecit, quaeso iterum conare.',
+    speechErrorNoDetect: 'Nulla oratio detecta, quaeso iterum conare.',
+    logout: 'Exire',
+    inputPlaceholder: 'Aut, textum directe scribe... (Enter mittere)',
+    welcome: (name: string) => `Salve, ${name}. Amicus tuus AI sum. Iam potes mecum loqui!`,
+    welcomePickAvatar: (name: string) => `Salve, ${name}, elige imaginem meam et libere loquamur!`,
+    welcomeChat: (avatar: string, name: string) => `${avatar}: Salve, ${name}, de quo hodie loqui vis?`,
+    whoAmI: 'Quis vis me esse?',
+    tapToTalk: 'Tange ut colloquium vocale incipias...',
+    aiReplying: 'AI respondet, scribe novum nuntium ad interrumpendum.',
+    recognizing: 'Agnoscens...',
+  },
+  'ms': {
+    friend: 'Kawan',
+    avatarTitle: 'Pilih Saya sebagai Kawan Anda',
+    companionPhrase: ['🕊️ Saya di sini di tepi laut,', 'Saya sedang mendengar.'],
+    changeAvatar: 'Tukar Avatar Saya',
+    aiReplyTemplate: (text: string) => `Sembang AI: Saya faham maksud awak, "${text}", beritahu saya lagi...`,
+    aiSystemPrompt: 'Anda adalah orang maya yang mesra dan empati. Sila balas dengan nada yang menggalakkan dan positif.',
+    speechErrorBrowser: 'Pelayar ini tidak menyokong pengecaman pertuturan. Sila gunakan Chrome/Edge.',
+    speechErrorFail: 'Pengecaman pertuturan gagal, sila cuba lagi.',
+    speechErrorNoDetect: 'Tiada pertuturan dikesan, sila cuba lagi.',
+    logout: 'Log keluar',
+    inputPlaceholder: 'Atau, taip teks secara terus... (Enter untuk hantar)',
+    welcome: (name: string) => `Hai, ${name}. Saya kawan AI anda. Anda boleh mula bercakap dengan saya sekarang!`,
+    welcomePickAvatar: (name: string) => `Hai, ${name}, pilih avatar saya dan mari berbual dengan bebas!`,
+    welcomeChat: (avatar: string, name: string) => `${avatar}: Hai, ${name}, apa yang anda mahu bualkan hari ini?`,
+    whoAmI: 'Awak nak saya jadi siapa?',
+    tapToTalk: 'Ketik untuk memulakan sembang suara...',
+    aiReplying: 'AI sedang membalas, taip mesej baru untuk mengganggu.',
+    recognizing: 'Mengecam...',
+  },
+};
+
+// 1. 多語言返回與更換頭像
+const BACK_TEXT = {
+  'zh-TW': '返回',
+  'zh-CN': '返回',
+  'en': 'Back',
+  'ja': '戻る',
+  'ko': '뒤로',
+  'th': 'ย้อนกลับ',
+  'vi': 'Quay lại',
+  'ms': 'Kembali',
+  'la': 'Redi',
+};
+const CHANGE_AVATAR_TEXT = {
+  'zh-TW': '更換頭像',
+  'zh-CN': '更换头像',
+  'en': 'Change Avatar',
+  'ja': 'アバターを変更',
+  'ko': '아바타 변경',
+  'th': 'เปลี่ยนภาพประจำตัว',
+  'vi': 'Đổi avatar',
+  'ms': 'Tukar Avatar',
+  'la': 'Muta Imaginem',
+};
+
+// 1. 多語言主副標題
+const MAIN_TITLE = {
+  'zh-TW': '讓我們來聊天...',
+  'zh-CN': '让我们来聊天...',
+  'en': "Let's Chat...",
+  'ja': 'さあ、話そう...',
+  'ko': '함께 이야기해요...',
+  'th': 'มาคุยกันเถอะ...',
+  'vi': 'Hãy trò chuyện nào...',
+  'ms': 'Mari Berbual...',
+  'la': 'Colloquamur...'
+};
+const SUB_TITLE = {
+  'zh-TW': '聊什麼都可以喔 😊',
+  'zh-CN': '聊什么都可以哦 😊',
+  'en': 'Anything is okay to talk about 😊',
+  'ja': '何でも話していいよ 😊',
+  'ko': '무엇이든 이야기해도 돼요 😊',
+  'th': 'คุยอะไรก็ได้เลย 😊',
+  'vi': 'Nói gìก็ได้ nhé 😊',
+  'ms': 'Boleh berbual apa sahaja 😊',
+  'la': 'De omnibus loqui licet 😊'
+};
+
 export default function ChatCompanion() {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
@@ -24,6 +281,7 @@ export default function ChatCompanion() {
   const [aiStreaming, setAIStreaming] = useState(false);
   const aiTimeout = useRef<NodeJS.Timeout|null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const [showInput, setShowInput] = useState(false);
   const [recording, setRecording] = useState(false);
   const [aiAvatar, setAiAvatar] = useState<string>('');
@@ -34,405 +292,606 @@ export default function ChatCompanion() {
   const [recognizing, setRecognizing] = useState(false);
   const [speechError, setSpeechError] = useState('');
   const [lastTranscript, setLastTranscript] = useState('');
-  const AVATAR_FILES = [
-    'Annie.png', 'berlex.png', 'Bray.png', 'Cayly.png', 'Derxl.png', 'El.png',
-    'Fenny.png', 'Gily.png', 'Henny.png', 'Jesy.png', 'Karl.png', 'michy.png',
-    'Mily.png', 'Neysher.png', 'sandy.png', 'Sherl.png', 'Shu.png', 'Shyly.png'
-  ];
-  const AVATAR_LIST = AVATAR_FILES.map(f => `/avatars/${f}`);
-  const AVATAR_NAMES = AVATAR_FILES.map(f => f.replace(/\.png$/i, ''));
+  
   const { lang, setLang } = useLanguage();
-  const AVATAR_TITLE = {
-    'zh-TW': '選我做你的朋友',
-    'zh-CN': '选我做你的朋友',
-    'en': 'Pick Me as Your Friend',
-    'ja': '友達に選んでね',
-    'ko': '나를 친구로 선택하세요',
-    'vi': 'Chọn tôi làm bạn của bạn',
-  };
-  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-  let recognition: any = null;
-  if (SpeechRecognition) {
-    recognition = new SpeechRecognition();
-    recognition.lang = lang === 'zh-TW' ? 'zh-TW' : lang === 'zh-CN' ? 'zh-CN' : lang === 'ja' ? 'ja-JP' : 'en-US';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-  }
+  const t = TEXTS[lang] || TEXTS['zh-TW'];
+  const recognitionRef = useRef<any>(null);
+
+  // 新增：語音自動循環控制
+  const [autoVoiceLoop, setAutoVoiceLoop] = useState(false);
+  const voiceLoopTimeout = useRef<NodeJS.Timeout|null>(null);
+  // 新增：強制控制麥克風按鈕狀態
+  const [forceStop, setForceStop] = useState(false);
+
+  // 新增：權限檢查
+  const { checkPermission, recordUsage } = usePermission();
+  const [showRenewalModal, setShowRenewalModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [permissionResult, setPermissionResult] = useState<any>(null);
+
   const getNickname = () => {
     const user = getAuth().currentUser;
-    return (user && user.displayName) || localStorage.getItem('nickname') || '朋友';
+    return (user && user.displayName) || localStorage.getItem('nickname') || t.friend;
   };
+
   const [nickname, setNickname] = useState(getNickname());
   const [lastUid, setLastUid] = useState(() => localStorage.getItem('lastUid'));
-  const [firstAvatarSelected, setFirstAvatarSelected] = useState(() => {
-    return !localStorage.getItem('avatarWelcomed');
-  });
+  const [firstAvatarSelected, setFirstAvatarSelected] = useState(() => !localStorage.getItem('avatarWelcomed'));
   const [isFirstChat, setIsFirstChat] = useState(() => !localStorage.getItem('aiAvatar'));
-  const CHAT_TITLE: Record<string, string> = {
-    'zh-TW': '來聊天吧',
-    'zh-CN': '來聊天吧',
-    'en': 'Let\'s Chat!',
-    'ja': 'おしゃべりしよう！',
-    'ko': '이야기하자!',
-    'vi': 'Hãy trò chuyện!'
-  };
-  const I_AM_WHO_TEXT: Record<string, string> = {
-    'zh-TW': '你想要我是誰？',
-    'zh-CN': '你想要我是谁？',
-    'en': 'Who do you want me to be?',
-    'ja': '私に誰になってほしい？',
-    'ko': '내가 누구이길 바라?',
-    'vi': 'Bạn muốn tôi là ai?'
-  };
-  const VOICE_HINT_TEXT: Record<string, string> = {
-    'zh-TW': '按一下開始語音聊天...',
-    'zh-CN': '点一下开始语音聊天...',
-    'en': 'Tap to start voice chat...',
-    'ja': 'タップして音声チャット開始',
-    'ko': '탭하여 음성 채팅을 시작하세요...',
-    'vi': 'Nhấn để bắt đầu trò chuyện bằng giọng nói...'
-  };
+  const [uploadedAvatar, setUploadedAvatar] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
-    const saved = localStorage.getItem('aiAvatar');
-    if (saved) {
-      setAiAvatar(saved);
+    localStorage.setItem('lang', lang);
+    setNickname(getNickname());
+    
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = lang;
+
+      recognitionRef.current.onresult = (event: any) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        
+        setInput(lastTranscript + finalTranscript + interimTranscript);
+
+        if (finalTranscript) {
+          setLastTranscript(prev => prev + finalTranscript);
+          handleSend(lastTranscript + finalTranscript);
+          handleRecordVoice(); // Stop recording after sending
+        }
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error', event.error);
+        let errorMsg = '';
+        switch (event.error) {
+          case 'no-speech':
+            errorMsg = t.speechErrorNoDetect;
+            break;
+          case 'audio-capture':
+          case 'network':
+            errorMsg = t.speechErrorFail;
+            break;
+          default:
+            errorMsg = '';
+        }
+        setSpeechError(errorMsg);
+        setRecognizing(false);
+        setRecording(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setRecognizing(false);
+        if (recording) {
+          // If recording was stopped manually, don't restart.
+          // If it stopped by itself, maybe restart it if needed.
+        }
+      };
+    } else {
+      setSpeechError(t.speechErrorBrowser);
+    }
+  }, [lang, t.speechErrorBrowser, t.speechErrorFail, t.speechErrorNoDetect, recording, lastTranscript]);
+
+  useEffect(() => {
+    if (!recognitionRef.current) return;
+    // 語音辨識結束時自動觸發AI回覆與循環
+    recognitionRef.current.onend = () => {
+      setRecognizing(false);
+      if (autoVoiceLoop && recording && !forceStop) {
+        // 停下後0.1秒自動AI回覆，然後自動再啟動語音辨識
+        voiceLoopTimeout.current = setTimeout(() => {
+          if (!recording || forceStop) return;
+          if (input.trim()) {
+            handleSend(input);
+            setInput('');
+            setLastTranscript('');
+          }
+          // AI回覆完再自動啟動語音辨識
+          setTimeout(() => {
+            if (recording && autoVoiceLoop && !forceStop) {
+              recognitionRef.current.start();
+              setRecognizing(true);
+            }
+          }, 500); // AI回覆後再啟動語音辨識
+        }, 100);
+      }
+    };
+    // eslint-disable-next-line
+  }, [autoVoiceLoop, recording, input, forceStop]);
+
+  useEffect(() => {
+    const savedAvatar = localStorage.getItem('aiAvatar');
+    if (savedAvatar) {
+      setAiAvatar(savedAvatar);
+      setShowAvatarSelect(false);
     } else {
       setShowAvatarSelect(true);
     }
-  }, []);
-  useEffect(() => {
-    const user = getAuth().currentUser;
-    if (user) {
-      if (lastUid !== user.uid) {
-        localStorage.removeItem('aiAvatar');
-        localStorage.removeItem('avatarWelcomed');
-        localStorage.setItem('lastUid', user.uid);
+    
+    const currentUid = getAuth().currentUser?.uid;
+    if (currentUid !== lastUid) {
+      localStorage.removeItem('aiAvatar');
+      localStorage.removeItem('avatarWelcomed');
+      setAiAvatar('');
+      setLastUid(currentUid || null);
+      if (currentUid) {
+        localStorage.setItem('lastUid', currentUid);
       }
-      setNickname(user.displayName || '朋友');
     }
-  }, []);
+
+    if (getAuth().currentUser) {
+      setNickname(getAuth().currentUser?.displayName || t.friend);
+    }
+
+  }, [lastUid, t.friend]);
+
+  // 自動捲動到最新訊息
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(getAuth());
+      localStorage.removeItem('nickname');
+      localStorage.removeItem('lastUid');
+      localStorage.removeItem('aiAvatar');
+      localStorage.removeItem('avatarWelcomed');
+      navigate('/');
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
+
   const handleSelectAvatar = (url: string) => {
     setAiAvatar(url);
     localStorage.setItem('aiAvatar', url);
     setShowAvatarSelect(false);
-    setIsFirstChat(false);
-    if (!localStorage.getItem('avatarWelcomed')) {
-      setFirstAvatarSelected(true);
-      localStorage.setItem('avatarWelcomed', '1');
-    }
-  };
-
-  // 多語言陪伴語
-  const COMPANION_PHRASE = {
-    'zh-TW': ['🕊️ 守在海這端，', '我都聽著呢。'],
-    'zh-CN': ['🕊️ 守在海这端，', '我都听着呢。'],
-    'en': ['🕊️ I\'m here by the sea,', 'I\'m listening.'],
-    'ja': ['🕊️ この海辺で待ってるよ、', 'ずっと聞いているから。'],
-    'ko': ['🕊️ 이 바닷가에서 기다릴게요,', '계속 듣고 있어요.'],
-    'vi': ['🕊️ Tôi ở bên bờ biển này,', 'Tôi luôn lắng nghe.'],
-  };
-  const CHANGE_AVATAR_BTN = {
-    'zh-TW': '更換我的頭像',
-    'zh-CN': '更换我的头像',
-    'en': 'Change My Avatar',
-    'ja': 'アバターを変更',
-    'ko': '내 아바타 변경',
-    'vi': 'Đổi ảnh đại diện',
-  };
-
-  const langTyped = (lang as 'zh-TW'|'zh-CN'|'en'|'ja'|'ko'|'vi');
-  const phrase = COMPANION_PHRASE[langTyped] || COMPANION_PHRASE['en'];
-  const changeAvatarText = CHANGE_AVATAR_BTN[langTyped] || CHANGE_AVATAR_BTN['en'];
-
-  // 模擬 AI 回覆（可被打斷）
-  const fakeAIReply = (userText: string) => {
-    setAIStreaming(true);
-    const aiMsg: ChatMsg = {
-      id: Date.now().toString(),
-      text: '',
-      sender: 'ai',
-      status: 'streaming',
-    };
-    setMessages(prev => [...prev, aiMsg]);
-    let idx = 0;
-    const reply = `AI陪聊：我明白你的意思，「${userText}」，讓我再多聽你說說...`;
-    aiTimeout.current = setInterval(() => {
-      idx++;
-      setMessages(prev => prev.map(m => m.id === aiMsg.id ? { ...m, text: reply.slice(0, idx) } : m));
-      if (idx >= reply.length) {
-        clearInterval(aiTimeout.current!);
-        setMessages(prev => prev.map(m => m.id === aiMsg.id ? { ...m, status: 'done' } : m));
-        setAIStreaming(false);
-      }
-    }, 40);
-  };
-
-  // 用戶送出訊息
-  const handleSend = async () => {
-    if (!input.trim()) return;
-    // 若AI正在回覆，立即打斷
-    if (aiStreaming && aiTimeout.current) {
-      clearInterval(aiTimeout.current);
-      setMessages(prev => prev.filter(m => m.sender !== 'ai' || m.status === 'done'));
-      setAIStreaming(false);
-    }
-    const userMsg: ChatMsg = {
-      id: Date.now().toString(),
-      text: input,
-      sender: 'user',
-    };
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
-    setTimeout(() => fakeAIReply(userMsg.text), 400);
-    // AI 虛擬人回應
-    setIsSpeaking(true);
-    const openaiKey = process.env.REACT_APP_OPENAI_API_KEY || '';
-    const playhtKey = process.env.REACT_APP_PLAYHT_API_KEY || '';
-    const didKey = process.env.REACT_APP_DID_API_KEY || '';
-    const aiText = await generateResponse([
-      { role: 'assistant', content: '你是一個溫暖、善解人意的虛擬人，請用鼓勵、正向語氣回應。' },
-      { role: 'user', content: input },
-    ], openaiKey);
-    const ttsUrl = await speak(aiText, aiAvatar.includes('female') ? 'female' : 'male', playhtKey);
-    setAvatarAudio(ttsUrl);
-    const videoUrl = await generateTalkingFace({
-      imageUrl: aiAvatar,
-      audioUrl: ttsUrl,
-      text: aiText,
-      apiKey: didKey,
-    });
-    setAvatarVideo(videoUrl);
-    setIsSpeaking(false);
-  };
-
-  // 根據 public/avatars/ 目錄下的實際檔名顯示頭像與名字
-  const getAvatarName = (url: string) => {
-    if (!url) return '';
-    const file = url.split('/').pop() || '';
-    return file.replace(/\.png$/i, '');
-  };
-
-  const handleRecordVoice = () => {
-    if (!SpeechRecognition) {
-      setSpeechError(lang==='zh-TW'?'此瀏覽器不支援語音辨識，請改用 Chrome/Edge。':lang==='zh-CN'?'此浏览器不支持语音识别，请改用 Chrome/Edge。':lang==='ja'?'このブラウザは音声認識に対応していません。Chrome/Edgeを使ってください。':'This browser does not support speech recognition. Please use Chrome/Edge.');
-      return;
-    }
-    setSpeechError('');
-    setRecognizing(true);
-    setLastTranscript('');
-    recognition.start();
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      if (transcript) {
-        setLastTranscript(transcript);
-        setRecognizing(false);
-        // 顯示用戶語音訊息
-        const userMsg: ChatMsg = {
-          id: Date.now().toString(),
-          text: transcript,
-          sender: 'user',
-        };
-        setMessages(prev => [...prev, userMsg]);
-        // 呼叫 AI 回覆
-        handleSendVoice(transcript);
-      }
-    };
-    recognition.onerror = (event: any) => {
-      setRecognizing(false);
-      setSpeechError(lang==='zh-TW'?'語音辨識失敗，請再試一次。':lang==='zh-CN'?'语音识别失败，请再试一次。':lang==='ja'?'音声認識に失敗しました。もう一度お試しください。':'Speech recognition failed, please try again.');
-    };
-    recognition.onend = () => {
-      if (!lastTranscript) {
-        setRecognizing(false);
-        setSpeechError(lang==='zh-TW'?'沒有偵測到語音，請再試一次。':lang==='zh-CN'?'没有检测到语音，请再试一次。':lang==='ja'?'音声が検出されませんでした。もう一度お試しください。':'No speech detected, please try again.');
-      }
-    };
-  };
-
-  // 用戶送出語音訊息後呼叫 AI 回覆
-  const handleSendVoice = async (inputText: string) => {
-    setAIStreaming(true);
-    const aiMsg: ChatMsg = {
-      id: Date.now().toString(),
-      text: '',
-      sender: 'ai',
-      status: 'streaming',
-    };
-    setMessages(prev => [...prev, aiMsg]);
-    let idx = 0;
-    try {
-      // 呼叫 AI 產生回覆
-      const openaiKey = process.env.REACT_APP_OPENAI_API_KEY || '';
-      const playhtKey = process.env.REACT_APP_PLAYHT_API_KEY || '';
-      const didKey = process.env.REACT_APP_DID_API_KEY || '';
-      const aiText = await generateResponse([
-        { role: 'assistant', content: '你是一個溫暖、善解人意的虛擬人，請用鼓勵、正向語氣回應。' },
-        { role: 'user', content: inputText },
-      ], openaiKey);
-      // 動畫顯示 AI 回覆
-      const reply = aiText;
-      aiTimeout.current = setInterval(() => {
-        idx++;
-        setMessages(prev => prev.map(m => m.id === aiMsg.id ? { ...m, text: reply.slice(0, idx) } : m));
-        if (idx >= reply.length) {
-          clearInterval(aiTimeout.current!);
-          setMessages(prev => prev.map(m => m.id === aiMsg.id ? { ...m, status: 'done' } : m));
-          setAIStreaming(false);
-        }
-      }, 40);
-      // AI 語音合成
-      setIsSpeaking(true);
-      const ttsUrl = await speak(aiText, aiAvatar.toLowerCase().includes('female') ? 'female' : 'male', playhtKey);
-      setAvatarAudio(ttsUrl);
-      const videoUrl = await generateTalkingFace({
-        imageUrl: aiAvatar,
-        audioUrl: ttsUrl,
-        text: aiText,
-        apiKey: didKey,
-      });
-      setAvatarVideo(videoUrl);
-      setIsSpeaking(false);
-    } catch (e) {
-      setMessages(prev => prev.map(m => m.id === aiMsg.id ? { ...m, text: 'AI 回覆失敗，請稍後再試', status: 'done' } : m));
-      setAIStreaming(false);
-    }
-  };
-
-  useEffect(() => {
-    if (messages.length > 0 && firstAvatarSelected) {
+    if (firstAvatarSelected) {
+      setMessages([{ id: 'welcome-1', text: t.welcomeChat(getAvatarName(url), nickname), sender: 'ai' }]);
+      localStorage.setItem('avatarWelcomed', 'true');
       setFirstAvatarSelected(false);
     }
-  }, [messages, firstAvatarSelected]);
+  };
 
+  const fakeAIReply = (userText: string) => {
+    if (aiTimeout.current) clearTimeout(aiTimeout.current);
+    const newMsgId = `ai-${Date.now()}`;
+    setMessages(prev => [...prev, { id: newMsgId, text: '', sender: 'ai', status: 'streaming' }]);
+    setAIStreaming(true);
+
+    const replyText = t.aiReplyTemplate(userText);
+    let i = 0;
+    const interval = setInterval(() => {
+      setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: replyText.substring(0, i) } : m));
+      i++;
+      if (i > replyText.length) {
+        clearInterval(interval);
+        setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
+        setAIStreaming(false);
+      }
+    }, 50);
+  };
+
+  const handleSend = async (text: string = input) => {
+    if (!text.trim()) return;
+
+    // 檢查 AI 聊天權限
+    const permission = await checkPermission('aiChat');
+    if (!permission.allowed) {
+      if (permission.isFreeUser) {
+        // 免費用戶顯示升級跳窗
+        setShowUpgradeModal(true);
+      } else if (permission.canRenew) {
+        // 已訂閱用戶但 Token 用完，顯示續購跳窗
+        setPermissionResult(permission);
+        setShowRenewalModal(true);
+      } else {
+        // 其他情況也顯示續購跳窗
+        setPermissionResult(permission);
+        setShowRenewalModal(true);
+      }
+      return;
+    }
+
+    const newUserMsg: ChatMsg = { id: `user-${Date.now()}`, text, sender: 'user' };
+    setMessages(prev => [...prev, newUserMsg]);
+    setInput('');
+    setLastTranscript('');
+
+    if (aiTimeout.current) clearTimeout(aiTimeout.current);
+    const newMsgId = `ai-${Date.now()}`;
+    setMessages(prev => [...prev, { id: newMsgId, text: '', sender: 'ai', status: 'streaming' }]);
+    setAIStreaming(true);
+    
+    try {
+      const stream = await generateResponse(text, lang, t.aiSystemPrompt);
+      let fullReply = '';
+      for await (const chunk of stream) {
+        fullReply += chunk;
+        setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: fullReply } : m));
+      }
+
+      setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
+      
+      setIsSpeaking(true);
+      // 暫時跳過語音和影片生成
+      // const audioUrl = await speak(fullReply, lang);
+      // setAvatarAudio(audioUrl);
+      // const videoUrl = await generateTalkingFace(fullReply, aiAvatar);
+      // setAvatarVideo(videoUrl);
+      
+      // 記錄使用量
+      await recordUsage('aiChat', 2); // AI 聊天消耗 2 tokens
+      
+    } catch (error) {
+      console.error("Error in AI pipeline: ", error);
+      setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: 'Oops, something went wrong.', status: 'done' } : m));
+    } finally {
+      setAIStreaming(false);
+      setIsSpeaking(false);
+    }
+  };
+
+  const getAvatarName = (url: string) => {
+    if (!url) return '';
+    const parts = url.split('/');
+    return parts[parts.length - 1].replace(/\.png$/i, '');
+  };
+
+  const handleRecordVoice = async () => {
+    if (!recognitionRef.current) return;
+    
+    if (recording || autoVoiceLoop || recognizing) {
+      recognitionRef.current.stop();
+      setRecording(false);
+      setRecognizing(false);
+      setAutoVoiceLoop(false); // 停止自動循環
+      if (voiceLoopTimeout.current) clearTimeout(voiceLoopTimeout.current);
+      setForceStop(true); // 強制停止
+    } else {
+      // 檢查語音權限
+      const permission = await checkPermission('aiChat');
+      if (!permission.allowed) {
+        if (permission.isFreeUser) {
+          // 免費用戶顯示升級跳窗
+          setShowUpgradeModal(true);
+        } else if (permission.canRenew) {
+          // 已訂閱用戶但 Token 用完，顯示續購跳窗
+          setPermissionResult(permission);
+          setShowRenewalModal(true);
+        } else {
+          // 其他情況也顯示續購跳窗
+          setPermissionResult(permission);
+          setShowRenewalModal(true);
+        }
+        return;
+      }
+
+      setLastTranscript('');
+      setInput('');
+      recognitionRef.current.start();
+      setRecording(true);
+      setRecognizing(true);
+      setSpeechError('');
+      setAutoVoiceLoop(true); // 啟動自動循環
+      setForceStop(false);
+      
+      // 記錄使用量
+      await recordUsage('aiChat', 1);
+    }
+  };
+
+  const randomAvatar = () => {
+    const randUrl = AVATAR_LIST[Math.floor(Math.random() * AVATAR_LIST.length)];
+    handleSelectAvatar(randUrl);
+  };
+
+  const handleUploadAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // 檢查文件類型
+      if (!file.type.startsWith('image/')) {
+        alert('請選擇圖片文件');
+        return;
+      }
+      
+      // 檢查文件大小 (限制為 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('圖片大小不能超過 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setUploadedAvatar(result);
+        handleSelectAvatar(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+  
+  // 確保 autoVoiceLoop 和 recording 都為 false 時才重置 forceStop
   useEffect(() => {
-    const onStorage = () => setLang(localStorage.getItem('lang') as LanguageCode || 'zh-TW');
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
+    if (!recording && !autoVoiceLoop) setForceStop(false);
+  }, [recording, autoVoiceLoop]);
+
+  const handleRenewalModalClose = () => {
+    setShowRenewalModal(false);
+    setPermissionResult(null);
+  };
 
   return (
-    <div className="modern-bg" style={{ background: `url('/skytree.png') center center / cover no-repeat`, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{position:'fixed',top:0,left:0,width:'100%',zIndex:3000,display:'flex',justifyContent:'space-between',alignItems:'center',padding:'18px 32px 0 32px',boxSizing:'border-box',background:'transparent',pointerEvents:'auto'}}>
-        <button className="topbar-btn" onClick={()=>navigate('/')} style={{fontWeight:700,fontSize:18,marginRight:8}}>
-          {TEXT[lang].back}
-        </button>
-        <div style={{display:'flex',gap:12,marginRight:8}}>
-          <button className="topbar-btn" onClick={async()=>{const auth=getAuth();await signOut(auth);localStorage.clear();window.location.href='/';}}>{TEXT[lang].backHome || '登出'}</button>
-          <select className="topbar-select" value={lang} onChange={e=>{localStorage.setItem('lang',e.target.value); setLang(e.target.value as LanguageCode);}} style={{padding:'6px 18px',borderRadius:8,fontWeight:700,border:'2px solid #6B5BFF',color:'#6B5BFF',background:'#fff',cursor:'pointer',fontSize:16,transition:'background 0.2s, color 0.2s, box-shadow 0.2s',boxShadow:'none'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';e.currentTarget.style.boxShadow='0 2px 12px #6B5BFF55';}} onMouseOut={e=>{e.currentTarget.style.background='#fff';e.currentTarget.style.color='#6B5BFF';e.currentTarget.style.boxShadow='none';}}>
-            {LANGS.map(l => (
-              <option key={l.code} value={l.code}>{l.label}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className="modern-container" style={{ maxWidth: 540, width: '100%', margin: '0 auto', justifyContent: 'flex-start', paddingTop: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 18 }}>
-          <h2 className="modern-title" style={{ fontSize: '2.2rem', margin: 0, flex: 1, textAlign: 'center', color:'#fff', textShadow:'0 2px 16px #6B5BFF, 0 4px 32px #0008', letterSpacing:1, display:'flex',alignItems:'center',gap:8 }}>
-            💬 {CHAT_TITLE[langTyped as keyof typeof CHAT_TITLE]}
-          </h2>
-        </div>
-        {/* 橢圓形頭像框與頭像選擇 */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24, marginTop: 0 }}>
-          <div style={{ position: 'relative', width: 180, height: 120, marginBottom: 8, background: '#eee', borderRadius: '50% / 40%', overflow: 'hidden', boxShadow: '0 2px 12px #6B5BFF33', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {aiAvatar ? (
-              avatarVideo ? (
-                <video src={avatarVideo} width={120} height={120} autoPlay muted loop style={{ borderRadius: '50% / 40%', objectFit: 'cover', width: 120, height: 120, filter: isSpeaking ? 'brightness(1.1)' : 'none' }} />
-              ) : (
-                <img src={aiAvatar} width={120} height={120} style={{ borderRadius: '50% / 40%', objectFit: 'cover', filter: isSpeaking ? 'brightness(1.1)' : 'none', transition: 'filter 0.2s' }} alt="avatar" />
-              )
-            ) : null}
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f0f2f5' }}>
+      {/* 上緣：AI名稱、主標題、使用者名稱 */}
+      <header style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#fff', borderBottom: '1px solid #ddd', position: 'relative', padding: 0 }}>
+                  <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px 0 20px', position: 'relative' }}>
+            {/* 返回按鈕 */}
+            <button onClick={() => navigate(-1)} style={{ position: 'absolute', left: 20, background: '#6B5BFF', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 700, fontSize: 16, cursor: 'pointer' }}>{BACK_TEXT[lang]}</button>
+            {/* AI名稱、主標題、使用者名稱 */}
+            <span className="ai-name-desktop" style={{ fontWeight: 700, color: '#ff9800', fontSize: 18, marginRight: 12, minWidth: 50, textAlign: 'right', maxWidth: 70, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getAvatarName(aiAvatar) || t.whoAmI}</span>
+            <div style={{ fontSize: 20, fontWeight: 700, textAlign: 'center', flexShrink: 0 }}>💬 聊天了吧</div>
+            <span style={{ fontWeight: 700, color: '#1976d2', fontSize: 18, marginLeft: 12, minWidth: 50, textAlign: 'left', maxWidth: 70, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getAuth().currentUser?.displayName || getAuth().currentUser?.email || '用戶'}</span>
           </div>
-          {aiAvatar && <div style={{ fontWeight: 700, color: '#6B4F27', fontSize: 20, marginBottom: 4 }}>{getAvatarName(aiAvatar)}</div>}
-          <button onClick={() => setShowAvatarSelect(true)} style={{ marginTop: 0, padding: '6px 18px', borderRadius: 8, fontWeight: 700, background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', cursor: 'pointer', fontSize: 15, transition: 'background 0.2s, color 0.2s, box-shadow 0.2s' }} onMouseOver={e => { e.currentTarget.style.background = '#6B5BFF'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.boxShadow = '0 2px 12px #6B5BFF55'; }} onMouseOut={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#6B5BFF'; e.currentTarget.style.boxShadow = 'none'; }}>{isFirstChat ? I_AM_WHO_TEXT[lang] : changeAvatarText}</button>
-        </div>
-        {/* AI頭像選擇彈窗 */}
-        {showAvatarSelect && (
-          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ background: '#fff', borderRadius: 24, padding: 32, minWidth: 320, maxWidth: 420, boxShadow: '0 4px 24px #0002', textAlign: 'center', position: 'relative' }}>
-              <button onClick={() => setShowAvatarSelect(false)} style={{ position: 'absolute', top: 12, right: 18, background: 'none', border: 'none', fontSize: 26, color: '#6B4F27', cursor: 'pointer', fontWeight: 900 }}>×</button>
-              <div style={{ fontWeight: 700, color: '#6B4F27', fontSize: 22, marginBottom: 18 }}>{AVATAR_TITLE[langTyped as keyof typeof AVATAR_TITLE]}</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
-                {AVATAR_LIST.map((url, i) => (
-                  <div key={url} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 64 }}>
-                    <img src={url} alt={url} style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '2px solid #bbb', background: '#eee', cursor: 'pointer', boxShadow: aiAvatar === url ? '0 0 0 3px #6B5BFF' : undefined }} onClick={() => handleSelectAvatar(url)} />
-                    <div style={{ fontSize: 15, color: '#6B4F27', fontWeight: 700, marginTop: 4 }}>{AVATAR_NAMES[i]}</div>
-                  </div>
-                ))}
+          <div style={{ textAlign: 'center', marginTop: 4 }}>
+            <div style={{ fontSize: 16, color: '#888' }}>在這裡你可以盡情,暢快,放開地聊😊</div>
+          </div>
+      </header>
+
+      {showAvatarSelect && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100 }}>
+          <div style={{ background: '#fff', padding: 24, borderRadius: 12, textAlign: 'center', position: 'relative' }}>
+            {/* X 關閉按鈕 */}
+            <button 
+              onClick={() => setShowAvatarSelect(false)} 
+              style={{ 
+                position: 'absolute', 
+                top: 12, 
+                right: 12, 
+                background: 'none', 
+                border: 'none', 
+                fontSize: 24, 
+                color: '#888', 
+                cursor: 'pointer', 
+                fontWeight: 700 
+              }}
+            >
+              ×
+            </button>
+            <h2>{t.avatarTitle}</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, margin: '24px 0' }}>
+              {AVATAR_LIST.slice(0, 15).map(url => (
+                <img key={url} src={url} alt={getAvatarName(url)} onClick={() => handleSelectAvatar(url)} style={{ width: 80, height: 80, borderRadius: '50%', cursor: 'pointer', objectFit: 'cover' }} />
+              ))}
+              {/* 上傳心儀頭像 */}
+              <div 
+                style={{ 
+                  width: 80, 
+                  height: 80, 
+                  borderRadius: '50%', 
+                  border: '2px dashed #6B5BFF', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  cursor: 'pointer',
+                  background: '#f8f8ff',
+                  color: '#6B5BFF',
+                  fontSize: 12,
+                  fontWeight: 600
+                }}
+                onClick={triggerFileUpload}
+              >
+                上傳心儀頭像
               </div>
             </div>
+            {/* 隱藏的文件輸入 */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleUploadAvatar}
+            />
           </div>
-        )}
-        {/* 陪伴語：左側固定，僅顯示一遍，位置靠近頭像左緣 */}
-        <div className="companion-phrase-left">
-          <p>{phrase[0]}</p>
-          <p>{phrase[1]}</p>
         </div>
-        {/* 語音訊息顯示區 */}
-        <div className="quote-list" style={{ minHeight: 240, marginBottom: 18, background: 'rgba(35,41,70,0.7)', borderRadius: 16, padding: 12, position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          {messages.length === 0 && !recognizing && (
-            !aiAvatar ? (
-              <div style={{ textAlign: 'center', fontSize: 24, fontWeight: 700, color: '#fff' }}>
-                {lang==='zh-TW'?'嗨，'+nickname+'，先幫我選個頭像後我們再輕鬆自在，天南地北痛快聊...':
-                 lang==='zh-CN'?'嗨，'+nickname+'，先帮我选个头像后我们再轻松自在，天南地北畅快聊...':
-                 lang==='ja'?'やあ、'+nickname+'、まずは私のアバターを選んでから、気軽に何でも話そう！':
-                 lang==='ko'?'안녕, '+nickname+'님, 내 아바타를 골라주면 자유롭게 대화할 수 있어요!':
-                 lang==='vi'?'Chào, '+nickname+', hãy chọn avatar cho tôi rồi chúng ta cùng trò chuyện nhé!':
-                 'Hi, '+nickname+', pick my avatar and let\'s chat freely!'}
-              </div>
-            ) : (
-              <div style={{ textAlign: 'center', fontSize: 24, fontWeight: 700, color: '#fff' }}>
-                {lang==='zh-TW'?getAvatarName(aiAvatar)+'說：嗨，'+nickname+'，今天想聊點什麼呢？':
-                 lang==='zh-CN'?getAvatarName(aiAvatar)+'说：嗨，'+nickname+'，今天想聊点什么呢？':
-                 lang==='ja'?getAvatarName(aiAvatar)+'：やあ、'+nickname+'、今日は何を話そうか？':
-                 getAvatarName(aiAvatar)+': Hi, '+nickname+', what do you want to talk about today?'}
-              </div>
-            )
-          )}
-          {messages.map(msg => (
-            <div key={msg.id} className="quote-card" style={{ background: msg.sender === 'user' ? 'linear-gradient(120deg, #6c63ff 60%, #232946 100%)' : undefined, alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', color: msg.sender === 'user' ? '#fff' : undefined, marginTop: 32 }}>
-              <div className="quote-text" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {msg.sender === 'ai' ? (
-                  <>
-                    <span style={{ color: '#614425', fontWeight: 700 }}>{getAvatarName(aiAvatar)}說：</span>
-                    <span style={{ color: '#fff' }}>{msg.text}</span>
-                  </>
-                ) : (
-                  msg.text
-                )}
-              </div>
-              <div className="quote-tone" style={{ color: msg.sender === 'user' ? '#614425' : '#6c63ff' }}>{msg.sender === 'user' ? '你' : getAvatarName(aiAvatar)}</div>
-              {msg.audio && <audio src={msg.audio} controls style={{ marginTop: 6 }} />}
-              {msg.status === 'streaming' && <span style={{ color: '#6c63ff', fontSize: 12 }}>AI 回覆中...</span>}
-            </div>
-          ))}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 32, justifyContent: 'center' }}>
-          <button
-            onClick={handleRecordVoice}
-            disabled={!aiAvatar}
-            style={{
-              padding: '12px 24px',
-              borderRadius: 8,
-              fontWeight: 700,
-              background: !aiAvatar ? '#ccc' : 'linear-gradient(135deg, #6B5BFF 60%, #23c6e6 100%)',
-              color: '#fff',
-              border: 'none',
-              fontSize: 16,
-              cursor: !aiAvatar ? 'not-allowed' : 'pointer',
-              marginTop: 12
-            }}
-          >
-            <button className="start-voice-btn" onClick={handleRecordVoice} style={{transition:'background 0.2s, color 0.2s'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}}>按一下開始語音聊天...</button>
+      )}
+
+      {!aiAvatar && !showAvatarSelect && (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 24, textAlign: 'center' }}>
+          <p style={{ fontSize: 18, marginBottom: 24 }}>{t.welcomePickAvatar(nickname)}</p>
+          <button onClick={() => setShowAvatarSelect(true)} style={{ padding: '10px 20px', borderRadius: 8, background: '#1877f2', color: '#fff', border: 'none', fontWeight: 700, fontSize: 16 }}>
+            {t.avatarTitle}
           </button>
-          {!aiAvatar && (
-            <div style={{ color: 'red', fontWeight: 700, marginTop: 8 }}>請先選擇頭像才能語音聊天</div>
-          )}
         </div>
-        {aiStreaming && <div style={{ color: '#6c63ff', marginTop: 10, textAlign: 'center' }}>{lang==='zh-TW'?'AI 正在回覆中，輸入新訊息可立即打斷':lang==='zh-CN'?'AI 正在回复中，输入新消息可立即打断':lang==='ja'?'AIが返信中です。新しいメッセージを入力するとすぐに中断できます':'AI is replying, type a new message to interrupt.'}</div>}
-        {speechError && <div style={{ color: 'red', marginTop: 8 }}>{speechError}</div>}
-        {/* 推薦區塊 */}
-        <RecommendationList type="ai" user={mockUsers[0]} />
-      </div>
+      )}
+      
+      {aiAvatar && (
+        <main 
+          ref={chatContainerRef}
+          style={{ 
+            flex: 1, 
+            overflowY: 'auto', 
+            padding: '20px',
+            maxHeight: 'calc(100vh - 240px)', // 調整高度計算，為固定footer預留空間
+            scrollBehavior: 'smooth',
+            boxSizing: 'border-box'
+          }}
+        >
+          <div style={{ maxWidth: 800, margin: '0 auto', minHeight: '100%' }}>
+            {messages.length === 0 && (
+              <div style={{ textAlign: 'center', color: '#888', marginTop: 40 }}>
+                <p style={{ fontSize: 18 }}>{t.welcomeChat(getAvatarName(aiAvatar), nickname)}</p>
+              </div>
+            )}
+            {messages.map((msg) => (
+              <div key={msg.id} style={{ 
+                display: 'flex', 
+                justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start', 
+                margin: '10px 0',
+                wordWrap: 'break-word'
+              }}>
+                <div style={{
+                  backgroundColor: msg.sender === 'user' ? '#0084ff' : '#e4e6eb',
+                  color: msg.sender === 'user' ? '#fff' : '#000',
+                  padding: '12px 16px',
+                  borderRadius: 18,
+                  maxWidth: '70%',
+                  wordBreak: 'break-word',
+                  whiteSpace: 'pre-wrap',
+                  lineHeight: '1.4'
+                }}>
+                  {msg.text}
+                  {msg.status === 'streaming' && '...'}
+                </div>
+              </div>
+            ))}
+            {/* 確保最後一條訊息後有足夠空間 */}
+            <div style={{ height: '20px' }}></div>
+          </div>
+        </main>
+      )}
+
+      {aiAvatar && (
+        <footer style={{ 
+          padding: '10px 20px 10px 20px', 
+          backgroundColor: '#fff', 
+          borderTop: '1px solid #ddd', 
+          position: 'relative',
+          minHeight: '160px', // 固定最小高度避免佈局變化
+          boxSizing: 'border-box'
+        }}>
+          <div style={{ maxWidth: 800, margin: '0 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+            <div style={{ flex: 1, marginLeft: 0, marginRight: 0 }}>
+              {/* 手機版：AI頭像和使用者頭像在訊息框上方 */}
+              <div className="mobile-avatars-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, padding: '0 8px' }}>
+                {/* AI頭像 - 手機版樣式 */}
+                <div className="mobile-ai-avatar" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 80, height: 80, borderRadius: '50% / 45%', border: '4px solid #2196f3', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', overflow: 'hidden' }}>
+                    <div style={{ width: 72, height: 72, minWidth: 72, minHeight: 72, borderRadius: '50%', overflow: 'hidden', position: 'relative' }}>
+                      <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+                        <VirtualAvatar avatar={aiAvatar} videoUrl={avatarVideo} audioUrl={avatarAudio} isSpeaking={isSpeaking} size={72} />
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowAvatarSelect(true)} style={{ background: '#6B5BFF', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 8px', fontWeight: 600, fontSize: 10, cursor: 'pointer', boxShadow: '0 2px 4px rgba(107, 91, 255, 0.3)', whiteSpace: 'nowrap' }}>{CHANGE_AVATAR_TEXT[lang]}</button>
+                </div>
+                {/* 中間歡迎訊息 */}
+                <div style={{ flex: 1, textAlign: 'center', padding: '0 12px' }}>
+                  <div style={{ fontSize: 14, color: '#666', lineHeight: '1.4' }}>
+                    <span style={{ fontWeight: 700, color: '#ff9800' }}>{getAvatarName(aiAvatar) || 'Fenny'}</span>
+                    <br />
+                    <span style={{ color: '#1976d2' }}>讓我們來聊天...</span>
+                    <br />
+                    <span style={{ color: '#1976d2' }}>{getAuth().currentUser?.displayName || getAuth().currentUser?.email || '用戶'}</span>
+                    <br />
+                    <span style={{ color: '#666' }}>聊什麼都可以喔 😊</span>
+                  </div>
+                </div>
+                {/* 使用者頭像 - 手機版樣式 */}
+                <div style={{ width: 80, height: 80, borderRadius: '50% / 45%', border: '4px solid #2196f3', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', overflow: 'visible' }}>
+                  <img src={getAuth().currentUser?.photoURL || '/ctx-logo.png'} alt="user" style={{ width: 72, height: 72, minWidth: 72, minHeight: 72, borderRadius: '50%', objectFit: 'cover', border: 'none', verticalAlign: 'bottom' }} />
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', height: 80 }}>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder={aiStreaming ? t.aiReplying : t.inputPlaceholder}
+                  style={{ width: '100%', padding: 12, borderRadius: 18, border: '1px solid #ccc' }}
+                  disabled={aiStreaming || recognizing}
+                />
+              </div>
+              {/* 手機版：送出與麥克風按鈕在輸入框下方置中 */}
+              <div className="chat-action-row-mobile" style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 12, gap: 16 }}>
+                <button
+                  onClick={() => handleSend()}
+                  disabled={aiStreaming || !input}
+                  style={{ padding: '10px 28px', borderRadius: 8, border: 'none', background: '#1976d2', color: '#fff', fontWeight: 700, fontSize: 16, cursor: aiStreaming || !input ? 'not-allowed' : 'pointer' }}
+                >送出</button>
+                <button
+                  onClick={handleRecordVoice}
+                  disabled={aiStreaming}
+                  style={{ padding: 16, borderRadius: '50%', border: 'none', background: (recording || autoVoiceLoop || recognizing) ? '#ff4d4d' : '#1877f2', color: '#fff', cursor: 'pointer', fontSize: 20 }}
+                >
+                  {(recording || autoVoiceLoop || recognizing) ? '停止' : '🎤'}
+                </button>
+              </div>
+              {/* 電腦版：送出與麥克風按鈕在輸入框下方置中 */}
+              <div className="chat-action-row-desktop" style={{ width: '100%', display: 'none', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 12, gap: 16 }}>
+                <button
+                  onClick={() => handleSend()}
+                  disabled={aiStreaming || !input}
+                  style={{ padding: '10px 28px', borderRadius: 8, border: 'none', background: '#1976d2', color: '#fff', fontWeight: 700, fontSize: 16, cursor: aiStreaming || !input ? 'not-allowed' : 'pointer' }}
+                >送出</button>
+                <button
+                  onClick={handleRecordVoice}
+                  disabled={aiStreaming}
+                  style={{ padding: 16, borderRadius: '50%', border: 'none', background: (recording || autoVoiceLoop || recognizing) ? '#ff4d4d' : '#1877f2', color: '#fff', cursor: 'pointer', fontSize: 20 }}
+                >
+                  {(recording || autoVoiceLoop || recognizing) ? '停止' : '🎤'}
+                </button>
+              </div>
+              {/* 固定高度的提示區域，避免佈局閃動 */}
+              <div style={{ height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {speechError && <p style={{ color: 'red', margin: 0 }}>{speechError}</p>}
+                {!speechError && !input && !recognizing && !aiStreaming && !recording && !autoVoiceLoop &&
+                  <p style={{ color: '#888', margin: 0, cursor: 'pointer' }} onClick={handleRecordVoice}>{t.tapToTalk}</p>
+                }
+                {!speechError && recognizing && <p style={{ color: '#888', margin: 0 }}>{t.recognizing}</p>}
+                {!speechError && (input || aiStreaming || recording || autoVoiceLoop) && <p style={{ color: 'transparent', margin: 0 }}>佔位</p>}
+              </div>
+            </div>
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 10, fontSize: 12, color: '#aaa' }}>
+              <p>{t.companionPhrase[0]}{t.companionPhrase[1]}</p>
+          </div>
+        </footer>
+      )}
+      
+      {/* Footer */}
+      <Footer />
+      
+      {/* Token 續購彈窗 */}
+      {showRenewalModal && permissionResult && (
+        <TokenRenewalModal
+          isOpen={showRenewalModal}
+          onClose={handleRenewalModalClose}
+          currentPlan={permissionResult.currentPlan}
+          remainingDays={permissionResult.remainingDays}
+          usedTokens={permissionResult.usedTokens}
+          totalTokens={permissionResult.totalTokens}
+        />
+      )}
+
+      {/* 升級彈窗 */}
+      {showUpgradeModal && (
+        <UpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+          featureName="AI 聊天"
+        />
+      )}
     </div>
   );
 }
@@ -547,5 +1006,23 @@ export default function ChatCompanion() {
       max-width: 90vw;
       background: rgba(0,0,0,0.18);
     }
+  }
+  @media (min-width: 768px) {
+    .change-avatar-desktop { display: block !important; }
+    .change-avatar-mobile { display: none !important; }
+    .ai-avatar-img-wrap { width: 40px !important; height: 40px !important; }
+    .ai-name-desktop { max-width: 120px !important; }
+    .chat-action-row-mobile { display: none !important; }
+    .chat-action-row-desktop { display: flex !important; }
+    .mobile-avatars-row { display: none !important; }
+  }
+  @media (max-width: 767px) {
+    .change-avatar-desktop { display: none !important; }
+    .change-avatar-mobile { display: block !important; }
+    .ai-avatar-img-wrap { width: 40px !important; height: 40px !important; }
+    .ai-name-desktop { max-width: 100px !important; }
+    .chat-action-row-mobile { display: flex !important; }
+    .chat-action-row-desktop { display: none !important; }
+    .mobile-avatars-row { display: flex !important; }
   }
 `}</style> 

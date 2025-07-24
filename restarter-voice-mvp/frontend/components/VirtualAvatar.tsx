@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
 
 export interface VirtualAvatarProps {
-  avatar: 'male' | 'female';
+  avatar: string; // Can be 'male', 'female', or a URL to a custom avatar
   videoUrl?: string; // 嘴型動畫影片
   audioUrl?: string; // TTS 語音
   isSpeaking?: boolean;
   onAvatarChange?: (avatar: 'male' | 'female') => void;
+  size?: number; // 頭像尺寸，預設 160
 }
 
 const AVATAR_IMG = {
@@ -13,7 +14,7 @@ const AVATAR_IMG = {
   female: '/avatars/female.png',
 };
 
-export default function VirtualAvatar({ avatar, videoUrl, audioUrl, isSpeaking, onAvatarChange }: VirtualAvatarProps) {
+export default function VirtualAvatar({ avatar, videoUrl, audioUrl, isSpeaking, onAvatarChange, size = 160 }: VirtualAvatarProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
 
@@ -26,15 +27,24 @@ export default function VirtualAvatar({ avatar, videoUrl, audioUrl, isSpeaking, 
   };
   const handleEnded = () => setPlaying(false);
 
+  const getAvatarSrc = () => {
+    if (avatar === 'male' || avatar === 'female') {
+      return AVATAR_IMG[avatar];
+    }
+    return avatar; // Assume it's a URL
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
-      <div style={{ position: 'relative', width: 160, height: 160, marginBottom: 8 }}>
+      <div style={{ position: 'relative', width: size, height: size, marginBottom: 8 }}>
         {videoUrl ? (
-          <video src={videoUrl} width={160} height={160} autoPlay muted loop style={{ borderRadius: '50%', objectFit: 'cover' }} />
+          <video src={videoUrl} width={size} height={size} autoPlay muted loop style={{ borderRadius: '50%', objectFit: 'cover' }} />
         ) : (
-          <img src={AVATAR_IMG[avatar]} width={160} height={160} style={{ borderRadius: '50%', objectFit: 'cover', filter: isSpeaking ? 'brightness(1.1)' : 'none' }} alt={avatar} />
+          <img src={getAvatarSrc()} width={size} height={size} style={{ borderRadius: '50%', objectFit: 'cover', filter: isSpeaking ? 'brightness(1.1)' : 'none' }} alt="avatar" />
         )}
-        <button onClick={() => onAvatarChange && onAvatarChange(avatar === 'male' ? 'female' : 'male')} style={{ position: 'absolute', right: 8, bottom: 8, background: '#fff', borderRadius: '50%', border: 'none', width: 36, height: 36, cursor: 'pointer', fontSize: 18 }}>切換</button>
+        {onAvatarChange && (avatar === 'male' || avatar === 'female') && (
+            <button onClick={() => onAvatarChange(avatar === 'male' ? 'female' : 'male')} style={{ position: 'absolute', right: 8, bottom: 8, background: '#fff', borderRadius: '50%', border: 'none', width: 36, height: 36, cursor: 'pointer', fontSize: 18 }}>切換</button>
+        )}
       </div>
       {audioUrl && (
         <audio ref={audioRef} src={audioUrl} onEnded={handleEnded} />

@@ -5,12 +5,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
   },
-  preview: {
-    host: true,
-    port: 4173,
-    allowedHosts: [
-      'restarter-signaling-server-1.onrender.com'
-    ]
-  }
 }); 

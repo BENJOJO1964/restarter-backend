@@ -1,15 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-
 body, html, #root {
   height: 100%;
   margin: 0;
+  padding: 0;
   font-family: 'Inter', 'Noto Sans TC', Arial, sans-serif;
+  overflow-x: hidden;
   /* background: #6B4F27 !important; */
-  color: #f3f6fa;
+  /* color: #f3f6fa; */
 }
 
 .modern-bg {
@@ -55,7 +56,6 @@ body, html, #root {
   padding: 20px 28px;
   min-width: 120px;
   cursor: pointer;
-  transition: box-shadow 0.2s, border 0.2s, background 0.2s;
   border: 2px solid transparent;
   color: #e0e6f7;
   font-size: 1.1rem;
@@ -92,7 +92,6 @@ body, html, #root {
   font-size: 1.1rem;
   position: relative;
   border-left: 4px solid #6c63ff;
-  transition: box-shadow 0.2s, border 0.2s;
 }
 .quote-text {
   font-size: 1.15rem;
@@ -124,13 +123,13 @@ body, html, #root {
 }
 
 .fixed-logo-box {
-  position: fixed;
-  top: 0;
-  left: 36px;
-  z-index: 3000;
+  position: fixed !important;
+  top: 16px !important;
+  left: 42px !important;
+  z-index: 10000 !important;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
 }
 .fixed-logo-img {
@@ -394,13 +393,7 @@ body, html, #root {
   color: #fff;
   border: 2px solid #6c63ff;
   box-shadow: 0 4px 24px #6c63ff44, 0 1.5px 8px 0 #2d3a5a44;
-  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
   cursor: pointer;
-}
-.tone-card.selected:hover {
-  background: linear-gradient(135deg, #6c63ff 60%, #232946 100%);
-  color: #fff;
-  box-shadow: 0 6px 32px #6c63ff66, 0 2px 12px #23294633;
 }
 
 .topbar-btn {
@@ -421,11 +414,349 @@ body, html, #root {
   box-shadow: 0 2px 12px #6B5BFF55;
 }
 .topbar-select {
-  transition: border 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
+  min-width: 100px;
+  width: 120px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 6px 18px;
+  border: 2px solid #6B5BFF;
+  color: #6B5BFF;
+  background: #fff;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
 }
-.topbar-select:hover, .topbar-select:focus {
-  border: 2px solid #ff7e5f;
-  background: #fff7f0;
-  color: #ff7e5f;
-  box-shadow: 0 0 8px 2px #ff7e5f55;
+/* ===== 簡化的懸停效果 ===== */
+.mutual-help-btn:hover {
+  background: linear-gradient(90deg, #ffcc80 0%, #ffa726 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px #ffb74d88 !important;
+}
+
+.feature-btn:hover {
+  background: #6B5BFF !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(107, 91, 255, 0.3) !important;
+}
+
+.home-chat-btn:hover {
+  background: #6B5BFF !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(107, 91, 255, 0.3) !important;
+}
+
+input::placeholder, textarea::placeholder, select::placeholder {
+  color: #aaa !important;
+  opacity: 1;
+} 
+
+/* ===== 現代化改進：移動端優化 ===== */
+@media (max-width: 768px) {
+  .home-flex-root {
+    flex-direction: column;
+    gap: 24px;
+    padding: 16px;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .home-left-col, .home-right {
+    height: auto;
+    min-height: auto;
+    padding: 16px 0;
+    width: 100%;
+  }
+  
+  .modern-container {
+    padding: 24px 16px;
+    margin: 16px 0;
+    border-radius: 20px;
+  }
+  
+  .modern-title {
+    font-size: 2rem;
+    margin-bottom: 24px;
+  }
+  
+  .feature-btns {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .feature-btn {
+    width: 100%;
+    padding: 16px 20px;
+  }
+  
+  .topbar-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  .fixed-logo-box {
+    left: 16px;
+    top: 16px;
+  }
+  
+  .fixed-logo-img {
+    max-width: 60px;
+  }
+  
+  .fixed-logo-slogan {
+    font-size: 0.85rem;
+  }
+  
+  /* 手機版通用優化 */
+  body {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  /* 手機版按鈕優化 */
+  button, .feature-btn, .topbar-btn {
+    min-height: 44px; /* 符合 iOS 觸控標準 */
+    touch-action: manipulation;
+  }
+  
+  /* 手機版卡片優化 */
+  .tone-card, .quote-card {
+    margin-bottom: 12px;
+    border-radius: 12px;
+  }
+  
+  /* 手機版 footer 優化 */
+  footer {
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+  
+  footer a {
+    padding: 4px 8px;
+    margin: 2px;
+  }
+  
+  /* 手機版導航優化 */
+  .topbar-btn {
+    min-width: 60px;
+    text-align: center;
+  }
+  
+  /* 手機版圖片優化 */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* 手機版文字優化 */
+  h1, h2, h3 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* 手機版滾動優化 */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-slogan {
+    font-size: 1.8rem;
+  }
+  
+  .home-slogan-top {
+    font-size: 2rem;
+  }
+  
+  .modern-title {
+    font-size: 1.8rem;
+  }
+  
+  .tone-card {
+    padding: 16px 20px;
+    min-width: 100px;
+  }
+  
+  .quote-card {
+    padding: 16px 20px;
+  }
+  
+  /* 超小螢幕優化 */
+  body {
+    font-size: 13px;
+  }
+  
+  .feature-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .topbar-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  footer {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+  
+  /* 超小螢幕文字優化 */
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.3rem;
+  }
+  
+  h3 {
+    font-size: 1.1rem;
+  }
+}
+
+/* ===== 現代化改進：載入動畫 ===== */
+/* 移除所有動畫效果以避免畫面停滯和耗電 */
+
+/* ===== 現代化改進：ARIA 標籤支援 ===== */
+[role="button"] {
+  cursor: pointer;
+}
+
+[role="button"]:focus {
+  outline: 2px solid #6c63ff;
+  outline-offset: 2px;
+}
+
+[aria-label] {
+  position: relative;
+}
+
+/* ===== 簡化的 aria-label 懸停提示 ===== */
+[aria-label]:hover::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* ===== 現代化改進：色彩對比度優化 ===== */
+.modern-title {
+  color: #ffffff;
+  text-shadow: 0 2px 16px rgba(45, 58, 90, 0.8);
+}
+
+.tone-card {
+  color: #ffffff;
+  background: linear-gradient(135deg, #1a1f35 60%, #2d3a5a 100%);
+}
+
+.tone-card .tone-desc {
+  color: #e0e6f7;
+}
+
+.quote-card {
+  color: #ffffff;
+  background: linear-gradient(120deg, #1a1f35 60%, #2d3a5a 100%);
+}
+
+.quote-card .quote-tone {
+  color: #d1d5e6;
+}
+
+/* ===== 現代化改進：焦點管理 ===== */
+*:focus {
+  outline: 2px solid #6c63ff;
+  outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid #6c63ff;
+  outline-offset: 2px;
+}
+
+/* 移除複雜的響應式設計以避免畫面停滯 */ 
+
+/* ===== 簡化功能按鈕樣式以避免畫面停滯 ===== */
+.feature-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 24px;
+  min-width: 160px;
+  font-size: 18px;
+  background: #fff;
+  border-radius: 12px;
+  border: 2px solid #6B5BFF;
+  color: #6B5BFF;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(107, 91, 255, 0.1);
+}
+
+.feature-btn span {
+  display: block;
+  text-align: center;
+}
+
+.feature-btn span:first-child {
+  font-size: 32px;
+  margin-bottom: 4px;
+}
+
+.feature-btn span:nth-child(2) {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.feature-btn span:nth-child(3) {
+  font-size: 14px;
+  color: #b85c00;
+  font-weight: 500;
+  line-height: 1.2;
+} 
+
+/* ChatCompanion 響應式樣式 */
+@media (min-width: 769px) {
+  .ai-avatar-block {
+    margin-right: 20px !important;
+  }
+  .chat-action-row-desktop {
+    display: flex !important;
+  }
+  .chat-action-row-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-avatar-block {
+    margin-right: 8px !important;
+  }
+  .chat-action-row-desktop {
+    display: none !important;
+  }
+  .chat-action-row-mobile {
+    display: flex !important;
+  }
 } 

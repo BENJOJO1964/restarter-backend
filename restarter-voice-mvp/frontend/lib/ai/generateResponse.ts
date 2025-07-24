@@ -1,16 +1,25 @@
 import axios from 'axios';
 
-export async function generateResponse(messages: { role: 'user' | 'assistant', content: string }[], apiKey: string): Promise<string> {
-  const res = await axios.post('https://api.openai.com/v1/chat/completions', {
-    model: 'gpt-4o',
-    messages,
-    max_tokens: 200,
-    temperature: 0.7,
-  }, {
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-  });
-  return res.data.choices[0].message.content.trim();
+export async function* generateResponse(userText: string, lang: string, systemPrompt: string): AsyncGenerator<string> {
+  try {
+    const response = await axios.post('/api/gpt', {
+      messages: [
+        { sender: 'user', text: userText }
+      ],
+      system_prompt: systemPrompt
+    });
+    
+    const reply = response.data.reply;
+    if (reply) {
+      // 模擬流式輸出
+      const words = reply.split('');
+      for (const word of words) {
+        yield word;
+        await new Promise(resolve => setTimeout(resolve, 50)); // 50ms 延遲
+      }
+    }
+  } catch (error) {
+    console.error('Error calling GPT API:', error);
+    yield '抱歉，我現在無法回應，請稍後再試。';
+  }
 } 
