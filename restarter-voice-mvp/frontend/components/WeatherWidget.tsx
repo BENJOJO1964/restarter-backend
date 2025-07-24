@@ -475,16 +475,16 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         justifyContent: 'space-between',
         gap: '8px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           <img 
             src="/weather-icons/01d.png" 
             alt={localizedWeather.description}
-            style={{ width: '20px', height: '20px' }}
+            style={{ width: '16px', height: '16px' }}
           />
           <div style={{ fontSize: '14px', fontWeight: 600, color: '#6B5BFF' }}>
             {localizedWeather.temp}°C
           </div>
-          <div style={{ fontSize: '12px', color: '#666' }}>
+          <div style={{ fontSize: '10px', color: '#666' }}>
             {localizedWeather.description}
           </div>
         </div>
