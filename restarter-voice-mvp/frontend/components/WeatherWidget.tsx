@@ -45,7 +45,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
             navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
           });
           
-          const response = await fetch(`/api/weather/current?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+          const response = await fetch(`https://restarter-backend-6e9s.onrender.com/api/weather/current?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
           const data = await response.json();
           
           if (data.weather) {
@@ -58,7 +58,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
       }
       
       // 使用預設城市
-      const response = await fetch(`/api/weather/current?city=${location.city}`);
+      const response = await fetch(`https://restarter-backend-6e9s.onrender.com/api/weather/current?city=${location.city}`);
       const data = await response.json();
       
       if (data.weather) {
