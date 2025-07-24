@@ -17,6 +17,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   requiredPlan = 'basic'
 }) => {
   const navigate = useNavigate();
+  const isMobile = window.innerWidth <= 768;
 
   if (!isOpen) return null;
 
@@ -43,7 +44,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       <div style={{
         background: '#fff',
         borderRadius: 16,
-        padding: 32,
+        padding: isMobile ? 20 : 32,
         maxWidth: 400,
         width: '90%',
         maxHeight: '80vh',
@@ -53,8 +54,8 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       }}>
         {/* 圖標 */}
         <div style={{
-          fontSize: 48,
-          marginBottom: 16,
+          fontSize: isMobile ? 36 : 48,
+          marginBottom: isMobile ? 12 : 16,
           color: '#6B5BFF'
         }}>
           🚀
@@ -62,19 +63,19 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 
         {/* 標題 */}
         <h2 style={{
-          fontSize: 24,
+          fontSize: isMobile ? 20 : 24,
           fontWeight: 700,
           color: '#333',
-          marginBottom: 12
+          marginBottom: isMobile ? 8 : 12
         }}>
           {title}
         </h2>
 
         {/* 訊息 */}
         <p style={{
-          fontSize: 16,
+          fontSize: isMobile ? 14 : 16,
           color: '#666',
-          marginBottom: 20,
+          marginBottom: isMobile ? 16 : 20,
           lineHeight: 1.6
         }}>
           {message}
@@ -84,20 +85,20 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         <div style={{
           background: 'linear-gradient(135deg, #f8f9ff 0%, #e8f4ff 100%)',
           borderRadius: 12,
-          padding: 16,
-          marginBottom: 24,
+          padding: isMobile ? 12 : 16,
+          marginBottom: isMobile ? 16 : 24,
           border: '1px solid #e0e8ff'
         }}>
           <div style={{
-            fontSize: 14,
+            fontSize: isMobile ? 12 : 14,
             color: '#6B5BFF',
             fontWeight: 600,
-            marginBottom: 8
+            marginBottom: isMobile ? 6 : 8
           }}>
             💡 升級小提醒
           </div>
           <div style={{
-            fontSize: 13,
+            fontSize: isMobile ? 11 : 13,
             color: '#666',
             lineHeight: 1.4
           }}>
@@ -112,13 +113,13 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           <div style={{
             background: '#fff',
             borderRadius: 10,
-            padding: 14,
-            marginBottom: 24,
+            padding: isMobile ? 10 : 14,
+            marginBottom: isMobile ? 16 : 24,
             border: '2px solid #6B5BFF',
             boxShadow: '0 2px 8px #6B5BFF22'
           }}>
             <span style={{
-              fontSize: 14,
+              fontSize: isMobile ? 12 : 14,
               color: '#6B5BFF',
               fontWeight: 700
             }}>
