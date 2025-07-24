@@ -46,6 +46,8 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         padding: 32,
         maxWidth: 400,
         width: '90%',
+        maxHeight: '80vh',
+        overflowY: 'auto',
         textAlign: 'center',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
       }}>
