@@ -54,7 +54,24 @@ router.get('/current', async (req, res) => {
 
     res.json({ weather });
   } catch (error) {
-    console.error('Weather API error:', error);
+    console.error('Weather API error:', error.response?.data || error.message);
+    console.error('API Key exists:', !!OPENWEATHER_API_KEY);
+    console.error('Request URL:', url);
+    
+    // 如果是API Key問題，返回預設數據
+    if (error.response?.status === 401) {
+      return res.status(200).json({ 
+        weather: {
+          temp: 25,
+          description: '晴天',
+          icon: '01d',
+          humidity: 60,
+          windSpeed: 5,
+          city: city || '台北'
+        }
+      });
+    }
+    
     res.status(500).json({ 
       error: '無法獲取天氣資訊',
       weather: {
