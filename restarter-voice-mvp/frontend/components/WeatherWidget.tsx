@@ -32,6 +32,15 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
     fetchWeather();
   }, [lang]);
 
+  // 強制顯示預設天氣，不管API是否成功
+  const defaultWeather = {
+    temp: 25,
+    description: '晴天',
+    icon: '01d',
+    city: '台北',
+    weekday: '星期四'
+  };
+
   const fetchWeather = async () => {
     try {
       setLoading(true);
@@ -447,217 +456,49 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
     return `星期${weekdays[date.getDay()]}`;
   };
 
-  if (loading) {
-    return (
-      <div className={`weather-widget loading ${className}`}>
-        <div className="weather-skeleton">
-          <div className="temp-skeleton"></div>
-          <div className="desc-skeleton"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !weather) {
-    // 如果沒有天氣數據，顯示預設天氣而不是錯誤訊息
-    const defaultWeather = {
-      temp: 25,
-      description: '晴天',
-      icon: '01d',
-      city: '台北',
-      weekday: '星期四'
-    };
-    const localizedDefault = getLocalizedWeather(defaultWeather);
-    return (
-      <div className={`weather-widget ${className}`}>
-        <div className="weather-main">
-          <div className="weather-icon">
-            <img src="/weather-icons/01d.png" alt={localizedDefault.description} />
-          </div>
-          <div className="weather-temp">{localizedDefault.temp}°C</div>
-          <div className="weather-desc">{localizedDefault.description}</div>
-          <div className="weather-city">{localizedDefault.city}</div>
-          <div className="weather-weekday">{localizedDefault.weekday}</div>
-        </div>
-        
-        <style>{`
-          .weather-widget {
-            background: #ffffff !important;
-            border-radius: 8px !important;
-            padding: 8px 12px !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-            margin-top: 8px !important;
-          }
-          
-          .weather-main {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            gap: 8px !important;
-          }
-          
-          .weather-icon img {
-            width: 20px !important;
-            height: 20px !important;
-          }
-          
-          .weather-temp {
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            color: #6B5BFF !important;
-            line-height: 1 !important;
-          }
-          
-          .weather-desc {
-            font-size: 12px !important;
-            color: #666 !important;
-          }
-          
-          .weather-city {
-            font-size: 12px !important;
-            color: #666 !important;
-          }
-          
-          .weather-weekday {
-            font-size: 12px !important;
-            color: #666 !important;
-          }
-        `}</style>
-      </div>
-    );
-  }
+  // 簡化邏輯，強制顯示白色卡片樣式
+  const displayWeather = weather || defaultWeather;
+  const localizedWeather = getLocalizedWeather(displayWeather);
 
   return (
-    <div className={`weather-widget ${className}`}>
-      <div className="weather-main">
-        <div className="weather-icon">
-          <img src={getWeatherIcon(weather.icon)} alt={weather.description} />
+    <div className={`weather-widget ${className}`} style={{
+      background: '#ffffff',
+      borderRadius: '8px',
+      padding: '8px 12px',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      marginTop: '8px'
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '8px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <img 
+            src="/weather-icons/01d.png" 
+            alt={localizedWeather.description}
+            style={{ width: '20px', height: '20px' }}
+          />
+          <div style={{ fontSize: '14px', fontWeight: 600, color: '#6B5BFF' }}>
+            {localizedWeather.temp}°C
+          </div>
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            {localizedWeather.description}
+          </div>
         </div>
-        <div className="weather-temp">{weather.temp}°C</div>
-        <div className="weather-desc">{weather.description}</div>
-        <div className="weather-city">{weather.city}</div>
-        <div className="weather-weekday">{weather.weekday}</div>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          {localizedWeather.city}
+        </div>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          {localizedWeather.weekday}
+        </div>
       </div>
-      
-      {showDetails && (
-        <div className="weather-details">
-          <div className="weather-detail-item">
-            <span>體感溫度</span>
-            <span>{weather.feelsLike}°C</span>
-          </div>
-          <div className="weather-detail-item">
-            <span>濕度</span>
-            <span>{weather.humidity}%</span>
-          </div>
-          <div className="weather-detail-item">
-            <span>風速</span>
-            <span>{weather.windSpeed} m/s</span>
-          </div>
-          <div className="weather-detail-item">
-            <span>能見度</span>
-            <span>{weather.visibility} km</span>
-          </div>
-        </div>
-      )}
-      
-      <style>{`
-        .weather-widget {
-          background: #ffffff !important;
-          border-radius: 8px !important;
-          padding: 8px 12px !important;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-          margin-top: 8px !important;
-        }
-        
-        .weather-main {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: space-between !important;
-          gap: 8px !important;
-        }
-        
-        .weather-icon img {
-          width: 20px !important;
-          height: 20px !important;
-        }
-        
-        .weather-temp {
-          font-size: 14px !important;
-          font-weight: 600 !important;
-          color: #6B5BFF !important;
-          line-height: 1 !important;
-        }
-        
-        .weather-desc {
-          font-size: 12px !important;
-          color: #666 !important;
-        }
-        
-        .weather-city {
-          font-size: 12px !important;
-          color: #666 !important;
-        }
-        
-        .weather-weekday {
-          font-size: 12px !important;
-          color: #666 !important;
-        }
-        
-        .weather-details {
-          margin-top: 12px;
-          padding-top: 12px;
-          border-top: 1px solid #eee;
-        }
-        
-        .weather-detail-item {
-          display: flex;
-          justify-content: space-between;
-          font-size: 12px;
-          color: #666;
-          margin-bottom: 4px;
-        }
-        
-        .weather-error {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: #999;
-          font-size: 14px;
-        }
-        
-        .weather-skeleton {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-        
-        .temp-skeleton {
-          width: 60px;
-          height: 24px;
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-          background-size: 200% 100%;
-          animation: loading 1.5s infinite;
-          border-radius: 4px;
-        }
-        
-        .desc-skeleton {
-          width: 80px;
-          height: 14px;
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-          background-size: 200% 100%;
-          animation: loading 1.5s infinite;
-          border-radius: 4px;
-        }
-        
-        @keyframes loading {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-      `}</style>
     </div>
   );
+
+
 };
 
 export default WeatherWidget; 
