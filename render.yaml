@@ -17,6 +17,7 @@ services:
   - type: web
     name: restarter-backend
     env: node
+    plan: free
     buildCommand: cd restarter-voice-mvp/backend && npm install
     startCommand: cd restarter-voice-mvp/backend && node -r dotenv/config server.js
     envVars:
