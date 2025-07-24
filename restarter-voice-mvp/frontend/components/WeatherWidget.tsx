@@ -39,12 +39,15 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
       
       // 使用預設城市，不根據瀏覽器位置
       const defaultCity = '台北';
+      console.log('Fetching weather for:', defaultCity);
       const response = await fetch(`https://restarter-backend-6e9s.onrender.com/api/weather/current?city=${defaultCity}`);
       const data = await response.json();
+      console.log('Weather API response:', data);
       
       if (data.weather) {
         // 使用本地化顯示
         const localizedWeather = getLocalizedWeather(data.weather);
+        console.log('Localized weather:', localizedWeather);
         setWeather(localizedWeather);
       } else {
         setError(data.error || '無法獲取天氣資訊');
