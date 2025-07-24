@@ -55,7 +55,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
       
       if (data.weather) {
         // 使用本地化顯示
-        const localizedWeather = getLocalizedWeather(data.weather);
+        const localizedWeather = getLocalizedWeather(data.weather, lang);
         console.log('Localized weather:', localizedWeather);
         setWeather(localizedWeather);
       } else {
@@ -70,7 +70,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
   };
 
   // 獲取本地化天氣顯示
-  const getLocalizedWeather = (weather: any) => {
+  const getLocalizedWeather = (weather: any, currentLang: string) => {
     // 天氣描述多語言映射
     const weatherDescMap: Record<string, Record<string, string>> = {
       'zh-TW': {
@@ -435,9 +435,9 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
     };
 
     // 獲取本地化內容
-    const localizedDesc = weatherDescMap[lang]?.[weather.description.toLowerCase()] || weather.description;
-    const localizedCity = cityNameMap[lang]?.[weather.city] || weather.city;
-    const currentWeekday = weekdayMap[lang]?.[new Date().getDay()] || weekdayMap['en'][new Date().getDay()];
+    const localizedDesc = weatherDescMap[currentLang]?.[weather.description.toLowerCase()] || weather.description;
+    const localizedCity = cityNameMap[currentLang]?.[weather.city] || weather.city;
+    const currentWeekday = weekdayMap[currentLang]?.[new Date().getDay()] || weekdayMap['en'][new Date().getDay()];
 
     return {
       ...weather,
@@ -458,7 +458,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
 
   // 簡化邏輯，強制顯示白色卡片樣式
   const displayWeather = weather || defaultWeather;
-  const localizedWeather = getLocalizedWeather(displayWeather);
+  const localizedWeather = getLocalizedWeather(displayWeather, lang);
 
   return (
     <div className={`weather-widget ${className}`} style={{
@@ -476,9 +476,6 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         gap: '8px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ fontSize: '16px' }}>
-            ☀️
-          </span>
           <div style={{ fontSize: '14px', fontWeight: 600, color: '#6B5BFF' }}>
             {localizedWeather.temp}°C
           </div>
