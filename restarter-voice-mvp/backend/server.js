@@ -109,6 +109,11 @@ app.get('/', (req, res) => {
   });
 });
 
+// 處理favicon請求，避免404錯誤
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end(); // 返回無內容狀態
+});
+
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
