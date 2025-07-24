@@ -35,9 +35,9 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
   // 強制顯示預設天氣，不管API是否成功
   const defaultWeather = {
     temp: 25,
-    description: '晴天',
+    description: 'clear sky',
     icon: '01d',
-    city: '台北',
+    city: 'Taipei',
     weekday: '星期四'
   };
 
@@ -476,11 +476,9 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         gap: '8px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <img 
-            src="/weather-icons/01d.png" 
-            alt={localizedWeather.description}
-            style={{ width: '16px', height: '16px' }}
-          />
+          <span style={{ fontSize: '16px' }}>
+            ☀️
+          </span>
           <div style={{ fontSize: '14px', fontWeight: 600, color: '#6B5BFF' }}>
             {localizedWeather.temp}°C
           </div>
