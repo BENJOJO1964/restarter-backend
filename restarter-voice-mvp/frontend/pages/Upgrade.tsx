@@ -183,7 +183,7 @@ export default function Upgrade() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f7faff', padding: 0 }}>
+    <div style={{ minHeight: '100vh', background: '#f7faff', padding: 0, overflowY: 'auto' }}>
       {/* 左上角返回按鈕 */}
       <button onClick={() => navigate('/plans')} style={{ position: 'absolute', top: 24, left: 24, zIndex: 10, background: '#fff', border: '1.5px solid #6B5BFF', color: '#6B5BFF', borderRadius: 8, padding: '6px 18px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #0001' }}>← 返回</button>
       
