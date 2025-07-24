@@ -518,12 +518,12 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
       
       <style>{`
         .weather-widget {
-          background: #ffffff;
-          border-radius: 8px;
-          padding: 8px 12px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          margin-top: 8px;
+          background: #ffffff !important;
+          border-radius: 8px !important;
+          padding: 8px 12px !important;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+          margin-top: 8px !important;
         }
         
         .weather-main {
