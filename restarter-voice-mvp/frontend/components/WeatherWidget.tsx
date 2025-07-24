@@ -476,6 +476,9 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         gap: '8px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ fontSize: '16px' }}>
+            ☀️
+          </span>
           <div style={{ fontSize: '14px', fontWeight: 600, color: '#6B5BFF' }}>
             {localizedWeather.temp}°C
           </div>
