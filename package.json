@@ -1,15 +1,20 @@
 {
+  "scripts": {
+    "build": "cd restarter-voice-mvp/frontend && npm run build"
+  },
   "dependencies": {
-    "@types/react-router-dom": "^5.3.3",
-    "@vitejs/plugin-react": "^4.5.1",
-    "axios": "^1.9.0",
+    "axios": "^1.10.0",
+    "dotenv": "^17.0.1",
     "firebase": "^11.9.1",
+    "i18next": "^25.3.0",
+    "react-i18next": "^15.5.3",
     "react-router-dom": "^7.6.2"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.10",
-    "vite": "^6.3.5"
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "eslint": "^9.31.0",
+    "eslint-plugin-react": "^7.37.5",
+    "typescript": "^5.8.3"
   }
 }
