@@ -37,7 +37,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
       setError(null);
       
       // 嘗試獲取用戶位置
-      let location = { city: '台北' };
+      let location = { city: '台北', country: 'TW' };
       
       if (navigator.geolocation) {
         try {
@@ -45,24 +45,44 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
             navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
           });
           
+          // 使用經緯度獲取天氣和位置信息
           const response = await fetch(`https://restarter-backend-6e9s.onrender.com/api/weather/current?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
           const data = await response.json();
           
           if (data.weather) {
-            setWeather(data.weather);
+            // 根據國家代碼自動切換語言顯示
+            const cityName = getLocalizedCityName(data.weather.city, data.weather.country);
+            setWeather({
+              ...data.weather,
+              city: cityName
+            });
             return;
           }
         } catch (geoError) {
-          console.log('無法獲取位置，使用預設城市');
+          console.log('無法獲取GPS位置，嘗試IP定位');
+          // 嘗試使用IP定位
+          try {
+            const response = await fetch(`https://restarter-backend-6e9s.onrender.com/api/weather/location`);
+            const locationData = await response.json();
+            if (locationData.city) {
+              location = locationData;
+            }
+          } catch (ipError) {
+            console.log('無法獲取IP位置，使用預設城市');
+          }
         }
       }
       
-      // 使用預設城市
+      // 使用預設或IP定位的城市
       const response = await fetch(`https://restarter-backend-6e9s.onrender.com/api/weather/current?city=${location.city}`);
       const data = await response.json();
       
       if (data.weather) {
-        setWeather(data.weather);
+        const cityName = getLocalizedCityName(data.weather.city, data.weather.country);
+        setWeather({
+          ...data.weather,
+          city: cityName
+        });
       } else {
         setError(data.error || '無法獲取天氣資訊');
       }
@@ -72,6 +92,69 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
     } finally {
       setLoading(false);
     }
+  };
+
+  // 根據國家代碼和語言獲取本地化城市名稱
+  const getLocalizedCityName = (city: string, country: string) => {
+    const cityMap: Record<string, Record<string, Record<string, string>>> = {
+      'TW': {
+        'zh-TW': {
+          'Taipei': '台北',
+          'Taichung': '台中',
+          'Tainan': '台南',
+          'Kaohsiung': '高雄',
+          'New Taipei': '新北',
+          'Taoyuan': '桃園',
+          'Hsinchu': '新竹',
+          'Chiayi': '嘉義',
+          'Keelung': '基隆',
+          'Hualien': '花蓮',
+          'Taitung': '台東',
+          'Pingtung': '屏東',
+          'Yilan': '宜蘭',
+          'Nantou': '南投',
+          'Yunlin': '雲林',
+          'Changhua': '彰化',
+          'Miaoli': '苗栗'
+        }
+      },
+      'JP': {
+        'ja': {
+          'Tokyo': '東京',
+          'Osaka': '大阪',
+          'Kyoto': '京都',
+          'Yokohama': '横浜',
+          'Nagoya': '名古屋',
+          'Sapporo': '札幌',
+          'Kobe': '神戸',
+          'Fukuoka': '福岡',
+          'Kawasaki': '川崎',
+          'Saitama': 'さいたま'
+        }
+      },
+      'KR': {
+        'ko': {
+          'Seoul': '서울',
+          'Busan': '부산',
+          'Incheon': '인천',
+          'Daegu': '대구',
+          'Daejeon': '대전',
+          'Gwangju': '광주',
+          'Suwon': '수원',
+          'Ulsan': '울산',
+          'Seongnam': '성남',
+          'Bucheon': '부천'
+        }
+      }
+    };
+
+    // 根據當前語言和國家代碼獲取本地化名稱
+    const countryMap = cityMap[country];
+    if (countryMap && countryMap[lang]) {
+      return countryMap[lang][city] || city;
+    }
+    
+    return city;
   };
 
   const getWeatherIcon = (iconCode: string) => {

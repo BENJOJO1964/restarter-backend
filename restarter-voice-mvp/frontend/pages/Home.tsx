@@ -885,10 +885,6 @@ export default function Home() {
               <img src="/ctx-logo.png" className="fixed-logo-img" style={{ marginBottom: 0, width: 182, height: 182, cursor: 'pointer', marginTop: '-40px' }} onClick={() => navigate('/')} />
             </div>
             <div className="column-content" style={{ justifyContent: 'center', alignItems: 'center', height: '100%', paddingTop: 48 }}>
-              {/* 天氣組件 */}
-              <div style={{ marginBottom: 20, width: '100%', maxWidth: 300 }}>
-                <WeatherWidget />
-              </div>
               
               {/* 恢復主標語、主標題、說明等重要文字內容 */}
               <div
@@ -1047,6 +1043,10 @@ export default function Home() {
             {/* 新增：上方按鈕區塊 */}
             <div style={{ display: 'flex', gap: 18, marginBottom: 18, justifyContent: 'center', width: '100%' }}>
               <a href="/plans" style={{ background: '#6B5BFF', color: '#fff', fontWeight: 700, fontSize: 18, padding: '10px 28px', borderRadius: 10, boxShadow: '0 2px 8px #6B5BFF33', textDecoration: 'none', border: '2px solid #6B5BFF', cursor: 'pointer' }}>{MEMBER_BENEFITS_TEXT[lang]}</a>
+            </div>
+            {/* 天氣組件 - 移動到訂閱方案按鈕下方 */}
+            <div style={{ marginBottom: 18, width: '100%', maxWidth: 300 }}>
+              <WeatherWidget />
             </div>
             <img src="/hero-mic.jpg" className="home-mic-img" style={{ marginBottom: 0, height: 'calc(100vh - 180px)', maxHeight: 520, minHeight: 320, width: '100%', objectFit: 'contain', background: '#232946' }} />
             <button
