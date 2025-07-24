@@ -10,7 +10,6 @@ if (!admin.apps.length) {
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
-const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
@@ -86,8 +85,29 @@ app.use('/api/mood', moodRouter);
 app.use('/api/feedback', feedbackRouter);
 app.use('/api/subscription', subscriptionRouter);
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+// 後端只提供API，不提供靜態文件
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Restarter Backend API', 
+    status: 'running',
+    endpoints: [
+      '/api/tts',
+      '/api/gpt', 
+      '/api/whisper',
+      '/api/quotes',
+      '/api/coaching',
+      '/api/scenarios',
+      '/api/mind-garden',
+      '/api/mission-ai',
+      '/api/story',
+      '/api/check-username',
+      '/api/send-message',
+      '/api/mood',
+      '/api/feedback',
+      '/api/subscription'
+    ]
+  });
+});
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
