@@ -479,6 +479,51 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
           <div className="weather-city">{localizedDefault.city}</div>
           <div className="weather-weekday">{localizedDefault.weekday}</div>
         </div>
+        
+        <style>{`
+          .weather-widget {
+            background: #ffffff !important;
+            border-radius: 8px !important;
+            padding: 8px 12px !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            margin-top: 8px !important;
+          }
+          
+          .weather-main {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+          }
+          
+          .weather-icon img {
+            width: 20px !important;
+            height: 20px !important;
+          }
+          
+          .weather-temp {
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: #6B5BFF !important;
+            line-height: 1 !important;
+          }
+          
+          .weather-desc {
+            font-size: 12px !important;
+            color: #666 !important;
+          }
+          
+          .weather-city {
+            font-size: 12px !important;
+            color: #666 !important;
+          }
+          
+          .weather-weekday {
+            font-size: 12px !important;
+            color: #666 !important;
+          }
+        `}</style>
       </div>
     );
   }
@@ -527,37 +572,37 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         }
         
         .weather-main {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 8px;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          gap: 8px !important;
         }
         
         .weather-icon img {
-          width: 20px;
-          height: 20px;
+          width: 20px !important;
+          height: 20px !important;
         }
         
         .weather-temp {
-          font-size: 14px;
-          font-weight: 600;
-          color: #6B5BFF;
-          line-height: 1;
+          font-size: 14px !important;
+          font-weight: 600 !important;
+          color: #6B5BFF !important;
+          line-height: 1 !important;
         }
         
         .weather-desc {
-          font-size: 12px;
-          color: #666;
+          font-size: 12px !important;
+          color: #666 !important;
         }
         
         .weather-city {
-          font-size: 12px;
-          color: #666;
+          font-size: 12px !important;
+          color: #666 !important;
         }
         
         .weather-weekday {
-          font-size: 12px;
-          color: #666;
+          font-size: 12px !important;
+          color: #666 !important;
         }
         
         .weather-details {
