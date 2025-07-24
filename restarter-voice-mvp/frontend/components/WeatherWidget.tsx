@@ -108,13 +108,18 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
   return (
     <div className={`weather-widget ${className}`}>
       <div className="weather-main">
-        <div className="weather-icon">
-          <img src={getWeatherIcon(weather.icon)} alt={weather.description} />
+        <div className="weather-left">
+          <div className="weather-icon">
+            <img src={getWeatherIcon(weather.icon)} alt={weather.description} />
+          </div>
+          <div className="weather-info">
+            <div className="weather-temp">{weather.temp}°C</div>
+            <div className="weather-desc">{weather.description}</div>
+            <div className="weather-city">{weather.city}</div>
+          </div>
         </div>
-        <div className="weather-info">
-          <div className="weather-temp">{weather.temp}°C</div>
-          <div className="weather-desc">{weather.description}</div>
-          <div className="weather-city">{weather.city}</div>
+        <div className="weather-right">
+          <div className="weather-weekday">{getWeekdayText(new Date())}</div>
         </div>
       </div>
       
@@ -142,21 +147,28 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
       <style>{`
         .weather-widget {
           background: rgba(255, 255, 255, 0.95);
-          border-radius: 16px;
-          padding: 16px;
-          box-shadow: 0 2px 12px rgba(107, 91, 255, 0.1);
+          border-radius: 12px;
+          padding: 12px;
+          box-shadow: 0 2px 8px rgba(107, 91, 255, 0.1);
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         
         .weather-main {
           display: flex;
           align-items: center;
-          gap: 12px;
+          justify-content: space-between;
+          gap: 8px;
+        }
+        
+        .weather-left {
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
         
         .weather-icon img {
-          width: 48px;
-          height: 48px;
+          width: 32px;
+          height: 32px;
         }
         
         .weather-info {
@@ -164,22 +176,36 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         }
         
         .weather-temp {
-          font-size: 24px;
+          font-size: 18px;
           font-weight: 700;
           color: #6B5BFF;
           line-height: 1;
         }
         
         .weather-desc {
-          font-size: 14px;
+          font-size: 12px;
           color: #666;
-          margin-top: 2px;
+          margin-top: 1px;
         }
         
         .weather-city {
-          font-size: 12px;
+          font-size: 10px;
           color: #999;
-          margin-top: 2px;
+          margin-top: 1px;
+        }
+        
+        .weather-right {
+          display: flex;
+          align-items: center;
+        }
+        
+        .weather-weekday {
+          font-size: 12px;
+          color: #6B5BFF;
+          font-weight: 600;
+          padding: 4px 8px;
+          background: rgba(107, 91, 255, 0.1);
+          border-radius: 6px;
         }
         
         .weather-details {
