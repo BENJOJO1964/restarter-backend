@@ -13,6 +13,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
   featureName
 }) => {
   const navigate = useNavigate();
+  const isMobile = window.innerWidth <= 768;
 
   if (!isOpen) return null;
 
@@ -64,16 +65,18 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
       <div style={{
         background: '#fff',
         borderRadius: 20,
-        padding: 32,
+        padding: isMobile ? 20 : 32,
         maxWidth: 480,
         width: '90%',
+        maxHeight: '80vh',
+        overflowY: 'auto',
         textAlign: 'center',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
       }}>
         {/* 圖標 */}
         <div style={{
-          fontSize: 48,
-          marginBottom: 16,
+          fontSize: isMobile ? 36 : 48,
+          marginBottom: isMobile ? 12 : 16,
           color: '#6B5BFF'
         }}>
           🚀
@@ -81,19 +84,19 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
         {/* 標題 */}
         <h2 style={{
-          fontSize: 24,
+          fontSize: isMobile ? 20 : 24,
           fontWeight: 700,
           color: '#333',
-          marginBottom: 12
+          marginBottom: isMobile ? 8 : 12
         }}>
           升級方案，解鎖 {featureName}
         </h2>
 
         {/* 友善說明 */}
         <p style={{
-          fontSize: 16,
+          fontSize: isMobile ? 14 : 16,
           color: '#666',
-          marginBottom: 20,
+          marginBottom: isMobile ? 16 : 20,
           lineHeight: 1.6
         }}>
           您目前使用的是免費方案，{featureName} 需要升級才能使用。
