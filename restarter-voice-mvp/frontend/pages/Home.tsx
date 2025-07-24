@@ -871,7 +871,10 @@ export default function Home() {
           
           {/* 手機版額外按鈕 */}
           <div style={{ width: '100%', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 12, boxSizing: 'border-box' }}>
-            <button onClick={() => navigate('/profile')} style={{ width: '100%', padding: '12px', borderRadius: 10, border: '2px solid #6B5BFF', background: '#fff', color: '#6B5BFF', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxSizing: 'border-box' }}>{PROFILE_MANAGEMENT_TEXT[lang]}</button>
+            {/* 手機版天氣組件 */}
+            <div style={{ marginBottom: 12, width: '100%' }}>
+              <WeatherWidget />
+            </div>
             <a href="/plans" style={{ width: '100%', padding: '12px', borderRadius: 10, background: '#6B5BFF', color: '#fff', fontWeight: 700, fontSize: 14, textDecoration: 'none', border: '2px solid #6B5BFF', cursor: 'pointer', textAlign: 'center', display: 'block', boxSizing: 'border-box' }}>{MEMBER_BENEFITS_TEXT[lang]}</a>
           </div>
         </div>

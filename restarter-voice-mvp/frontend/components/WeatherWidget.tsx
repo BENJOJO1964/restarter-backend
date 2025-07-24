@@ -30,7 +30,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
 
   useEffect(() => {
     fetchWeather();
-  }, []);
+  }, [lang]);
 
   const fetchWeather = async () => {
     try {
