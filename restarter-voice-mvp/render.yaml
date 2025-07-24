@@ -3,8 +3,8 @@ services:
   - type: web
     name: restarter-frontend
     env: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: ./frontend/dist
+    buildCommand: cd restarter-voice-mvp/frontend && npm install && npm run build
+    staticPublishPath: ./restarter-voice-mvp/frontend/dist
     routes:
       - type: rewrite
         source: /api/*
@@ -17,8 +17,8 @@ services:
   - type: web
     name: restarter-backend
     env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && node -r dotenv/config server.js
+    buildCommand: cd restarter-voice-mvp/backend && npm install
+    startCommand: cd restarter-voice-mvp/backend && node -r dotenv/config server.js
     envVars:
       - key: NODE_ENV
         value: production
