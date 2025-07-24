@@ -460,24 +460,24 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
 
   if (error || !weather) {
     // 如果沒有天氣數據，顯示預設天氣而不是錯誤訊息
+    const defaultWeather = {
+      temp: 25,
+      description: '晴天',
+      icon: '01d',
+      city: '台北',
+      weekday: '星期四'
+    };
+    const localizedDefault = getLocalizedWeather(defaultWeather);
     return (
       <div className={`weather-widget ${className}`}>
         <div className="weather-main">
-          <div className="weather-left">
-            <div className="weather-icon">
-              <img src="/weather-icons/01d.png" alt="晴天" />
-            </div>
-            <div className="weather-info">
-              <div className="weather-temp">25°C</div>
-              <div className="weather-desc">晴天</div>
-            </div>
+          <div className="weather-icon">
+            <img src="/weather-icons/01d.png" alt={localizedDefault.description} />
           </div>
-          <div className="weather-center">
-            <div className="weather-city">台北</div>
-          </div>
-          <div className="weather-right">
-            <div className="weather-weekday">星期四</div>
-          </div>
+          <div className="weather-temp">{localizedDefault.temp}°C</div>
+          <div className="weather-desc">{localizedDefault.description}</div>
+          <div className="weather-city">{localizedDefault.city}</div>
+          <div className="weather-weekday">{localizedDefault.weekday}</div>
         </div>
       </div>
     );
@@ -486,21 +486,13 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
   return (
     <div className={`weather-widget ${className}`}>
       <div className="weather-main">
-        <div className="weather-left">
-          <div className="weather-icon">
-            <img src={getWeatherIcon(weather.icon)} alt={weather.description} />
-          </div>
-          <div className="weather-info">
-            <div className="weather-temp">{weather.temp}°C</div>
-            <div className="weather-desc">{weather.description}</div>
-          </div>
+        <div className="weather-icon">
+          <img src={getWeatherIcon(weather.icon)} alt={weather.description} />
         </div>
-        <div className="weather-center">
-          <div className="weather-city">{weather.city}</div>
-        </div>
-                     <div className="weather-right">
-               <div className="weather-weekday">{weather.weekday}</div>
-             </div>
+        <div className="weather-temp">{weather.temp}°C</div>
+        <div className="weather-desc">{weather.description}</div>
+        <div className="weather-city">{weather.city}</div>
+        <div className="weather-weekday">{weather.weekday}</div>
       </div>
       
       {showDetails && (
@@ -526,10 +518,10 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
       
       <style>{`
         .weather-widget {
-          background: rgba(255, 255, 255, 0.95);
-          border-radius: 10px;
+          background: #ffffff;
+          border-radius: 8px;
           padding: 8px 12px;
-          box-shadow: 0 2px 8px rgba(107, 91, 255, 0.1);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           margin-top: 8px;
         }
@@ -538,62 +530,34 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 6px;
-        }
-        
-        .weather-left {
-          display: flex;
-          align-items: center;
-          gap: 6px;
+          gap: 8px;
         }
         
         .weather-icon img {
-          width: 28px;
-          height: 28px;
-        }
-        
-        .weather-info {
-          flex: 1;
+          width: 20px;
+          height: 20px;
         }
         
         .weather-temp {
-          font-size: 16px;
-          font-weight: 700;
+          font-size: 14px;
+          font-weight: 600;
           color: #6B5BFF;
           line-height: 1;
         }
         
         .weather-desc {
-          font-size: 11px;
+          font-size: 12px;
           color: #666;
-          margin-top: 1px;
-        }
-        
-        .weather-center {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex: 1;
         }
         
         .weather-city {
-          font-size: 10px;
+          font-size: 12px;
           color: #666;
-          text-align: center;
-        }
-        
-        .weather-right {
-          display: flex;
-          align-items: center;
         }
         
         .weather-weekday {
-          font-size: 11px;
-          color: #6B5BFF;
-          font-weight: 600;
-          padding: 3px 6px;
-          background: rgba(107, 91, 255, 0.1);
-          border-radius: 4px;
+          font-size: 12px;
+          color: #666;
         }
         
         .weather-details {
