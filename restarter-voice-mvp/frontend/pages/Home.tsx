@@ -721,6 +721,11 @@ export default function Home() {
         // 手機版主內容
         <div style={{ width: '100vw', minHeight: '100vh', background: `url('/plains.png') center center/cover no-repeat`, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 100 }}>
           
+          {/* 手機版天氣組件 */}
+          <div style={{ width: '100%', padding: '0 16px', marginBottom: 16 }}>
+            <WeatherWidget />
+          </div>
+          
           {/* 手機版主標題區域 */}
           <div style={{ width: '100%', padding: '20px 16px', textAlign: 'center' }}>
             <div style={{ marginBottom: 16 }}>
@@ -866,10 +871,6 @@ export default function Home() {
           
           {/* 手機版額外按鈕 */}
           <div style={{ width: '100%', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 12, boxSizing: 'border-box' }}>
-            {/* 手機版天氣組件 */}
-            <div style={{ marginBottom: 12, width: '100%' }}>
-              <WeatherWidget />
-            </div>
             <a href="/plans" style={{ width: '100%', padding: '12px', borderRadius: 10, background: '#6B5BFF', color: '#fff', fontWeight: 700, fontSize: 14, textDecoration: 'none', border: '2px solid #6B5BFF', cursor: 'pointer', textAlign: 'center', display: 'block', boxSizing: 'border-box' }}>{MEMBER_BENEFITS_TEXT[lang]}</a>
           </div>
         </div>
