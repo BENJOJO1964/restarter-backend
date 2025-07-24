@@ -1,0 +1,26 @@
+services:
+  # 前端服務
+  - type: web
+    name: restarter-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: /index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # 後端 API 服務
+  - type: web
+    name: restarter-backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node -r dotenv/config server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001 
