@@ -7,9 +7,6 @@ services:
     staticPublishPath: ./restarter-voice-mvp/frontend/dist
     routes:
       - type: rewrite
-        source: /api/*
-        destination: /index.html
-      - type: rewrite
         source: /*
         destination: /index.html
 
