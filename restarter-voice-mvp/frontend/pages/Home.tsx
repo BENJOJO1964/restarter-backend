@@ -721,11 +721,6 @@ export default function Home() {
         // 手機版主內容
         <div style={{ width: '100vw', minHeight: '100vh', background: `url('/plains.png') center center/cover no-repeat`, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 100 }}>
           
-          {/* 手機版天氣組件 */}
-          <div style={{ width: '100%', padding: '0 16px', marginBottom: 16 }}>
-            <WeatherWidget />
-          </div>
-          
           {/* 手機版主標題區域 */}
           <div style={{ width: '100%', padding: '20px 16px', textAlign: 'center' }}>
             <div style={{ marginBottom: 16 }}>
