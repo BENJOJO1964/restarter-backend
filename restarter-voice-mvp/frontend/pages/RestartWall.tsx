@@ -985,8 +985,28 @@ export default function RestartWall() {
       </div>
       <div className="modern-container" style={{ maxWidth: 600, width: '100%', margin: '0 auto', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         {/* 主標題和按鈕 */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
-          <h2 className="modern-title" style={{ fontSize: '2.2rem', margin: 0, flex: 1, textAlign: 'center', color:'#6B5BFF', textShadow:'0 2px 12px #6B5BFF88, 0 4px 24px #0008', letterSpacing:1, display:'flex',alignItems:'center',gap:8 }}>{t.title}</h2>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          marginBottom: 24,
+          flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+          gap: window.innerWidth <= 768 ? 16 : 0
+        }}>
+          <h2 className="modern-title" style={{ 
+            fontSize: window.innerWidth <= 768 ? '1.8rem' : '2.2rem', 
+            margin: 0, 
+            flex: 1, 
+            textAlign: 'center', 
+            color:'#6B5BFF', 
+            textShadow:'0 2px 12px #6B5BFF88, 0 4px 24px #0008', 
+            letterSpacing: 1, 
+            display:'flex',
+            alignItems:'center',
+            gap: 8,
+            whiteSpace: 'nowrap',
+            flexWrap: 'wrap',
+            justifyContent: 'center'
+          }}>{t.title}</h2>
                     <button
             onClick={() => setShowMyMessages(!showMyMessages)}
             style={{
@@ -995,9 +1015,9 @@ export default function RestartWall() {
               border: 'none', 
               borderRadius: 12, 
               fontWeight: 900, 
-              fontSize: 17, 
-              padding: '10px 28px', 
-              marginLeft: 18, 
+              fontSize: window.innerWidth <= 768 ? 14 : 17, 
+              padding: window.innerWidth <= 768 ? '8px 20px' : '10px 28px', 
+              marginLeft: window.innerWidth <= 768 ? 0 : 18, 
               boxShadow: '0 2px 12px #6B5BFF33', 
               letterSpacing: 2,
               transition: 'all 0.3s ease'
@@ -1029,16 +1049,17 @@ export default function RestartWall() {
         <div style={{
           background: 'linear-gradient(135deg, rgba(107, 91, 255, 0.1) 0%, rgba(35, 198, 230, 0.1) 100%)',
           borderRadius: '20px',
-          padding: '24px',
+          padding: window.innerWidth <= 768 ? '16px' : '24px',
           marginBottom: '18px',
           border: '2px solid rgba(107, 91, 255, 0.2)',
           boxShadow: '0 8px 32px rgba(107, 91, 255, 0.15)',
           backdropFilter: 'blur(10px)',
-          textAlign: 'center'
+          textAlign: 'center',
+          marginTop: window.innerWidth <= 768 ? '20px' : '0'
         }}>
           <h3 style={{
             color: '#fff',
-            fontSize: '1.5rem',
+            fontSize: window.innerWidth <= 768 ? '1.2rem' : '1.5rem',
             fontWeight: '700',
             margin: '0 0 12px 0',
             textShadow: '0 2px 8px rgba(107, 91, 255, 0.3)'
@@ -1047,7 +1068,7 @@ export default function RestartWall() {
           </h3>
           <p style={{
             color: '#fff',
-            fontSize: '1rem',
+            fontSize: window.innerWidth <= 768 ? '0.9rem' : '1rem',
             lineHeight: '1.6',
             margin: '0',
             opacity: '0.9'
@@ -1058,13 +1079,19 @@ export default function RestartWall() {
         <div className="tone-list" style={{ marginBottom: 18 }}>
           {/* 移除語調選擇 */}
         </div>
-                <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
+                <div style={{ 
+                  display: 'flex', 
+                  gap: 12, 
+                  marginBottom: 18,
+                  flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+                  padding: window.innerWidth <= 768 ? '0 16px' : '0'
+                }}>
           <input
             className="quote-card"
             style={{ 
               flex: 1,
-              fontSize: 18, 
-              padding: '12px 16px', 
+              fontSize: window.innerWidth <= 768 ? 16 : 18, 
+              padding: window.innerWidth <= 768 ? '10px 14px' : '12px 16px', 
               border: 'none', 
               outline: 'none', 
               background: '#232946', 
@@ -1078,25 +1105,31 @@ export default function RestartWall() {
             onKeyDown={e => e.key === 'Enter' && handleSend()}
             disabled={loading}
           />
-          <button
-            className="tone-card selected"
-            style={{ 
-              fontSize: 16, 
-              padding: '10px 16px',
-              minWidth: '70px',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-              borderRadius: '8px'
-            }}
-            onClick={() => {
-              console.log('發送按鈕被點擊');
-              console.log('當前狀態:', { input, loading });
-              handleSend();
-            }}
-            disabled={loading}
-          >
-            {loading ? t.sending : t.send}
-          </button>
+          <div style={{
+            display: 'flex',
+            gap: 8,
+            flexDirection: window.innerWidth <= 768 ? 'row' : 'row',
+            justifyContent: window.innerWidth <= 768 ? 'space-between' : 'flex-start'
+          }}>
+            <button
+              className="tone-card selected"
+              style={{ 
+                fontSize: window.innerWidth <= 768 ? 14 : 16, 
+                padding: window.innerWidth <= 768 ? '8px 12px' : '10px 16px',
+                minWidth: window.innerWidth <= 768 ? '60px' : '70px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                borderRadius: '8px'
+              }}
+              onClick={() => {
+                console.log('發送按鈕被點擊');
+                console.log('當前狀態:', { input, loading });
+                handleSend();
+              }}
+              disabled={loading}
+            >
+              {loading ? t.sending : t.send}
+            </button>
           {/* 語音錄製按鈕 */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <button
@@ -1151,6 +1184,7 @@ export default function RestartWall() {
               </div>
             )}
           </div>
+        </div>
         </div>
         
         {/* 移除錄音狀態顯示 */}
