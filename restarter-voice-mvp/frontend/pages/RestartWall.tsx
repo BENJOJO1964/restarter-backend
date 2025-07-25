@@ -32,7 +32,7 @@ const TEXTS: Record<LanguageCode, any> = {
     subtitleDesc: '在這裡，每個人都能找到情感上的歸屬感和支援。分享你的心情，或為他人提供溫暖的支援留言，讓我們一起建立溫暖的社群。',
     inbox: '💌 我的留言箱',
     placeholder: '說出你的心聲...(200字內)',
-    send: '發送',
+    send: window.innerWidth <= 768 ? '送出' : '發送',
     sending: '發送中...',
     noMessages: '還沒有留言，快來發表你的心聲吧！',
     commentsTitle: '支援留言：',
@@ -974,7 +974,7 @@ export default function RestartWall() {
 
   return (
     <div className="modern-bg" style={{ 
-      background: window.innerWidth <= 768 ? '#ffffff' : '#8a8a8a', 
+      background: window.innerWidth <= 768 ? '#8a8a8a' : '#8a8a8a', 
       minHeight: '100vh', 
       display: 'flex', 
       flexDirection: 'column' 
@@ -1039,7 +1039,7 @@ export default function RestartWall() {
         position: 'relative',
         zIndex: 1,
         overflow: 'auto',
-        background: window.innerWidth <= 768 ? '#ffffff' : '#ffffff'
+        background: window.innerWidth <= 768 ? '#8a8a8a' : '#8a8a8a'
       }}>
         {/* 主標題和按鈕 */}
                   <div style={{ 
@@ -1049,7 +1049,8 @@ export default function RestartWall() {
             flexDirection: window.innerWidth <= 768 ? 'column' : 'column',
             gap: window.innerWidth <= 768 ? 8 : 8,
             width: '100%',
-            minHeight: window.innerWidth <= 768 ? 'auto' : 'auto'
+            minHeight: window.innerWidth <= 768 ? 'auto' : 'auto',
+            background: window.innerWidth <= 768 ? '#8a8a8a' : '#8a8a8a'
           }}>
                       <h2 className="modern-title" style={{ 
               fontSize: window.innerWidth <= 768 ? '1.2rem' : '1.2rem', 
@@ -1064,7 +1065,8 @@ export default function RestartWall() {
               gap: window.innerWidth <= 768 ? 2 : 2,
               whiteSpace: 'nowrap',
               flexWrap: 'wrap',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              background: window.innerWidth <= 768 ? '#8a8a8a' : '#8a8a8a'
             }}>{t.title}</h2>
                     <button
             onClick={() => setShowMyMessages(!showMyMessages)}
