@@ -4721,6 +4721,8 @@ function RacingGame({ onClose }: { onClose: () => void }) {
   const [showRules, setShowRules] = useState(false);
   const [showCollisionEffect, setShowCollisionEffect] = useState(false);
   const [isColliding, setIsColliding] = useState(false);
+  const [showExplosionEffect, setShowExplosionEffect] = useState(false);
+  const [explosionPosition, setExplosionPosition] = useState({ x: 0, y: 0 });
 
   // 多語言翻譯函數
   const getText = (key: string) => {
@@ -5049,10 +5051,16 @@ function RacingGame({ onClose }: { onClose: () => void }) {
                 setScore(prev => Math.max(0, prev - 10));
                 setIsColliding(true);
                 setShowCollisionEffect(true);
+                
+                // 設置爆炸效果位置
+                setExplosionPosition({ x: carPosition, y: 75 });
+                setShowExplosionEffect(true);
+                
                 setTimeout(() => {
                   setIsColliding(false);
                   setShowCollisionEffect(false);
-                }, 500);
+                  setShowExplosionEffect(false);
+                }, 800);
                 collisionOccurred = true;
               }
               return false; // 移除碰撞的障礙物
@@ -5133,12 +5141,36 @@ function RacingGame({ onClose }: { onClose: () => void }) {
         height: '100vh',
         background: 'linear-gradient(180deg, #87CEEB 0%, #98FB98 100%)',
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'auto',
         fontFamily: 'Arial, sans-serif',
-        touchAction: 'none'
+        touchAction: 'pan-y'
       }}
       onTouchStart={handleTouchStart}
     >
+      {/* 返回按鈕 */}
+      <button
+        onClick={onClose}
+        style={{
+          position: 'absolute',
+          top: 'clamp(20px, 4vw, 40px)',
+          left: 'clamp(20px, 4vw, 40px)',
+          background: '#fff',
+          border: '2px solid #9C27B0',
+          borderRadius: '50%',
+          width: 'clamp(40px, 8vw, 50px)',
+          height: 'clamp(40px, 8vw, 50px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
+          zIndex: 1000,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+        }}
+      >
+        ←
+      </button>
+
       {/* 遊戲資訊 */}
       <div style={{
         position: 'absolute',
@@ -5250,6 +5282,29 @@ function RacingGame({ onClose }: { onClose: () => void }) {
         </div>
       )}
 
+      {/* 爆炸效果 */}
+      {showExplosionEffect && (
+        <div style={{
+          position: 'absolute',
+          left: `${explosionPosition.x}%`,
+          top: `${explosionPosition.y}%`,
+          transform: 'translate(-50%, -50%)',
+          width: 'clamp(60px, 12vw, 80px)',
+          height: 'clamp(60px, 12vw, 80px)',
+          animation: 'explosionEffect 0.8s ease-out forwards',
+          pointerEvents: 'none',
+          zIndex: 999
+        }}>
+          <div style={{
+            width: '100%',
+            height: '100%',
+            background: 'radial-gradient(circle, #FFD700 0%, #FF8800 30%, #FF4444 60%, #FF0000 100%)',
+            borderRadius: '50%',
+            boxShadow: '0 0 30px #FFD700, 0 0 60px #FF8800, 0 0 90px #FF4444'
+          }} />
+        </div>
+      )}
+
       <style>
         {`
           @keyframes collisionShake {
@@ -5269,6 +5324,20 @@ function RacingGame({ onClose }: { onClose: () => void }) {
             }
             100% { 
               transform: translate(-50%, -50%) scale(1);
+              opacity: 0;
+            }
+          }
+          @keyframes explosionEffect {
+            0% { 
+              transform: translate(-50%, -50%) scale(0.1);
+              opacity: 1;
+            }
+            50% { 
+              transform: translate(-50%, -50%) scale(1.5);
+              opacity: 1;
+            }
+            100% { 
+              transform: translate(-50%, -50%) scale(2);
               opacity: 0;
             }
           }
