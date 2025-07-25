@@ -4164,11 +4164,35 @@ function BubblePopGame({ onClose }: { onClose: () => void }) {
           }
         `}
       </style>
+      
+      {/* 返回按鈕 */}
+      <button
+        onClick={onClose}
+        style={{
+          position: 'absolute',
+          top: 'clamp(20px, 4vw, 40px)',
+          left: 'clamp(20px, 4vw, 40px)',
+          background: '#fff',
+          border: '2px solid #9C27B0',
+          borderRadius: '50%',
+          width: 'clamp(40px, 8vw, 50px)',
+          height: 'clamp(40px, 8vw, 50px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
+          zIndex: 10,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+        }}
+      >
+        ←
+      </button>
       {/* 遊戲信息 */}
       <div style={{ 
         position: 'absolute',
         top: 'clamp(20px, 4vw, 40px)',
-        left: 'clamp(60px, 12vw, 70px)',
+        left: 'clamp(80px, 16vw, 100px)',
         background: 'rgba(255,255,255,0.9)',
         borderRadius: '15px',
         padding: 'clamp(12px, 2.5vw, 16px)',
@@ -4972,7 +4996,7 @@ function RacingGame({ onClose }: { onClose: () => void }) {
     setObstacles(prev => [...prev, {
       id: Date.now(),
       x,
-      y: -20,
+      y: 0,
       type
     }]);
   };
@@ -5006,11 +5030,11 @@ function RacingGame({ onClose }: { onClose: () => void }) {
         const updated = prev.map(obstacle => ({
           ...obstacle,
           y: obstacle.y + speed
-        })).filter(obstacle => obstacle.y < 120);
+        })).filter(obstacle => obstacle.y < 100);
 
         // 檢查碰撞
         updated.forEach(obstacle => {
-          if (obstacle.y > 60 && obstacle.y < 80) {
+          if (obstacle.y > 70 && obstacle.y < 85) {
             if (checkCollision(carPosition, obstacle.x)) {
               // 碰撞發生
               setCombo(0);
@@ -5036,7 +5060,7 @@ function RacingGame({ onClose }: { onClose: () => void }) {
         setLevel(prev => prev + 1);
         setSpeed(prev => Math.min(8, prev + 0.5));
       }
-    }, 1000);
+    }, 100);
 
     return () => clearInterval(gameInterval);
   }, [isPlaying, speed, level, carPosition, combo]);
@@ -5136,7 +5160,7 @@ function RacingGame({ onClose }: { onClose: () => void }) {
           key={obstacle.id}
           style={{
             position: 'absolute',
-            bottom: `${obstacle.y}%`,
+            top: `${obstacle.y}%`,
             left: `${obstacle.x}%`,
             transform: 'translateX(-50%)',
             width: 'clamp(30px, 6vw, 45px)',
