@@ -1098,7 +1098,9 @@ export default function RestartWall() {
               width: window.innerWidth <= 768 ? '120px' : '120px',
               minHeight: '32px',
               cursor: 'pointer',
-              zIndex: 1000
+              zIndex: 1000,
+              position: 'relative',
+              pointerEvents: 'auto'
             }}
           >
             {showMyMessages ? 
@@ -1174,7 +1176,7 @@ export default function RestartWall() {
               width: '100%',
               fontSize: window.innerWidth <= 768 ? 16 : 18, 
               padding: window.innerWidth <= 768 ? '10px 14px' : '12px 16px', 
-              border: 'none', 
+              border: '2px solid rgba(107, 91, 255, 0.3)', 
               outline: 'none', 
               background: '#232946', 
               color: '#fff',
@@ -1192,7 +1194,8 @@ export default function RestartWall() {
             display: 'flex',
             gap: 8,
             justifyContent: 'space-between',
-            width: '100%'
+            width: '100%',
+            padding: '0 16px'
           }}>
             <button
               className="tone-card selected"
