@@ -1085,22 +1085,28 @@ export default function RestartWall() {
               borderRadius: 12, 
               fontWeight: 900, 
               fontSize: window.innerWidth <= 768 ? 10 : 10, 
-              padding: window.innerWidth <= 768 ? '4px 8px' : '4px 8px', 
+              padding: window.innerWidth <= 768 ? '8px 12px' : '8px 12px', 
               marginLeft: window.innerWidth <= 768 ? 0 : 0, 
               boxShadow: '0 2px 12px #6B5BFF33', 
               letterSpacing: 1,
               transition: 'all 0.3s ease',
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: '2px',
               whiteSpace: 'nowrap',
               flexDirection: 'row',
               flexWrap: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              maxWidth: window.innerWidth <= 768 ? '120px' : '120px',
+              width: window.innerWidth <= 768 ? '120px' : '120px',
+              minHeight: '32px',
               cursor: 'pointer',
-              zIndex: 1000
+              zIndex: 1000,
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              MozUserSelect: 'none',
+              msUserSelect: 'none'
             }}
           >
             {showMyMessages ? 
