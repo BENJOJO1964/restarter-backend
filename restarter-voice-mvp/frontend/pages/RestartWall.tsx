@@ -1073,7 +1073,11 @@ export default function RestartWall() {
               background: window.innerWidth <= 768 ? '#8a8a8a' : '#8a8a8a'
             }}>{t.title}</h2>
                     <button
-            onClick={() => setShowMyMessages(!showMyMessages)}
+            onClick={() => {
+              console.log('【我的留言】按鈕被點擊，當前狀態:', showMyMessages);
+              setShowMyMessages(!showMyMessages);
+              console.log('設置新狀態:', !showMyMessages);
+            }}
             style={{
               background: showMyMessages ? 'linear-gradient(135deg, #23c6e6 60%, #6B5BFF 100%)' : 'linear-gradient(135deg, #6B5BFF 60%, #23c6e6 100%)', 
               color: '#fff', 
@@ -1095,7 +1099,8 @@ export default function RestartWall() {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               maxWidth: window.innerWidth <= 768 ? '120px' : '120px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              zIndex: 1000
             }}
           >
             {showMyMessages ? 
@@ -1589,26 +1594,21 @@ export default function RestartWall() {
             </div>
           ))}
               
-              {/* 在全部留言頁面也顯示我給別人的支援留言 */}
+              {/* 在全部留言頁面也顯示我發表的留言 */}
               <div style={{ marginTop: '32px', padding: '20px', background: 'linear-gradient(135deg, rgba(107, 91, 255, 0.1) 0%, rgba(35, 198, 230, 0.1) 100%)', borderRadius: '16px', border: '2px solid rgba(107, 91, 255, 0.2)' }}>
-                <h3 style={{ color: '#6B5BFF', fontSize: '1.2rem', marginBottom: '12px', textAlign: 'center' }}>💝 我給別人的支援留言</h3>
+                <h3 style={{ color: '#6B5BFF', fontSize: '1.2rem', marginBottom: '12px', textAlign: 'center' }}>📝 我發表的留言</h3>
                 {(() => {
-                  const myComments = getMyComments();
-                  console.log('我的支援留言數量:', myComments.length);
-                  console.log('我的支援留言:', myComments);
-                  return myComments.length === 0 ? (
-                    <div style={{ color: '#000', textAlign: 'center', padding: '20px' }}>您還沒有給別人留過支援留言</div>
+                  const myMessages = getMyMessages();
+                  console.log('我發表的留言數量:', myMessages.length);
+                  console.log('我發表的留言:', myMessages);
+                  return myMessages.length === 0 ? (
+                    <div style={{ color: '#000', textAlign: 'center', padding: '20px' }}>您還沒有發表過留言</div>
                   ) : (
-                    myComments.map(({message, comment}, index) => (
+                    myMessages.map((msg, index) => (
                       <div key={index} className="quote-card" style={{ position: 'relative', paddingLeft: 64, marginBottom: '12px' }}>
-                        <img src={message.user.avatar} alt="avatar" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', position: 'absolute', left: 8, top: 16, border: '2px solid #6B5BFF' }} />
-                        <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
-                          給 <b style={{ color: '#6B5BFF' }}>{message.user.name}</b> 的支援留言：
-                        </div>
-                        <div className="quote-text" style={{ background: '#f0f8ff', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e6f3ff' }}>
-                          {comment.content}
-                        </div>
-                        <div style={{ fontSize: 12, color: '#614425', marginTop: 6 }}>{comment.createdAt ? new Date(comment.createdAt).toLocaleString() : new Date(message.createdAt).toLocaleString()}</div>
+                        <img src={msg.user.avatar} alt="avatar" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', position: 'absolute', left: 8, top: 16, border: '2px solid #6B5BFF' }} />
+                        <div className="quote-text">{msg.text}</div>
+                        <div style={{ fontSize: 12, color: '#614425', marginTop: 6 }}>{new Date(msg.createdAt).toLocaleString()}</div>
                       </div>
                     ))
                   );
