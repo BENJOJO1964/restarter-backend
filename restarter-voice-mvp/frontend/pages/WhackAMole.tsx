@@ -51,7 +51,21 @@ interface HoleProps {
 }
 
 const Hole: React.FC<HoleProps> = ({ mole, onClick, isPeeking }) => (
-  <div className={`hole ${isPeeking ? 'up' : ''}`} onClick={onClick}>
+  <div 
+    className={`hole ${isPeeking ? 'up' : ''}`} 
+    onClick={onClick}
+    onTouchStart={(e) => {
+      e.preventDefault(); // 防止觸摸事件的默認行為
+      onClick();
+    }}
+    style={{ 
+      cursor: 'pointer',
+      userSelect: 'none',
+      WebkitUserSelect: 'none',
+      MozUserSelect: 'none',
+      msUserSelect: 'none'
+    }}
+  >
     {mole && <img src={mole.image} alt={mole.name} className="mole-image" />}
   </div>
 );
@@ -87,10 +101,10 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
 
   const updateLevel = () => {
     const accuracy = totalMoles.current > 0 ? hitCount.current / totalMoles.current : 0;
-    if (accuracy > 0.9 && level.current < 6) {
+    if (accuracy >= 0.7 && level.current < 5) {
       level.current++;
       showFeedback(`升級！LV ${level.current} - ${getRandomPhrase('praise')}`);
-    } else if (accuracy <= 0.4 && level.current > 1) {
+    } else if (accuracy <= 0.3 && level.current > 1) {
       level.current--;
       showFeedback(`降級！LV ${level.current}`);
     }
@@ -98,7 +112,11 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
 
   const peek = useCallback(() => {
     if (!isGameRunning) return;
-    const time = Math.max(200, 1000 - level.current * 100);
+    // 根據等級調整地鼠冒出消失速度：等級越高，速度越快
+    const baseTime = 1200; // 基礎時間
+    const levelSpeedMultiplier = Math.max(0.3, 1 - (level.current - 1) * 0.15); // 每級減少15%時間
+    const time = Math.max(300, baseTime * levelSpeedMultiplier);
+    
     const holeIndex = Math.floor(Math.random() * 9);
     
     if (holes[holeIndex]) {
@@ -202,6 +220,11 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
         <span>分數: {score}</span>
         <span>時間: {timeLeft}s</span>
         <span>等級: {level.current}</span>
+        <span>擊中: {hitCount.current}</span>
+        <span>準確率: {totalMoles.current > 0 ? Math.round((hitCount.current / totalMoles.current) * 100) : 0}%</span>
+        <span>連擊: {0}</span>
+        <span>最高分: {score}</span>
+        <span>最高連擊: {1}</span>
         <span>{rank?.icon} {rank?.name_zh} (徽章: {badges}/10)</span>
       </div>
       {feedback && <div className="feedback">{feedback}</div>}
