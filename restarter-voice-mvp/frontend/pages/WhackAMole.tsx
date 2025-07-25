@@ -150,7 +150,9 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
         const newHoles = [...prev];
         if (newHoles[holeIndex]) { // if mole is still there (wasn't hit)
           missCount.current++;
-          // 地鼠消失時不扣分，因為點擊空坑已經扣分了
+          // 地鼠消失時沒有點擊任何地方 - 失敗扣1分
+          const newScore = score - 1;
+          setScore(newScore);
           setCombo(0);
           updateLevel();
           showFeedback(getRandomPhrase(level.current <=1 ? 'severeTaunt' : 'taunt'));
@@ -167,7 +169,7 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
 
   const bonk = (index: number) => {
     if (holes[index]) {
-      // 點擊到地鼠 - 成功
+      // 點擊到地鼠身上 - 成功
       const timeout = timers.current[index];
       if (timeout) {
         clearTimeout(timeout);
@@ -200,7 +202,7 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
       });
       peek(); // Speed up next mole appearance
     } else {
-      // 點擊空坑 - 失敗
+      // 點擊空坑或地鼠消失後點擊 - 失敗
       const newScore = score - 1; // 沒打到扣1分
       setScore(newScore);
       setCombo(0); // 重置連擊
