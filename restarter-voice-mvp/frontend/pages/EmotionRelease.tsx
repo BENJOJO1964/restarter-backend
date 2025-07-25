@@ -4993,7 +4993,11 @@ function RacingGame({ onClose }: { onClose: () => void }) {
     
     const types = ['rock', 'car', 'truck'];
     const type = types[Math.floor(Math.random() * types.length)];
-    const x = Math.random() * 80 + 10;
+    
+    // 平均分散在左、中、右三個區域
+    const zones = [15, 50, 85]; // 左、中、右的x座標
+    const randomZone = zones[Math.floor(Math.random() * zones.length)];
+    const x = randomZone + (Math.random() - 0.5) * 20; // 在選定區域內隨機偏移
     
     setObstacles(prev => [...prev, {
       id: Date.now(),
@@ -5035,18 +5039,23 @@ function RacingGame({ onClose }: { onClose: () => void }) {
         })).filter(obstacle => obstacle.y < 100);
 
         // 檢查碰撞
-        updated.forEach(obstacle => {
+        let collisionOccurred = false;
+        const finalObstacles = updated.filter(obstacle => {
           if (obstacle.y > 70 && obstacle.y < 85) {
             if (checkCollision(carPosition, obstacle.x)) {
               // 碰撞發生
-              setCombo(0);
-              setScore(prev => Math.max(0, prev - 10));
-              setIsColliding(true);
-              setShowCollisionEffect(true);
-              setTimeout(() => {
-                setIsColliding(false);
-                setShowCollisionEffect(false);
-              }, 500);
+              if (!collisionOccurred) {
+                setCombo(0);
+                setScore(prev => Math.max(0, prev - 10));
+                setIsColliding(true);
+                setShowCollisionEffect(true);
+                setTimeout(() => {
+                  setIsColliding(false);
+                  setShowCollisionEffect(false);
+                }, 500);
+                collisionOccurred = true;
+              }
+              return false; // 移除碰撞的障礙物
             } else {
               // 成功避開
               setCombo(prev => prev + 1);
@@ -5058,7 +5067,10 @@ function RacingGame({ onClose }: { onClose: () => void }) {
               }
             }
           }
+          return true;
         });
+        
+        return finalObstacles;
 
         return updated;
       });
