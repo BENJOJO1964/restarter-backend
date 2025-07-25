@@ -1155,9 +1155,7 @@ function FarmGame({ onClose }: { onClose: () => void }) {
                   {plant ? (
                     <div style={{ 
                       fontSize: isMature ? 'clamp(1.5rem, 4vw, 2rem)' : 'clamp(0.8rem, 2vw, 1rem)',
-                      opacity: plant.growth / 100,
-                      transform: isMature ? 'scale(1.1)' : 'scale(1)',
-                      transition: 'all 0.3s ease'
+                      opacity: plant.growth / 100
                     }}>
                       {seed?.emoji}
                     </div>
