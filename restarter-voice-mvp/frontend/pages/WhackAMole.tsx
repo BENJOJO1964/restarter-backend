@@ -105,14 +105,20 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
 
   const updateLevel = () => {
     const accuracy = totalMoles.current > 0 ? hitCount.current / totalMoles.current : 0;
-    if (accuracy >= 0.7 && level.current < 5) {
-      level.current++;
-      setCurrentLevel(level.current);
-      showFeedback(`升級！LV ${level.current} - ${getRandomPhrase('praise')}`);
-    } else if (accuracy <= 0.3 && level.current > 1) {
-      level.current--;
-      setCurrentLevel(level.current);
-      showFeedback(`降級！LV ${level.current}`);
+    
+    // 新的等級系統：基於30秒內的成功率
+    if (level.current === 1 && accuracy >= 0.7) {
+      level.current = 2;
+      setCurrentLevel(2);
+      showFeedback(`升級！LV 2 - ${getRandomPhrase('praise')}`);
+    } else if (level.current === 2 && accuracy >= 0.6) {
+      level.current = 3;
+      setCurrentLevel(3);
+      showFeedback(`升級！LV 3 - ${getRandomPhrase('praise')}`);
+    } else if (level.current === 3 && accuracy >= 0.5) {
+      level.current = 4;
+      setCurrentLevel(4);
+      showFeedback(`升級！LV 4 - ${getRandomPhrase('praise')}`);
     }
   };
 
@@ -144,6 +150,9 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
         const newHoles = [...prev];
         if (newHoles[holeIndex]) { // if mole is still there (wasn't hit)
           missCount.current++;
+          // 沒打到扣1分
+          const newScore = score - 1;
+          setScore(newScore);
           // 重置連擊
           setCombo(0);
           updateLevel();
@@ -169,7 +178,7 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
     }
     
     hitCount.current++;
-    const newScore = score + 1;
+    const newScore = score + 1; // 打成功得1分
     setScore(newScore);
     
     // 更新連擊

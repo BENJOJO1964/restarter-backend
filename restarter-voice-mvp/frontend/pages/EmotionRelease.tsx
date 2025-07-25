@@ -1539,16 +1539,21 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
     }
   }, [score, highScore]);
 
-  // 等級系統
+  // 等級系統 - 基於30秒內的成功率
   useEffect(() => {
-    if (score >= 100 && gameLevel === 1) {
-      setGameLevel(2);
-    } else if (score >= 250 && gameLevel === 2) {
-      setGameLevel(3);
-    } else if (score >= 500 && gameLevel === 3) {
-      setGameLevel(4);
+    const totalAttempts = molesWhacked + missedMoles;
+    if (totalAttempts > 0) {
+      const accuracy = molesWhacked / totalAttempts;
+      
+      if (gameLevel === 1 && accuracy >= 0.7) {
+        setGameLevel(2);
+      } else if (gameLevel === 2 && accuracy >= 0.6) {
+        setGameLevel(3);
+      } else if (gameLevel === 3 && accuracy >= 0.5) {
+        setGameLevel(4);
+      }
     }
-  }, [score, gameLevel]);
+  }, [molesWhacked, missedMoles, gameLevel]);
 
   // 幽默提示語
   const getHumorousMessage = () => {
@@ -1561,12 +1566,10 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
     return "👑 地鼠之王！";
   };
 
-  // 根據分數調整遊戲難度
+  // 根據等級調整遊戲難度
   useEffect(() => {
-    if (score >= 100 && gameLevel === 1) setGameLevel(2);
-    if (score >= 250 && gameLevel === 2) setGameLevel(3);
-    if (score >= 500 && gameLevel === 3) setGameLevel(4);
-  }, [score, gameLevel]);
+    // 等級系統已經在上面處理了
+  }, [gameLevel]);
 
   // 計算準確率
   useEffect(() => {
@@ -1629,12 +1632,8 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
 
   const whackMole = (holeIndex: number) => {
     if (activeHole === holeIndex) {
-      const basePoints = 10;
-      const comboBonus = Math.floor(combo / 3) * 5;
-      const levelBonus = gameLevel * 5;
-      const points = basePoints + comboBonus + levelBonus;
-      
-      setScore(prev => prev + points);
+      // 打成功得1分
+      setScore(prev => prev + 1);
       setMolesWhacked(prev => prev + 1);
       setCombo(prev => {
         const newCombo = prev + 1;
@@ -1643,8 +1642,8 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
       });
       setActiveHole(null);
     } else {
-      // 沒打到地鼠扣分
-      setScore(prev => prev - 5);
+      // 沒打到地鼠扣1分
+      setScore(prev => prev - 1);
       setCombo(0);
     }
   };
@@ -1729,14 +1728,14 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
             <p style={{ marginBottom: '6px' }}>• {getText('moleSpeed')}</p>
             
             <p style={{ marginBottom: '6px', marginTop: '8px' }}><strong>{getText('scoreSystem')}：</strong></p>
-            <p style={{ marginBottom: '6px' }}>• {getText('baseScore')}：10{getText('points')}</p>
-            <p style={{ marginBottom: '6px' }}>• {getText('levelBonus')}：{getText('perLevel')}+5{getText('points')}</p>
-            <p style={{ marginBottom: '6px' }}>• {getText('comboBonus')}：{getText('per3Combo')}+5{getText('points')}</p>
+            <p style={{ marginBottom: '6px' }}>• 打成功得1分，沒打到扣1分</p>
+            <p style={{ marginBottom: '6px' }}>• 從0分開始，無正負限制</p>
             
             <p style={{ marginBottom: '6px', marginTop: '8px' }}><strong>{getText('levelSystem')}：</strong></p>
-            <p style={{ marginBottom: '6px' }}>• {getText('level1')}：100{getText('points')} → {getText('level2')}（{getText('molesFaster')}）</p>
-            <p style={{ marginBottom: '6px' }}>• {getText('level2')}：250{getText('points')} → {getText('level3')}（{getText('moreFrequent')}）</p>
-            <p style={{ marginBottom: '6px' }}>• {getText('level3')}：500{getText('points')} → {getText('level4')}（{getText('extremeSpeed')}）</p>
+            <p style={{ marginBottom: '6px' }}>• 1級：70%成功 → 2級（地鼠更快）</p>
+            <p style={{ marginBottom: '6px' }}>• 2級：60%成功 → 3級（更頻繁）</p>
+            <p style={{ marginBottom: '6px' }}>• 3級：50%成功 → 4級（極限速度）</p>
+            <p style={{ marginBottom: '6px' }}>• 成功率基於30秒內的成功比率計算</p>
           </div>
         )}
         
