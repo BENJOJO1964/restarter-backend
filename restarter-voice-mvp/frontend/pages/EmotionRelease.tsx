@@ -1018,7 +1018,7 @@ function FarmGame({ onClose }: { onClose: () => void }) {
         <div style={{ 
           background: 'rgba(255,255,255,0.9)',
           borderRadius: '15px',
-          padding: 'clamp(10px, 2vw, 20px)',
+          padding: window.innerWidth <= 768 ? 'clamp(5px, 1vw, 10px)' : 'clamp(10px, 2vw, 20px)',
           position: 'relative',
           overflow: 'visible',
           boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
