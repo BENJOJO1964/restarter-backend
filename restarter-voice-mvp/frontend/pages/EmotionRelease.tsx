@@ -5038,7 +5038,7 @@ function RacingGame({ onClose }: { onClose: () => void }) {
         setLevel(prev => prev + 1);
         setSpeed(prev => Math.min(8, prev + 0.5));
       }
-    }, 50);
+    }, 1000);
 
     return () => clearInterval(gameInterval);
   }, [isPlaying, speed, level, carPosition, combo]);
