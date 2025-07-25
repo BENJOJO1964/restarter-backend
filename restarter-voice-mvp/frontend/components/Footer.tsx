@@ -95,19 +95,35 @@ const Footer: React.FC = () => {
           maxWidth: 800,
           margin: '0 auto',
           display: 'flex',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
           alignItems: 'center',
-          gap: 40,
-          flexWrap: 'wrap',
+          gap: 20,
           padding: '0 20px'
         }}
       >
-        {/* 一行排列：隱私權政策、條款/聲明、資料刪除說明、我們是誰、意見箱 */}
-        <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>{t.privacy}</a>
-        <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>{t.terms}</a>
-        <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>{t.deletion}</a>
-        <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px' }}>{ABOUT_TEXT[lang] || ABOUT_TEXT['zh-TW']}</a>
-        <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px' }}>{FEEDBACK_TEXT[lang] || FEEDBACK_TEXT['zh-TW']}</a>
+        {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 40,
+          flexWrap: 'wrap'
+        }}>
+          <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>{t.privacy}</a>
+          <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>{t.terms}</a>
+          <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>{t.deletion}</a>
+        </div>
+        {/* 第二行：我們是誰、意見箱 */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 40,
+          flexWrap: 'wrap'
+        }}>
+          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px' }}>{ABOUT_TEXT[lang] || ABOUT_TEXT['zh-TW']}</a>
+          <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px' }}>{FEEDBACK_TEXT[lang] || FEEDBACK_TEXT['zh-TW']}</a>
+        </div>
       </div>
       <style>{`
         @media (max-width: 768px) {

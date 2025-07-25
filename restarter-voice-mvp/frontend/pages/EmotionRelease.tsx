@@ -507,7 +507,7 @@ export default function EmotionRelease() {
       )}
       
       {/* Footer 5個按鈕 - 原封不動複製自 RestartWall */}
-      <Footer />
+      {currentGame === null && <Footer />}
     </div>
   );
 }
