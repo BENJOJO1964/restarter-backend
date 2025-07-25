@@ -4103,7 +4103,7 @@ function BubblePopGame({ onClose }: { onClose: () => void }) {
         position: 'relative',
         overflow: 'auto',
         cursor: isPlaying ? 'pointer' : 'default',
-        touchAction: 'none',
+        touchAction: 'pan-y',
         userSelect: 'none',
         WebkitUserSelect: 'none',
         WebkitTouchCallout: 'none'
