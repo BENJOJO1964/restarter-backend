@@ -1695,7 +1695,7 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
         marginBottom: 'clamp(8px, 1.5vw, 15px)',
         textAlign: 'center',
         width: '100%',
-        maxWidth: '400px'
+        maxWidth: '300px'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: 0 }}>🔨 {getText('title')}</h2>
@@ -1804,7 +1804,7 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
           display: 'grid', 
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: 'clamp(8px, 1.5vw, 15px)',
-          maxWidth: '400px',
+          maxWidth: '300px',
           width: '100%',
           marginTop: '10px',
           padding: 'clamp(10px, 2vw, 15px)',
