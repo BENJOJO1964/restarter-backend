@@ -1728,7 +1728,10 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
             <p style={{ marginBottom: '6px' }}>• {getText('moleSpeed')}</p>
             
             <p style={{ marginBottom: '6px', marginTop: '8px' }}><strong>{getText('scoreSystem')}：</strong></p>
-            <p style={{ marginBottom: '6px' }}>• 打成功得1分，沒打到扣1分</p>
+            <p style={{ marginBottom: '6px' }}>• 點擊到地鼠身上 → +1分</p>
+            <p style={{ marginBottom: '6px' }}>• 地鼠消失時沒有點擊 → -1分</p>
+            <p style={{ marginBottom: '6px' }}>• 地鼠消失後才點擊 → -1分</p>
+            <p style={{ marginBottom: '6px' }}>• 點擊地鼠坑但沒點擊到地鼠 → -1分</p>
             <p style={{ marginBottom: '6px' }}>• 從0分開始，無正負限制</p>
             
             <p style={{ marginBottom: '6px', marginTop: '8px' }}><strong>{getText('levelSystem')}：</strong></p>
