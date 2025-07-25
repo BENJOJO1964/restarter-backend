@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LanguageSelector } from '../components/LanguageSelector';
 import Footer from '../components/Footer';
@@ -1181,6 +1181,7 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
   const [timeLeft, setTimeLeft] = useState(30);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeHole, setActiveHole] = useState<number | null>(null);
+  const moleTimers = useRef<{ [key: number]: NodeJS.Timeout | null }>({});
 
   // 多語言翻譯函數
   const getText = (key: string) => {
@@ -1608,29 +1609,33 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
 
     // 立即出現第一個地鼠
     setTimeout(() => {
-      setActiveHole(Math.floor(Math.random() * 9));
+      const holeIndex = Math.floor(Math.random() * 9);
+      setActiveHole(holeIndex);
       // 調快地鼠出現時間
       const showTime = gameLevel === 1 ? 900 : gameLevel === 2 ? 700 : gameLevel === 3 ? 500 : 350;
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setActiveHole(null);
         setMissedMoles(prev => prev + 1);
         // 地鼠消失時沒有點擊 - 失敗扣1分
         setScore(prev => prev - 1);
         setCombo(0);
       }, showTime);
+      moleTimers.current[holeIndex] = timer;
     }, 300);
 
     // 根據等級調整地鼠出現頻率（調快）
     moleInterval = setInterval(() => {
-      setActiveHole(Math.floor(Math.random() * 9));
+      const holeIndex = Math.floor(Math.random() * 9);
+      setActiveHole(holeIndex);
       const showTime = gameLevel === 1 ? 900 : gameLevel === 2 ? 700 : gameLevel === 3 ? 500 : 350;
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setActiveHole(null);
         setMissedMoles(prev => prev + 1);
         // 地鼠消失時沒有點擊 - 失敗扣1分
         setScore(prev => prev - 1);
         setCombo(0);
       }, showTime);
+      moleTimers.current[holeIndex] = timer;
     }, gameLevel === 1 ? 1100 : gameLevel === 2 ? 900 : gameLevel === 3 ? 700 : 500);
   };
 
@@ -1644,7 +1649,13 @@ function WhackAMoleGame({ onClose }: { onClose: () => void }) {
         if (newCombo > maxCombo) setMaxCombo(newCombo);
         return newCombo;
       });
+      // 立即清除地鼠，防止重複計分
       setActiveHole(null);
+      // 清除該地鼠的消失計時器
+      if (moleTimers.current[holeIndex]) {
+        clearTimeout(moleTimers.current[holeIndex]);
+        moleTimers.current[holeIndex] = null;
+      }
     } else {
       // 沒打到地鼠扣1分
       setScore(prev => prev - 1);
