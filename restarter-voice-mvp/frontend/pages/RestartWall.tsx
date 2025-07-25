@@ -1098,9 +1098,14 @@ export default function RestartWall() {
               width: window.innerWidth <= 768 ? '120px' : '120px',
               minHeight: '32px',
               cursor: 'pointer',
-              zIndex: 1000,
+              zIndex: 9999,
               position: 'relative',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              MozUserSelect: 'none',
+              msUserSelect: 'none',
+              touchAction: 'manipulation'
             }}
           >
             {showMyMessages ? 
@@ -1176,12 +1181,13 @@ export default function RestartWall() {
               width: '100%',
               fontSize: window.innerWidth <= 768 ? 16 : 18, 
               padding: window.innerWidth <= 768 ? '10px 14px' : '12px 16px', 
-              border: '2px solid rgba(107, 91, 255, 0.3)', 
+              border: '2px solid rgba(107, 91, 255, 0.5)', 
               outline: 'none', 
               background: '#232946', 
               color: '#fff',
               borderRadius: '12px',
-              marginBottom: '8px'
+              marginBottom: '8px',
+              boxSizing: 'border-box'
             }}
             maxLength={200} // 限制200字
             placeholder={t.placeholder}
@@ -1195,7 +1201,7 @@ export default function RestartWall() {
             gap: 8,
             justifyContent: 'space-between',
             width: '100%',
-            padding: '0 16px'
+            padding: '0 24px'
           }}>
             <button
               className="tone-card selected"
