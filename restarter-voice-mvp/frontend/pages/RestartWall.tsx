@@ -1028,9 +1028,11 @@ export default function RestartWall() {
         display: 'flex', 
         flexDirection: 'column', 
         justifyContent: 'center',
-        padding: window.innerWidth <= 768 ? '100px 16px 20px 16px' : '0',
+        padding: window.innerWidth <= 768 ? '120px 16px 20px 16px' : '0',
         boxSizing: 'border-box',
-        minHeight: window.innerWidth <= 768 ? '100vh' : 'auto'
+        minHeight: window.innerWidth <= 768 ? '100vh' : 'auto',
+        position: 'relative',
+        zIndex: 1
       }}>
         {/* 主標題和按鈕 */}
                   <div style={{ 
@@ -1074,7 +1076,10 @@ export default function RestartWall() {
               alignItems: 'center',
               gap: '4px',
               whiteSpace: 'nowrap',
-              flexDirection: 'row'
+              flexDirection: 'row',
+              flexWrap: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
             }}
           >
             {showMyMessages ? 
