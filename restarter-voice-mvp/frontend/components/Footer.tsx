@@ -133,7 +133,8 @@ const Footer: React.FC = () => {
           }
           footer > div {
             gap: 16px !important;
-            justify-content: space-around !important;
+            flex-direction: column !important;
+            justify-content: center !important;
           }
           footer > div > a {
             padding: 4px 6px !important;
