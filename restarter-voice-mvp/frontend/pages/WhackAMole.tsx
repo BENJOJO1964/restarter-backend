@@ -84,6 +84,10 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
   const [isGameRunning, setIsGameRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(duration);
   const [feedback, setFeedback] = useState('');
+  const [currentLevel, setCurrentLevel] = useState(1);
+  const [combo, setCombo] = useState(0);
+  const [maxCombo, setMaxCombo] = useState(0);
+  const [highScore, setHighScore] = useState(0);
   const { addBadge, rank, badges } = useUserStatus();
 
   const hitCount = useRef(0);
@@ -103,9 +107,11 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
     const accuracy = totalMoles.current > 0 ? hitCount.current / totalMoles.current : 0;
     if (accuracy >= 0.7 && level.current < 5) {
       level.current++;
+      setCurrentLevel(level.current);
       showFeedback(`升級！LV ${level.current} - ${getRandomPhrase('praise')}`);
     } else if (accuracy <= 0.3 && level.current > 1) {
       level.current--;
+      setCurrentLevel(level.current);
       showFeedback(`降級！LV ${level.current}`);
     }
   };
@@ -138,6 +144,8 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
         const newHoles = [...prev];
         if (newHoles[holeIndex]) { // if mole is still there (wasn't hit)
           missCount.current++;
+          // 重置連擊
+          setCombo(0);
           updateLevel();
           showFeedback(getRandomPhrase(level.current <=1 ? 'severeTaunt' : 'taunt'));
         }
@@ -161,7 +169,21 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
     }
     
     hitCount.current++;
-    setScore(prev => prev + 1);
+    const newScore = score + 1;
+    setScore(newScore);
+    
+    // 更新連擊
+    const newCombo = combo + 1;
+    setCombo(newCombo);
+    if (newCombo > maxCombo) {
+      setMaxCombo(newCombo);
+    }
+    
+    // 更新最高分
+    if (newScore > highScore) {
+      setHighScore(newScore);
+    }
+    
     updateLevel();
     showFeedback(getRandomPhrase('praise'));
     
@@ -177,6 +199,8 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
     setIsGameRunning(true);
     setTimeLeft(duration);
     setScore(0);
+    setCurrentLevel(1);
+    setCombo(0);
     hitCount.current = 0;
     missCount.current = 0;
     totalMoles.current = 0;
@@ -219,12 +243,12 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
        <div className="game-info">
         <span>分數: {score}</span>
         <span>時間: {timeLeft}s</span>
-        <span>等級: {level.current}</span>
+        <span>等級: {currentLevel}</span>
         <span>擊中: {hitCount.current}</span>
         <span>準確率: {totalMoles.current > 0 ? Math.round((hitCount.current / totalMoles.current) * 100) : 0}%</span>
-        <span>連擊: {0}</span>
-        <span>最高分: {score}</span>
-        <span>最高連擊: {1}</span>
+        <span>連擊: {combo}</span>
+        <span>最高分: {highScore}</span>
+        <span>最高連擊: {maxCombo}</span>
         <span>{rank?.icon} {rank?.name_zh} (徽章: {badges}/10)</span>
       </div>
       {feedback && <div className="feedback">{feedback}</div>}
