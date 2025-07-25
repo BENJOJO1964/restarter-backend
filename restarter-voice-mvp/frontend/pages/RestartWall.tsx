@@ -974,16 +974,63 @@ export default function RestartWall() {
 
   return (
     <div className="modern-bg" style={{ background: '#8a8a8a', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div style={{position:'absolute',top:0,left:0,width:'100%',zIndex:100,display:'flex',justifyContent:'space-between',alignItems:'center',padding:'18px 32px 0 32px',boxSizing:'border-box',background:'transparent'}}>
-        <button onClick={()=>navigate('/')} style={{background:'#fff',border:'2px solid #6B5BFF',borderRadius:8,color:'#6B5BFF',fontWeight:700,fontSize:16,cursor:'pointer',padding:'6px 18px',transition:'background 0.2s, color 0.2s, box-shadow 0.2s'}}>{t.back}</button>
-        <div style={{display:'flex',gap:12,marginRight:8}}>
-          <button className="topbar-btn" onClick={async()=>{const auth=getAuth();await auth.signOut();localStorage.clear();window.location.href='/'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}}>{t.logout}</button>
-                      <select className="topbar-select" value={lang} onChange={e=>{const newLang = e.target.value as LanguageCode; setLang(newLang); localStorage.setItem('lang', newLang);}} style={{padding:'6px 8px',borderRadius:8,fontWeight:600,cursor:'pointer',minWidth:'50px',width:'50px'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}}>
+      <div style={{
+        position:'absolute',
+        top:0,
+        left:0,
+        width:'100%',
+        zIndex:100,
+        display:'flex',
+        justifyContent:'space-between',
+        alignItems:'center',
+        padding: window.innerWidth <= 768 ? '12px 16px 0 16px' : '18px 32px 0 32px',
+        boxSizing:'border-box',
+        background:'transparent'
+      }}>
+        <button onClick={()=>navigate('/')} style={{
+          background:'#fff',
+          border:'2px solid #6B5BFF',
+          borderRadius:8,
+          color:'#6B5BFF',
+          fontWeight:700,
+          fontSize: window.innerWidth <= 768 ? 14 : 16,
+          cursor:'pointer',
+          padding: window.innerWidth <= 768 ? '4px 12px' : '6px 18px',
+          transition:'background 0.2s, color 0.2s, box-shadow 0.2s'
+        }}>{t.back}</button>
+        <div style={{
+          display:'flex',
+          gap: window.innerWidth <= 768 ? 8 : 12,
+          marginRight: window.innerWidth <= 768 ? 4 : 8
+        }}>
+          <button className="topbar-btn" onClick={async()=>{const auth=getAuth();await auth.signOut();localStorage.clear();window.location.href='/'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}} style={{
+            fontSize: window.innerWidth <= 768 ? 12 : 16,
+            padding: window.innerWidth <= 768 ? '4px 8px' : '6px 12px'
+          }}>{t.logout}</button>
+                      <select className="topbar-select" value={lang} onChange={e=>{const newLang = e.target.value as LanguageCode; setLang(newLang); localStorage.setItem('lang', newLang);}} style={{
+                        padding: window.innerWidth <= 768 ? '4px 6px' : '6px 8px',
+                        borderRadius:8,
+                        fontWeight:600,
+                        cursor:'pointer',
+                        minWidth: window.innerWidth <= 768 ? '40px' : '50px',
+                        width: window.innerWidth <= 768 ? '40px' : '50px',
+                        fontSize: window.innerWidth <= 768 ? 12 : 14
+                      }} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}}>
             {LANGS.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
           </select>
         </div>
       </div>
-      <div className="modern-container" style={{ maxWidth: 600, width: '100%', margin: '0 auto', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div className="modern-container" style={{ 
+        maxWidth: window.innerWidth <= 768 ? '100%' : 600, 
+        width: '100%', 
+        margin: '0 auto', 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'center',
+        padding: window.innerWidth <= 768 ? '80px 16px 20px 16px' : '0',
+        boxSizing: 'border-box'
+      }}>
         {/* 主標題和按鈕 */}
         <div style={{ 
           display: 'flex', 
@@ -1020,7 +1067,11 @@ export default function RestartWall() {
               marginLeft: window.innerWidth <= 768 ? 0 : 18, 
               boxShadow: '0 2px 12px #6B5BFF33', 
               letterSpacing: 2,
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              whiteSpace: 'nowrap'
             }}
           >
             {showMyMessages ? 
