@@ -150,10 +150,7 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
         const newHoles = [...prev];
         if (newHoles[holeIndex]) { // if mole is still there (wasn't hit)
           missCount.current++;
-          // 沒打到扣1分
-          const newScore = score - 1;
-          setScore(newScore);
-          // 重置連擊
+          // 地鼠消失時不扣分，因為點擊空坑已經扣分了
           setCombo(0);
           updateLevel();
           showFeedback(getRandomPhrase(level.current <=1 ? 'severeTaunt' : 'taunt'));
@@ -169,39 +166,46 @@ const Game: React.FC<GameProps> = ({ moles, phrases, duration, onGameEnd }) => {
   }, [isGameRunning, holes, moles, phrases]);
 
   const bonk = (index: number) => {
-    if (!holes[index]) return; // Cannot bonk an empty hole
-
-    const timeout = timers.current[index];
-    if (timeout) {
-      clearTimeout(timeout);
-      timers.current[index] = null;
+    if (holes[index]) {
+      // 點擊到地鼠 - 成功
+      const timeout = timers.current[index];
+      if (timeout) {
+        clearTimeout(timeout);
+        timers.current[index] = null;
+      }
+      
+      hitCount.current++;
+      const newScore = score + 1; // 打成功得1分
+      setScore(newScore);
+      
+      // 更新連擊
+      const newCombo = combo + 1;
+      setCombo(newCombo);
+      if (newCombo > maxCombo) {
+        setMaxCombo(newCombo);
+      }
+      
+      // 更新最高分
+      if (newScore > highScore) {
+        setHighScore(newScore);
+      }
+      
+      updateLevel();
+      showFeedback(getRandomPhrase('praise'));
+      
+      setHoles(prev => {
+          const newHoles = [...prev];
+          newHoles[index] = null;
+          return newHoles;
+      });
+      peek(); // Speed up next mole appearance
+    } else {
+      // 點擊空坑 - 失敗
+      const newScore = score - 1; // 沒打到扣1分
+      setScore(newScore);
+      setCombo(0); // 重置連擊
+      showFeedback(getRandomPhrase(level.current <=1 ? 'severeTaunt' : 'taunt'));
     }
-    
-    hitCount.current++;
-    const newScore = score + 1; // 打成功得1分
-    setScore(newScore);
-    
-    // 更新連擊
-    const newCombo = combo + 1;
-    setCombo(newCombo);
-    if (newCombo > maxCombo) {
-      setMaxCombo(newCombo);
-    }
-    
-    // 更新最高分
-    if (newScore > highScore) {
-      setHighScore(newScore);
-    }
-    
-    updateLevel();
-    showFeedback(getRandomPhrase('praise'));
-    
-    setHoles(prev => {
-        const newHoles = [...prev];
-        newHoles[index] = null;
-        return newHoles;
-    });
-    peek(); // Speed up next mole appearance
   };
 
   useEffect(() => {
