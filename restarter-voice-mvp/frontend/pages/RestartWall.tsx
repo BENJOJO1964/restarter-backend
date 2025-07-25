@@ -1046,7 +1046,8 @@ export default function RestartWall() {
         background: window.innerWidth <= 768 ? '#8a8a8a' : '#8a8a8a',
         transform: 'translateZ(0)',
         backfaceVisibility: 'hidden',
-        perspective: '1000px'
+        perspective: '1000px',
+        willChange: 'auto'
       }}>
         {/* 主標題和按鈕 */}
                   <div style={{ 
@@ -1173,7 +1174,7 @@ export default function RestartWall() {
                   alignItems: 'center',
                   gap: 12, 
                   marginBottom: 18,
-                  padding: window.innerWidth <= 768 ? '0 16px' : '0 32px',
+                  padding: window.innerWidth <= 768 ? '0 16px' : '0 48px',
                   width: '100%',
                   maxWidth: '600px',
                   margin: '0 auto'
@@ -1204,7 +1205,7 @@ export default function RestartWall() {
             gap: 8,
             justifyContent: 'space-between',
             width: '100%',
-            padding: '0 40px'
+            padding: '0 56px'
           }}>
             <button
               className="tone-card selected"
