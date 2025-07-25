@@ -1028,32 +1028,34 @@ export default function RestartWall() {
         display: 'flex', 
         flexDirection: 'column', 
         justifyContent: 'center',
-        padding: window.innerWidth <= 768 ? '80px 16px 20px 16px' : '0',
-        boxSizing: 'border-box'
+        padding: window.innerWidth <= 768 ? '100px 16px 20px 16px' : '0',
+        boxSizing: 'border-box',
+        minHeight: window.innerWidth <= 768 ? '100vh' : 'auto'
       }}>
         {/* 主標題和按鈕 */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          marginBottom: 24,
-          flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-          gap: window.innerWidth <= 768 ? 16 : 0
-        }}>
-          <h2 className="modern-title" style={{ 
-            fontSize: window.innerWidth <= 768 ? '1.8rem' : '2.2rem', 
-            margin: 0, 
-            flex: 1, 
-            textAlign: 'center', 
-            color:'#6B5BFF', 
-            textShadow:'0 2px 12px #6B5BFF88, 0 4px 24px #0008', 
-            letterSpacing: 1, 
-            display:'flex',
-            alignItems:'center',
-            gap: 8,
-            whiteSpace: 'nowrap',
-            flexWrap: 'wrap',
-            justifyContent: 'center'
-          }}>{t.title}</h2>
+                  <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            marginBottom: window.innerWidth <= 768 ? 16 : 24,
+            flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+            gap: window.innerWidth <= 768 ? 12 : 0,
+            width: '100%'
+          }}>
+                      <h2 className="modern-title" style={{ 
+              fontSize: window.innerWidth <= 768 ? '1.5rem' : '2.2rem', 
+              margin: 0, 
+              flex: 1, 
+              textAlign: 'center', 
+              color:'#6B5BFF', 
+              textShadow:'0 2px 12px #6B5BFF88, 0 4px 24px #0008', 
+              letterSpacing: 1, 
+              display:'flex',
+              alignItems:'center',
+              gap: window.innerWidth <= 768 ? 4 : 8,
+              whiteSpace: 'nowrap',
+              flexWrap: 'wrap',
+              justifyContent: 'center'
+            }}>{t.title}</h2>
                     <button
             onClick={() => setShowMyMessages(!showMyMessages)}
             style={{
@@ -1062,16 +1064,17 @@ export default function RestartWall() {
               border: 'none', 
               borderRadius: 12, 
               fontWeight: 900, 
-              fontSize: window.innerWidth <= 768 ? 14 : 17, 
-              padding: window.innerWidth <= 768 ? '8px 20px' : '10px 28px', 
+              fontSize: window.innerWidth <= 768 ? 12 : 17, 
+              padding: window.innerWidth <= 768 ? '6px 12px' : '10px 28px', 
               marginLeft: window.innerWidth <= 768 ? 0 : 18, 
               boxShadow: '0 2px 12px #6B5BFF33', 
               letterSpacing: 2,
               transition: 'all 0.3s ease',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              whiteSpace: 'nowrap'
+              gap: '4px',
+              whiteSpace: 'nowrap',
+              flexDirection: 'row'
             }}
           >
             {showMyMessages ? 
