@@ -5021,7 +5021,7 @@ function RacingGame({ onClose }: { onClose: () => void }) {
       });
 
       // 生成障礙物
-      if (Math.random() < 0.02 + level * 0.005) {
+      if (Math.random() < 0.3 + level * 0.05) {
         spawnObstacle();
       }
 
@@ -5060,7 +5060,7 @@ function RacingGame({ onClose }: { onClose: () => void }) {
         setLevel(prev => prev + 1);
         setSpeed(prev => Math.min(8, prev + 0.5));
       }
-    }, 100);
+    }, 1000);
 
     return () => clearInterval(gameInterval);
   }, [isPlaying, speed, level, carPosition, combo]);
