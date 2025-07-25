@@ -103,6 +103,7 @@ export function usePermission() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-test-mode': isTestMode ? 'true' : 'false'
         },
         body: JSON.stringify({
           userId: userId,
@@ -170,11 +171,15 @@ export function usePermission() {
       }
     }
 
+    // 檢查測試模式
+    const isTestMode = localStorage.getItem('testMode') === 'true';
+
     try {
       await fetch('/api/subscription/record-usage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-test-mode': isTestMode ? 'true' : 'false'
         },
         body: JSON.stringify({
           userId: userId,
