@@ -1095,18 +1095,10 @@ export default function RestartWall() {
               justifyContent: 'center',
               gap: '2px',
               whiteSpace: 'nowrap',
-              flexDirection: 'row',
-              flexWrap: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
               width: window.innerWidth <= 768 ? '120px' : '120px',
               minHeight: '32px',
               cursor: 'pointer',
-              zIndex: 1000,
-              userSelect: 'none',
-              WebkitUserSelect: 'none',
-              MozUserSelect: 'none',
-              msUserSelect: 'none'
+              zIndex: 1000
             }}
           >
             {showMyMessages ? 
