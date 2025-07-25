@@ -5013,15 +5013,15 @@ function RacingGame({ onClose }: { onClose: () => void }) {
 
     const gameInterval = setInterval(() => {
       setTimeLeft(prev => {
-        if (prev <= 1) {
+        if (prev <= 0.1) {
           endGame();
           return 0;
         }
-        return prev - 1;
+        return prev - 0.1;
       });
 
       // 生成障礙物
-      if (Math.random() < 0.3 + level * 0.05) {
+      if (Math.random() < 0.9 + level * 0.15) {
         spawnObstacle();
       }
 
@@ -5060,7 +5060,7 @@ function RacingGame({ onClose }: { onClose: () => void }) {
         setLevel(prev => prev + 1);
         setSpeed(prev => Math.min(8, prev + 0.5));
       }
-    }, 1000);
+    }, 100);
 
     return () => clearInterval(gameInterval);
   }, [isPlaying, speed, level, carPosition, combo]);
