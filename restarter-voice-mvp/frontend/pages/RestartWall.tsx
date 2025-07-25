@@ -1042,7 +1042,7 @@ export default function RestartWall() {
         minHeight: window.innerWidth <= 768 ? '100vh' : 'auto',
         position: 'relative',
         zIndex: 1,
-        overflow: 'auto',
+        overflow: 'hidden',
         background: window.innerWidth <= 768 ? '#8a8a8a' : '#8a8a8a'
       }}>
         {/* 主標題和按鈕 */}
@@ -1170,7 +1170,7 @@ export default function RestartWall() {
                   alignItems: 'center',
                   gap: 12, 
                   marginBottom: 18,
-                  padding: window.innerWidth <= 768 ? '0 16px' : '0',
+                  padding: window.innerWidth <= 768 ? '0 16px' : '0 24px',
                   width: '100%',
                   maxWidth: '600px',
                   margin: '0 auto'
@@ -1201,7 +1201,7 @@ export default function RestartWall() {
             gap: 8,
             justifyContent: 'space-between',
             width: '100%',
-            padding: '0 24px'
+            padding: '0 32px'
           }}>
             <button
               className="tone-card selected"
