@@ -2530,8 +2530,16 @@ function FruitPickingGame({ onClose }: { onClose: () => void }) {
       // 立即移除水果，防止重複點擊
       setFruits(prev => prev.filter(f => f.id !== fruitId));
       
-      // 直接更新狀態，不使用setTimeout
-      setScore(prev => prev + (fruitType?.points || 10));
+      // 使用函數式更新確保狀態正確
+      setScore(prevScore => {
+        const newScore = prevScore + (fruitType?.points || 10);
+        // 更新最高分
+        if (newScore > highScore) {
+          setHighScore(newScore);
+        }
+        return newScore;
+      });
+      
       setCollectedFruits(prev => prev + 1);
       setBasket(prev => [...prev, { type: fruit.type, emoji: fruit.emoji }]);
       
@@ -2916,6 +2924,12 @@ function FruitPickingGame({ onClose }: { onClose: () => void }) {
           key={fruit.id}
           onClick={(e) => {
             e.stopPropagation(); // 防止事件冒泡
+            e.preventDefault(); // 防止默認行為
+            catchFruit(fruit.id);
+          }}
+          onTouchStart={(e) => {
+            e.stopPropagation(); // 防止事件冒泡
+            e.preventDefault(); // 防止默認行為
             catchFruit(fruit.id);
           }}
           style={{
@@ -2928,7 +2942,10 @@ function FruitPickingGame({ onClose }: { onClose: () => void }) {
             transition: 'all 0.1s ease',
             zIndex: 20, // 提高z-index，確保水果在籃子上方
             touchAction: 'manipulation', // 優化觸摸響應
-            willChange: 'transform' // 只允許transform變化
+            willChange: 'transform', // 只允許transform變化
+            WebkitUserSelect: 'none', // Safari支持
+            MozUserSelect: 'none', // Firefox支持
+            msUserSelect: 'none' // IE支持
           }}
         >
           {fruit.emoji}
