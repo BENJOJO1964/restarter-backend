@@ -1028,23 +1028,25 @@ export default function RestartWall() {
         display: 'flex', 
         flexDirection: 'column', 
         justifyContent: 'center',
-        padding: window.innerWidth <= 768 ? '120px 16px 20px 16px' : '0',
+        padding: window.innerWidth <= 768 ? '140px 16px 20px 16px' : '0',
         boxSizing: 'border-box',
         minHeight: window.innerWidth <= 768 ? '100vh' : 'auto',
         position: 'relative',
-        zIndex: 1
+        zIndex: 1,
+        overflow: 'auto'
       }}>
         {/* 主標題和按鈕 */}
                   <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            marginBottom: window.innerWidth <= 768 ? 16 : 24,
+            marginBottom: window.innerWidth <= 768 ? 12 : 24,
             flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-            gap: window.innerWidth <= 768 ? 12 : 0,
-            width: '100%'
+            gap: window.innerWidth <= 768 ? 8 : 0,
+            width: '100%',
+            minHeight: window.innerWidth <= 768 ? 'auto' : 'auto'
           }}>
                       <h2 className="modern-title" style={{ 
-              fontSize: window.innerWidth <= 768 ? '1.5rem' : '2.2rem', 
+              fontSize: window.innerWidth <= 768 ? '1.2rem' : '2.2rem', 
               margin: 0, 
               flex: 1, 
               textAlign: 'center', 
@@ -1053,7 +1055,7 @@ export default function RestartWall() {
               letterSpacing: 1, 
               display:'flex',
               alignItems:'center',
-              gap: window.innerWidth <= 768 ? 4 : 8,
+              gap: window.innerWidth <= 768 ? 2 : 8,
               whiteSpace: 'nowrap',
               flexWrap: 'wrap',
               justifyContent: 'center'
@@ -1066,20 +1068,21 @@ export default function RestartWall() {
               border: 'none', 
               borderRadius: 12, 
               fontWeight: 900, 
-              fontSize: window.innerWidth <= 768 ? 12 : 17, 
-              padding: window.innerWidth <= 768 ? '6px 12px' : '10px 28px', 
+              fontSize: window.innerWidth <= 768 ? 10 : 14, 
+              padding: window.innerWidth <= 768 ? '4px 8px' : '8px 20px', 
               marginLeft: window.innerWidth <= 768 ? 0 : 18, 
               boxShadow: '0 2px 12px #6B5BFF33', 
-              letterSpacing: 2,
+              letterSpacing: 1,
               transition: 'all 0.3s ease',
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
+              gap: '2px',
               whiteSpace: 'nowrap',
               flexDirection: 'row',
               flexWrap: 'nowrap',
               overflow: 'hidden',
-              textOverflow: 'ellipsis'
+              textOverflow: 'ellipsis',
+              maxWidth: window.innerWidth <= 768 ? '120px' : '140px'
             }}
           >
             {showMyMessages ? 
