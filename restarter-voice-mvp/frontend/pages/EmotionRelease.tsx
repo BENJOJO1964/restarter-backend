@@ -4719,6 +4719,8 @@ function RacingGame({ onClose }: { onClose: () => void }) {
   const [combo, setCombo] = useState(0);
   const [showComboEffect, setShowComboEffect] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [showCollisionEffect, setShowCollisionEffect] = useState(false);
+  const [isColliding, setIsColliding] = useState(false);
 
   // 多語言翻譯函數
   const getText = (key: string) => {
@@ -5039,6 +5041,12 @@ function RacingGame({ onClose }: { onClose: () => void }) {
               // 碰撞發生
               setCombo(0);
               setScore(prev => Math.max(0, prev - 10));
+              setIsColliding(true);
+              setShowCollisionEffect(true);
+              setTimeout(() => {
+                setIsColliding(false);
+                setShowCollisionEffect(false);
+              }, 500);
             } else {
               // 成功避開
               setCombo(prev => prev + 1);
@@ -5090,15 +5098,35 @@ function RacingGame({ onClose }: { onClose: () => void }) {
     return styles[type as keyof typeof styles] || styles.rock;
   };
 
+  // 觸控事件處理
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isPlaying) return;
+    e.preventDefault();
+    
+    const touch = e.touches[0];
+    const screenWidth = window.innerWidth;
+    const touchX = touch.clientX;
+    
+    if (touchX < screenWidth / 2) {
+      moveCar('left');
+    } else {
+      moveCar('right');
+    }
+  };
+
   return (
-    <div style={{
-      width: '100vw',
-      height: '100vh',
-      background: 'linear-gradient(180deg, #87CEEB 0%, #98FB98 100%)',
-      position: 'relative',
-      overflow: 'hidden',
-      fontFamily: 'Arial, sans-serif'
-    }}>
+    <div 
+      style={{
+        width: '100vw',
+        height: '100vh',
+        background: 'linear-gradient(180deg, #87CEEB 0%, #98FB98 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        fontFamily: 'Arial, sans-serif',
+        touchAction: 'none'
+      }}
+      onTouchStart={handleTouchStart}
+    >
       {/* 遊戲資訊 */}
       <div style={{
         position: 'absolute',
@@ -5136,11 +5164,12 @@ function RacingGame({ onClose }: { onClose: () => void }) {
         transform: 'translateX(-50%)',
         width: 'clamp(40px, 8vw, 60px)',
         height: 'clamp(20px, 4vw, 30px)',
-        background: 'linear-gradient(45deg, #FF4444, #FF6666)',
+        background: isColliding ? 'linear-gradient(45deg, #FF0000, #FF4444)' : 'linear-gradient(45deg, #FF4444, #FF6666)',
         borderRadius: '8px',
-        border: '2px solid #CC0000',
+        border: isColliding ? '3px solid #FF0000' : '2px solid #CC0000',
         zIndex: 10,
-        transition: 'left 0.1s ease'
+        transition: 'left 0.1s ease',
+        animation: isColliding ? 'collisionShake 0.5s ease-in-out' : 'none'
       }}>
         <div style={{
           position: 'absolute',
@@ -5189,6 +5218,50 @@ function RacingGame({ onClose }: { onClose: () => void }) {
           COMBO x{combo}!
         </div>
       )}
+
+      {/* 碰撞效果 */}
+      {showCollisionEffect && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          fontSize: 'clamp(2rem, 5vw, 3rem)',
+          fontWeight: 'bold',
+          color: '#FF0000',
+          textShadow: '0 0 20px #FF0000',
+          animation: 'collisionEffect 0.5s ease-out forwards',
+          pointerEvents: 'none',
+          zIndex: 1000
+        }}>
+          BOOM!
+        </div>
+      )}
+
+      <style>
+        {`
+          @keyframes collisionShake {
+            0%, 100% { transform: translateX(-50%) translateY(0px); }
+            25% { transform: translateX(-50%) translateY(-5px) translateX(-3px); }
+            50% { transform: translateX(-50%) translateY(0px) translateX(3px); }
+            75% { transform: translateX(-50%) translateY(-5px) translateX(-3px); }
+          }
+          @keyframes collisionEffect {
+            0% { 
+              transform: translate(-50%, -50%) scale(0.5);
+              opacity: 0;
+            }
+            50% { 
+              transform: translate(-50%, -50%) scale(1.2);
+              opacity: 1;
+            }
+            100% { 
+              transform: translate(-50%, -50%) scale(1);
+              opacity: 0;
+            }
+          }
+        `}
+      </style>
 
       {/* 控制按鈕 */}
       <div style={{
