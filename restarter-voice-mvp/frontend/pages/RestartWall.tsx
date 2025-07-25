@@ -975,6 +975,10 @@ export default function RestartWall() {
   return (
     <div className="modern-bg" style={{ 
       background: window.innerWidth <= 768 ? '#8a8a8a' : '#8a8a8a', 
+      backgroundImage: 'url(/soil.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
       minHeight: '100vh', 
       display: 'flex', 
       flexDirection: 'column' 
@@ -1090,7 +1094,8 @@ export default function RestartWall() {
               flexWrap: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              maxWidth: window.innerWidth <= 768 ? '120px' : '120px'
+              maxWidth: window.innerWidth <= 768 ? '120px' : '120px',
+              cursor: 'pointer'
             }}
           >
             {showMyMessages ? 
@@ -1151,22 +1156,27 @@ export default function RestartWall() {
         </div>
                 <div style={{ 
                   display: 'flex', 
+                  flexDirection: 'column',
+                  alignItems: 'center',
                   gap: 12, 
                   marginBottom: 18,
-                  flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-                  padding: window.innerWidth <= 768 ? '0 16px' : '0'
+                  padding: window.innerWidth <= 768 ? '0 16px' : '0',
+                  width: '100%',
+                  maxWidth: '600px',
+                  margin: '0 auto'
                 }}>
           <input
             className="quote-card"
             style={{ 
-              flex: 1,
+              width: '100%',
               fontSize: window.innerWidth <= 768 ? 16 : 18, 
               padding: window.innerWidth <= 768 ? '10px 14px' : '12px 16px', 
               border: 'none', 
               outline: 'none', 
               background: '#232946', 
               color: '#fff',
-              borderRadius: '12px'
+              borderRadius: '12px',
+              marginBottom: '8px'
             }}
             maxLength={200} // 限制200字
             placeholder={t.placeholder}
@@ -1178,8 +1188,8 @@ export default function RestartWall() {
           <div style={{
             display: 'flex',
             gap: 8,
-            flexDirection: window.innerWidth <= 768 ? 'row' : 'row',
-            justifyContent: window.innerWidth <= 768 ? 'space-between' : 'flex-start'
+            justifyContent: 'space-between',
+            width: '100%'
           }}>
             <button
               className="tone-card selected"
@@ -1189,7 +1199,11 @@ export default function RestartWall() {
                 minWidth: window.innerWidth <= 768 ? '60px' : '70px',
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
-                borderRadius: '8px'
+                borderRadius: '8px',
+                background: 'linear-gradient(135deg, #6B5BFF 0%, #23c6e6 100%)',
+                color: '#fff',
+                border: 'none',
+                cursor: 'pointer'
               }}
               onClick={() => {
                 console.log('發送按鈕被點擊');
@@ -1201,48 +1215,47 @@ export default function RestartWall() {
               {loading ? t.sending : t.send}
             </button>
           {/* 語音錄製按鈕 */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <button
-              onClick={handleRecordingClick}
-              style={{
-                background: isRecording 
-                  ? 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)'
-                  : 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
-                border: 'none',
-                borderRadius: '12px',
-                padding: '10px 16px',
-                color: 'white',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: '600',
-                boxShadow: isRecording 
-                  ? '0 4px 16px rgba(244, 67, 54, 0.3)'
-                  : '0 4px 16px rgba(33, 150, 243, 0.3)',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                animation: isRecording ? 'pulse 1.5s infinite' : 'none',
-                minWidth: '70px',
-                whiteSpace: 'nowrap',
-                flexShrink: 0
-              }}
-              onMouseOver={(e) => {
-                if (!isRecording) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.4)';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!isRecording) {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(33, 150, 243, 0.3)';
-                }
-              }}
-            >
-                          <span style={{ fontSize: '18px' }}>🎤</span>
+          <button
+            onClick={handleRecordingClick}
+            style={{
+              background: isRecording 
+                ? 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)'
+                : 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '10px 16px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '600',
+              boxShadow: isRecording 
+                ? '0 4px 16px rgba(244, 67, 54, 0.3)'
+                : '0 4px 16px rgba(33, 150, 243, 0.3)',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              animation: isRecording ? 'pulse 1.5s infinite' : 'none',
+              minWidth: '70px',
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}
+            onMouseOver={(e) => {
+              if (!isRecording) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.4)';
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!isRecording) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(33, 150, 243, 0.3)';
+              }
+            }}
+          >
+            <span style={{ fontSize: '18px' }}>🎤</span>
             {isRecording ? `${t.recording} ${Math.floor(recordingDuration / 60)}:${(recordingDuration % 60).toString().padStart(2, '0')}` : t.voice}
-            </button>
+          </button>
             {isRecording && (
               <div style={{ 
                 fontSize: '12px', 
@@ -1254,7 +1267,6 @@ export default function RestartWall() {
               </div>
             )}
           </div>
-        </div>
         </div>
         
         {/* 移除錄音狀態顯示 */}
