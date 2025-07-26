@@ -1181,7 +1181,7 @@ export default function RestartWall() {
           <input
             className="quote-card"
             style={{ 
-              width: '100%',
+              width: window.innerWidth <= 768 ? '100%' : 'calc(100% - 32px)',
               fontSize: window.innerWidth <= 768 ? 16 : 18, 
               padding: window.innerWidth <= 768 ? '10px 14px' : '12px 16px', 
               border: '2px solid rgba(107, 91, 255, 0.5)', 
@@ -1190,7 +1190,8 @@ export default function RestartWall() {
               color: '#fff',
               borderRadius: '12px',
               marginBottom: '8px',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              margin: window.innerWidth <= 768 ? undefined : '0 auto 8px auto'
             }}
             maxLength={200} // 限制200字
             placeholder={t.placeholder}
@@ -1238,7 +1239,7 @@ export default function RestartWall() {
                 : 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
               border: 'none',
               borderRadius: '12px',
-              padding: '10px 16px',
+              padding: window.innerWidth <= 768 ? '10px 16px' : '10px 10px',
               color: 'white',
               cursor: 'pointer',
               fontSize: '16px',
@@ -1251,9 +1252,10 @@ export default function RestartWall() {
               alignItems: 'center',
               gap: '8px',
               animation: isRecording ? 'pulse 1.5s infinite' : 'none',
-              minWidth: '70px',
+              minWidth: window.innerWidth <= 768 ? '70px' : '56px',
               whiteSpace: 'nowrap',
-              flexShrink: 0
+              flexShrink: 0,
+              marginRight: window.innerWidth <= 768 ? undefined : 8
             }}
             onMouseOver={(e) => {
               if (!isRecording) {
