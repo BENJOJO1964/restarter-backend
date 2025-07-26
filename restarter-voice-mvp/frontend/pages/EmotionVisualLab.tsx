@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LanguageSelector } from '../components/LanguageSelector';
+import Footer from '../components/Footer';
 type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'vi' | 'th' | 'la' | 'ms';
 
 const LANGS: { code: LanguageCode; label: string }[] = [
@@ -377,83 +378,7 @@ export default function EmotionVisualLab() {
       `}</style>
       
       {/* Footer */}
-      <footer style={{ 
-        textAlign: 'center', 
-        fontSize: 14, 
-        color: '#888', 
-        marginTop: 40, 
-        padding: 16,
-        background: 'rgba(255,255,255,0.92)',
-        borderTop: '1px solid #eee',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        boxShadow: '0 -2px 8px #0001',
-        width: '100%'
-      }}>
-        <div style={{ width: '100%', maxWidth: 700, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          {/* 左側：我們是誰 */}
-          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, minWidth: 120, marginRight: 32 }}>
-            {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
-             lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
-             lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
-             lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
-             lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
-             lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
-             lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
-             lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
-             '🧬 Restarter™｜Quis sumus'}
-          </a>
-          {/* 中央：政策/條款/刪除 */}
-          <div style={{ display: 'flex', gap: 32, justifyContent: 'center', alignItems: 'center' }}>
-            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>
-              {lang === 'zh-TW' ? '隱私權政策' : 
-               lang === 'zh-CN' ? '隐私政策' : 
-               lang === 'en' ? 'Privacy Policy' : 
-               lang === 'ja' ? 'プライバシーポリシー' : 
-               lang === 'ko' ? '개인정보 처리방침' : 
-               lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
-               lang === 'vi' ? 'Chính sách bảo mật' : 
-               lang === 'ms' ? 'Dasar Privasi' : 
-               'Consilium de Privata'}
-            </a>
-            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>
-              {lang === 'zh-TW' ? '條款/聲明' : 
-               lang === 'zh-CN' ? '条款/声明' : 
-               lang === 'en' ? 'Terms/Statement' : 
-               lang === 'ja' ? '規約/声明' : 
-               lang === 'ko' ? '약관/성명' : 
-               lang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
-               lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
-               lang === 'ms' ? 'Terma/Pernyataan' : 
-               'Termini/Declaratio'}
-            </a>
-            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>
-              {lang === 'zh-TW' ? '資料刪除說明' : 
-               lang === 'zh-CN' ? '数据删除说明' : 
-               lang === 'en' ? 'Data Deletion' : 
-               lang === 'ja' ? 'データ削除について' : 
-               lang === 'ko' ? '데이터 삭제 안내' : 
-               lang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
-               lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
-               lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
-               'Explicatio Deletionis Datae'}
-            </a>
-          </div>
-          {/* 右側：意見箱 */}
-          <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, minWidth: 140, textAlign: 'right', marginLeft: 32 }}>
-            {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
-             lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
-             lang === 'en' ? '💬 Feedback｜We Want to Hear You' : 
-             lang === 'ja' ? '💬 ご意見箱｜あなたの声を聞かせて' : 
-             lang === 'ko' ? '💬 피드백｜여러분의 의견을 듣고 싶어요' : 
-             lang === 'th' ? '💬 กล่องความคิดเห็น｜เราอยากฟังคุณ' : 
-             lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn lắng nghe bạn' : 
-             lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami ingin mendengar anda' : 
-             '💬 Arca Consilii｜Te audire volumus'}
-          </a>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 } 
