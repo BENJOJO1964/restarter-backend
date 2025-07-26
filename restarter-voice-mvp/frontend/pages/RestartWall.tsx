@@ -1202,7 +1202,7 @@ export default function RestartWall() {
           <div style={{
             display: 'flex',
             gap: 8,
-            justifyContent: 'space-between',
+            justifyContent: 'flex-start',
             width: '100%',
             padding: window.innerWidth <= 768 ? '0 8px' : '0 8px'
           }}>
