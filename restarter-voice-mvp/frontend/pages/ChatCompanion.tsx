@@ -11,6 +11,7 @@ import Footer from '../components/Footer';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
 import { UpgradeModal } from '../components/UpgradeModal';
 import { usePermission } from '../hooks/usePermission';
+import { useTestMode } from '../App';
 
 interface ChatMsg {
   id: string;
@@ -296,6 +297,7 @@ export default function ChatCompanion() {
   const { lang, setLang } = useLanguage();
   const t = TEXTS[lang] || TEXTS['zh-TW'];
   const recognitionRef = useRef<any>(null);
+  const { isTestMode } = useTestMode();
 
   // 新增：語音自動循環控制
   const [autoVoiceLoop, setAutoVoiceLoop] = useState(false);
@@ -492,6 +494,7 @@ export default function ChatCompanion() {
     // 檢查 AI 聊天權限
     const permission = await checkPermission('aiChat');
     if (!permission.allowed) {
+      if (isTestMode) return;
       if (permission.isFreeUser) {
         // 免費用戶顯示升級跳窗
         setShowUpgradeModal(true);
@@ -566,6 +569,7 @@ export default function ChatCompanion() {
       // 檢查語音權限
       const permission = await checkPermission('aiChat');
       if (!permission.allowed) {
+        if (isTestMode) return;
         if (permission.isFreeUser) {
           // 免費用戶顯示升級跳窗
           setShowUpgradeModal(true);
