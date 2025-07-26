@@ -72,14 +72,7 @@ export const TokenRenewalModal: React.FC<TokenRenewalModalProps> = ({
         textAlign: 'center',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
       }}>
-        {/* 圖標 */}
-        <div style={{
-          fontSize: 48,
-          marginBottom: 16,
-          color: '#6B5BFF'
-        }}>
-          ⚡
-        </div>
+
 
         {/* 標題 */}
         <h2 style={{
