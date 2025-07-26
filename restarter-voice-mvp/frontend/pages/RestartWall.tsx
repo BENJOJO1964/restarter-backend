@@ -1173,7 +1173,7 @@ export default function RestartWall() {
                   alignItems: 'center',
                   gap: 12, 
                   marginBottom: 18,
-                  padding: window.innerWidth <= 768 ? '0 16px' : '0 16px',
+                  padding: window.innerWidth <= 768 ? '0 8px' : '0 16px',
                   width: '100%',
                   maxWidth: '600px',
                   margin: '0 auto'
@@ -1204,7 +1204,7 @@ export default function RestartWall() {
             gap: 8,
             justifyContent: 'space-between',
             width: '100%',
-            padding: '0 16px'
+            padding: window.innerWidth <= 768 ? '0 8px' : '0 16px'
           }}>
             <button
               className="tone-card selected"
