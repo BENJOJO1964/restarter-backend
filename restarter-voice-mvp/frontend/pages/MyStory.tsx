@@ -1428,34 +1428,36 @@ export default function MyStory() {
             maxWidth: 800,
             margin: '0 auto',
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: window.innerWidth <= 768 ? 'column' : 'column', // 手機版強制column
             alignItems: 'center',
-            gap: 20,
+            gap: window.innerWidth <= 768 ? 8 : 20,
             padding: '0 20px'
           }}
         >
           {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
           <div style={{
             display: 'flex',
+            flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 40,
+            gap: 20,
             flexWrap: 'wrap'
           }}>
-            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>隱私權政策</a>
-            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>條款/聲明</a>
-            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>資料刪除說明</a>
+            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
+            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
+            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
           </div>
           {/* 第二行：我們是誰、意見箱 */}
           <div style={{
             display: 'flex',
+            flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 40,
+            gap: 20,
             flexWrap: 'wrap'
           }}>
-            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px' }}>🧬 Restarter™｜我們是誰</a>
-            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px' }}>💬 意見箱｜我們想聽你說</a>
+            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
+            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
           </div>
         </div>
         <style>{`
