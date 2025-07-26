@@ -473,30 +473,32 @@ export default function FriendMatch() {
               <div style={{ fontSize: 12, color: '#888', textAlign: 'center', marginBottom: 12 }}>{UI_TEXT.partnerSubtitle ? UI_TEXT.partnerSubtitle[lang] : '請選擇你的夥伴目標'}</div>
               
               {/* 目標按鈕 */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-                {goalKeys.map((key) => (
-                  <button
-                    key={key}
-                    onClick={() => {
-                      setActiveGoal(key);
-                      setRightTab('main');
-                    }}
-                    style={{
-                      flex: '1 1 calc(50% - 4px)',
-                      padding: '8px 4px',
-                      borderRadius: 8,
-                      border: activeGoal === key ? '2px solid #23c6e6' : '1px solid #eee',
-                      background: activeGoal === key ? '#e6f7ff' : '#fff',
-                      color: activeGoal === key ? '#23c6e6' : '#333',
-                      fontWeight: 600,
-                      fontSize: 12,
-                      cursor: 'pointer',
-                      boxShadow: activeGoal === key ? '0 2px 8px #23c6e622' : '0 1px 4px #0001'
-                    }}
-                  >
-                    {UI_TEXT.goalOptions[key][lang]}
-                  </button>
-                ))}
+              <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 12, padding: '12px', marginBottom: 16, boxShadow: '0 2px 8px #6B5BFF22' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {goalKeys.map((key) => (
+                    <button
+                      key={key}
+                      onClick={() => {
+                        setActiveGoal(key);
+                        setRightTab('main');
+                      }}
+                      style={{
+                        flex: '1 1 calc(50% - 4px)',
+                        padding: '8px 4px',
+                        borderRadius: 8,
+                        border: activeGoal === key ? '2px solid #23c6e6' : '1px solid #eee',
+                        background: activeGoal === key ? '#e6f7ff' : '#fff',
+                        color: activeGoal === key ? '#23c6e6' : '#333',
+                        fontWeight: 600,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                        boxShadow: activeGoal === key ? '0 2px 8px #23c6e622' : '0 1px 4px #0001'
+                      }}
+                    >
+                      {UI_TEXT.goalOptions[key][lang]}
+                    </button>
+                  ))}
+                </div>
               </div>
               
               {/* 功能按鈕 */}
