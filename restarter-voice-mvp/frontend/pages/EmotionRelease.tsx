@@ -510,8 +510,16 @@ export default function EmotionRelease() {
       {currentGame === null && (
         <>
           {window.innerWidth <= 768 ? (
-            // 手機版 Footer - 2行排列
-            <div style={{ width: '100%', margin: '0 auto', marginTop: 24 }}>
+            // 手機版 Footer - 2行排列 + 白色卡片背景
+            <div style={{ 
+              width: '100%', 
+              margin: '0 auto', 
+              marginTop: 24,
+              background: 'rgba(255,255,255,0.95)',
+              borderRadius: 16,
+              padding: '16px',
+              boxShadow: '0 2px 12px #6B5BFF22'
+            }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
