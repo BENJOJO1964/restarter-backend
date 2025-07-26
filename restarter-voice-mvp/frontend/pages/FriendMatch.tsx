@@ -469,11 +469,12 @@ export default function FriendMatch() {
                 <img src={profile.avatar} alt="avatar" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid #6B5BFF' }} />
                 <div style={{ fontWeight: 700, fontSize: 14, color: '#333' }}>{profile.name}</div>
               </div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: '#6B5BFF', textAlign: 'center', marginBottom: 8 }}>{UI_TEXT.partnerTitle ? UI_TEXT.partnerTitle[lang] : '尋求夥伴同行'}</div>
-              <div style={{ fontSize: 12, color: '#888', textAlign: 'center', marginBottom: 12 }}>{UI_TEXT.partnerSubtitle ? UI_TEXT.partnerSubtitle[lang] : '請選擇你的夥伴目標'}</div>
-              
-              {/* 目標按鈕 */}
-              <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 12, padding: '12px', marginBottom: 16, boxShadow: '0 2px 8px #6B5BFF22' }}>
+              {/* 目標選擇區域 - 灰色卡片背景 */}
+              <div style={{ background: 'rgba(128,128,128,0.1)', borderRadius: 12, padding: '16px', marginBottom: 16, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
+                <div style={{ fontWeight: 700, fontSize: 16, color: '#6B5BFF', textAlign: 'center', marginBottom: 8 }}>{UI_TEXT.partnerTitle ? UI_TEXT.partnerTitle[lang] : '尋求夥伴同行'}</div>
+                <div style={{ fontSize: 12, color: '#888', textAlign: 'center', marginBottom: 12 }}>{UI_TEXT.partnerSubtitle ? UI_TEXT.partnerSubtitle[lang] : '請選擇你的夥伴目標'}</div>
+                
+                {/* 目標按鈕 */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {goalKeys.map((key) => (
                     <button
@@ -603,38 +604,41 @@ export default function FriendMatch() {
                 <img src={profile.avatar} alt="avatar" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', border: '3px solid #6B5BFF' }} />
                 <div style={{ fontWeight: 700, fontSize: 16, color: '#333' }}>{profile.name}</div>
               </div>
-              <div style={{ fontWeight: 700, fontSize: 18, color: '#6B5BFF', textAlign: 'center', marginBottom: 12 }}>{UI_TEXT.partnerTitle ? UI_TEXT.partnerTitle[lang] : '尋求夥伴同行'}</div>
-              <div style={{ fontSize: 14, color: '#888', textAlign: 'center', marginBottom: 20 }}>{UI_TEXT.partnerSubtitle ? UI_TEXT.partnerSubtitle[lang] : '請選擇你的夥伴目標'}</div>
-              
-              {/* 目標按鈕 */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
-                {goalKeys.map((key) => (
-                  <button
-                    key={key}
-                    onClick={() => {
-                      setActiveGoal(key);
-                      setRightTab('main');
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      borderRadius: 10,
-                      border: activeGoal === key ? '2px solid #23c6e6' : '1.5px solid #eee',
-                      background: activeGoal === key ? '#e6f7ff' : '#fff',
-                      color: activeGoal === key ? '#23c6e6' : '#333',
-                      fontWeight: 700,
-                      fontSize: 15,
-                      cursor: 'pointer',
-                      boxShadow: activeGoal === key ? '0 2px 8px #23c6e622' : '0 2px 8px #0001',
-                      transition: 'all 0.2s',
-                      outline: 'none',
-                      borderLeft: activeGoal === key ? '6px solid #23c6e6' : '6px solid transparent',
-                      marginBottom: 0
-                    }}
-                  >
-                    {UI_TEXT.goalOptions[key][lang]}
-                  </button>
-                ))}
+              {/* 目標選擇區域 - 灰色卡片背景 */}
+              <div style={{ background: 'rgba(128,128,128,0.1)', borderRadius: 12, padding: '20px', marginBottom: 24, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
+                <div style={{ fontWeight: 700, fontSize: 18, color: '#6B5BFF', textAlign: 'center', marginBottom: 12 }}>{UI_TEXT.partnerTitle ? UI_TEXT.partnerTitle[lang] : '尋求夥伴同行'}</div>
+                <div style={{ fontSize: 14, color: '#888', textAlign: 'center', marginBottom: 20 }}>{UI_TEXT.partnerSubtitle ? UI_TEXT.partnerSubtitle[lang] : '請選擇你的夥伴目標'}</div>
+                
+                {/* 目標按鈕 */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {goalKeys.map((key) => (
+                    <button
+                      key={key}
+                      onClick={() => {
+                        setActiveGoal(key);
+                        setRightTab('main');
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        borderRadius: 10,
+                        border: activeGoal === key ? '2px solid #23c6e6' : '1.5px solid #eee',
+                        background: activeGoal === key ? '#e6f7ff' : '#fff',
+                        color: activeGoal === key ? '#23c6e6' : '#333',
+                        fontWeight: 700,
+                        fontSize: 15,
+                        cursor: 'pointer',
+                        boxShadow: activeGoal === key ? '0 2px 8px #23c6e622' : '0 2px 8px #0001',
+                        transition: 'all 0.2s',
+                        outline: 'none',
+                        borderLeft: activeGoal === key ? '6px solid #23c6e6' : '6px solid transparent',
+                        marginBottom: 0
+                      }}
+                    >
+                      {UI_TEXT.goalOptions[key][lang]}
+                    </button>
+                  ))}
+                </div>
               </div>
               
               {/* 功能按鈕 */}
