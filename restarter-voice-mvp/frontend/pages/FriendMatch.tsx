@@ -523,7 +523,16 @@ export default function FriendMatch() {
                     const user = candidates[currentIndex >= 0 && currentIndex < candidates.length ? currentIndex : 0];
                     if (!user) return null;
                     return (
-                      <div style={{ textAlign: 'center' }}>
+                      <div
+                        id="user-card"
+                        style={{
+                          textAlign: 'center',
+                          transition: 'box-shadow 0.2s, transform 0.4s',
+                          transform: cardAnim === 'in' ? 'translateX(-120%) scale(0.4)' : cardAnim === 'out' ? 'translateX(120%) scale(0.4)' : 'translateX(0) scale(1)',
+                          opacity: 1
+                        }}
+                        onAnimationEnd={() => { if (cardAnim === 'in') setCardAnim('none'); }}
+                      >
                         <img src={user.avatar} alt="avatar" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '3px solid #6B5BFF', marginBottom: 12 }} />
                         <div style={{ fontWeight: 800, fontSize: 18, color: '#6B5BFF', marginBottom: 8 }}>{user.name}</div>
                         <div style={{ color: '#888', fontSize: 14, marginBottom: 4 }}>國家/地區：{user.country || '未填寫'}</div>
