@@ -870,7 +870,86 @@ export default function ChatCompanion() {
       )}
       
       {/* Footer */}
-      <Footer />
+      {window.innerWidth <= 768 ? (
+        // 手機版 Footer - 複製自我的里程碑頁面
+        <footer style={{ 
+          textAlign: 'center', 
+          fontSize: 12, 
+          color: '#888', 
+          marginTop: 20, 
+          padding: 12,
+          background: 'rgba(255,255,255,0.95)',
+          borderTop: '1px solid #eee',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8
+        }}>
+          {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
+              {lang === 'zh-TW' ? '隱私權政策' : 
+               lang === 'zh-CN' ? '隐私政策' : 
+               lang === 'en' ? 'Privacy Policy' : 
+               lang === 'ja' ? 'プライバシーポリシー' : 
+               lang === 'ko' ? '개인정보 처리방침' : 
+               lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
+               lang === 'vi' ? 'Chính sách bảo mật' : 
+               lang === 'ms' ? 'Dasar Privasi' : 
+               'Consilium de Privata'}
+            </a>
+            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
+              {lang === 'zh-TW' ? '條款/聲明' : 
+               lang === 'zh-CN' ? '条款/声明' : 
+               lang === 'en' ? 'Terms/Statement' : 
+               lang === 'ja' ? '規約/声明' : 
+               lang === 'ko' ? '약관/성명' : 
+               lang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
+               lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
+               lang === 'ms' ? 'Terma/Pernyataan' : 
+               'Termini/Declaratio'}
+            </a>
+            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
+              {lang === 'zh-TW' ? '資料刪除說明' : 
+               lang === 'zh-CN' ? '数据删除说明' : 
+               lang === 'en' ? 'Data Deletion' : 
+               lang === 'ja' ? 'データ削除について' : 
+               lang === 'ko' ? '데이터 삭제 안내' : 
+               lang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
+               lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
+               lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
+               'Explicatio Deletionis Datae'}
+            </a>
+          </div>
+          {/* 第二行：我們是誰、意見箱 */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
+              {lang === 'zh-TW' ? '🧬 我們是誰' : 
+               lang === 'zh-CN' ? '🧬 我们是谁' : 
+               lang === 'en' ? '🧬 Who We Are' : 
+               lang === 'ja' ? '🧬 私たちについて' : 
+               lang === 'ko' ? '🧬 우리는 누구인가' : 
+               lang === 'th' ? '🧬 เราเป็นใคร' : 
+               lang === 'vi' ? '🧬 Chúng tôi là ai' : 
+               lang === 'ms' ? '🧬 Siapa Kami' : 
+               '🧬 Quis sumus'}
+            </a>
+            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
+              {lang === 'zh-TW' ? '💬 意見箱' : 
+               lang === 'zh-CN' ? '💬 意见箱' : 
+               lang === 'en' ? '💬 Feedback' : 
+               lang === 'ja' ? '💬 ご意見箱' : 
+               lang === 'ko' ? '💬 피드백' : 
+               lang === 'th' ? '💬 กล่องความคิดเห็น' : 
+               lang === 'vi' ? '💬 Hộp góp ý' : 
+               lang === 'ms' ? '💬 Kotak Maklum Balas' : 
+               '💬 Arca Consilii'}
+            </a>
+          </div>
+        </footer>
+      ) : (
+        // 桌面版 Footer
+        <Footer />
+      )}
       
       {/* Token 續購彈窗 */}
       {showRenewalModal && permissionResult && (
