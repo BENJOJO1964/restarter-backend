@@ -564,17 +564,17 @@ export default function FriendMatch() {
                 </>
               )}
               {rightTab === 'chat' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16, justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20, justifyContent: 'center', alignItems: 'center', minHeight: '50vh', padding: '20px 0' }}>
                   {/* 上面一個淺灰色卡片框是【好友列表】 */}
-                  <div style={{ background: 'rgba(128,128,128,0.1)', borderRadius: 12, padding: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', width: '90%', maxWidth: 300 }}>
-                    <div style={{ fontWeight: 700, fontSize: 18, color: '#6B5BFF', marginBottom: 16, textAlign: 'center' }}>好友列表</div>
-                    <div style={{ textAlign: 'center', color: '#888', fontSize: 14 }}>請先加好友,才能開始聊天</div>
+                  <div style={{ background: 'rgba(128,128,128,0.15)', borderRadius: 16, padding: '24px', boxShadow: '0 6px 16px rgba(0,0,0,0.2)', width: '95%', maxWidth: 320, border: '1px solid rgba(128,128,128,0.2)' }}>
+                    <div style={{ fontWeight: 800, fontSize: 20, color: '#6B5BFF', marginBottom: 16, textAlign: 'center' }}>好友列表</div>
+                    <div style={{ textAlign: 'center', color: '#666', fontSize: 15, lineHeight: 1.4 }}>請先加好友,才能開始聊天</div>
                   </div>
                   
                   {/* 下面一個淺灰色卡片框是【聊天訊息框】 */}
-                  <div style={{ background: 'rgba(128,128,128,0.1)', borderRadius: 12, padding: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', width: '90%', maxWidth: 300 }}>
-                    <div style={{ fontWeight: 700, fontSize: 18, color: '#6B5BFF', marginBottom: 16, textAlign: 'center' }}>聊天訊息框</div>
-                    <div style={{ textAlign: 'center', color: '#888', fontSize: 14 }}>還沒有朋友,去交友區加好友吧!</div>
+                  <div style={{ background: 'rgba(128,128,128,0.15)', borderRadius: 16, padding: '24px', boxShadow: '0 6px 16px rgba(0,0,0,0.2)', width: '95%', maxWidth: 320, border: '1px solid rgba(128,128,128,0.2)' }}>
+                    <div style={{ fontWeight: 800, fontSize: 20, color: '#6B5BFF', marginBottom: 16, textAlign: 'center' }}>聊天訊息框</div>
+                    <div style={{ textAlign: 'center', color: '#666', fontSize: 15, lineHeight: 1.4 }}>還沒有朋友,去交友區加好友吧!</div>
                   </div>
                 </div>
               )}
