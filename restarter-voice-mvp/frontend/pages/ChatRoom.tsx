@@ -301,22 +301,99 @@ export default function ChatRoom() {
           {/* 上面一個淺灰色卡片框是【好友列表】 */}
           <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: '24px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', width: '95%', maxWidth: 320, border: '2px solid rgba(107,91,255,0.3)' }}>
             <div style={{ fontWeight: 800, fontSize: 22, color: '#6B5BFF', marginBottom: 16, textAlign: 'center', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>好友列表</div>
-            <div style={{ textAlign: 'center', color: '#333', fontSize: 16, lineHeight: 1.5, fontWeight: 500 }}>
+            <div style={{ textAlign: 'center', color: '#333', fontSize: 16, lineHeight: 1.5, fontWeight: 500, marginBottom: 16 }}>
               {friends.length === 0 ? 
                 (isTestMode ? '測試模式已啟用，但沒有測試好友' : '請先加好友,才能開始聊天') : 
                 '選擇好友開始聊天'
               }
             </div>
+            {/* 好友列表互動顯示 */}
+            {friends.length > 0 && (
+              <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                {friends.map(f => (
+                  <div key={f.id} onClick={() => setSelectedFriend(f)} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, cursor: 'pointer', padding: '8px', borderRadius: 8, background: selectedFriend?.id === f.id ? 'rgba(107,91,255,0.1)' : 'transparent', border: selectedFriend?.id === f.id ? '1px solid #6B5BFF' : '1px solid transparent' }}>
+                    <img src={f.avatar} alt={f.name} style={{ width: 36, height: 36, borderRadius: '50%', filter: f.online ? 'none' : 'grayscale(1)', border: selectedFriend?.id === f.id ? '2px solid #6B5BFF' : '2px solid #eee' }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, color: f.online ? '#222' : '#aaa', fontSize: 14 }}>
+                        {f.name}
+                        {isTestMode && f.id.startsWith('test-friend-') && (
+                          <span style={{ 
+                            fontSize: '10px', 
+                            background: '#ff6b6b', 
+                            color: 'white', 
+                            padding: '2px 6px', 
+                            borderRadius: '4px', 
+                            marginLeft: '6px',
+                            fontWeight: 'normal'
+                          }}>
+                            測試
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 11, color: f.online ? '#23c6e6' : '#aaa' }}>{f.online ? '在線' : '離線'}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           
           {/* 下面一個淺灰色卡片框是【聊天訊息框】 */}
           <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: '24px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', width: '95%', maxWidth: 320, border: '2px solid rgba(107,91,255,0.3)' }}>
             <div style={{ fontWeight: 800, fontSize: 22, color: '#6B5BFF', marginBottom: 16, textAlign: 'center', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>聊天訊息框</div>
-            <div style={{ textAlign: 'center', color: '#333', fontSize: 16, lineHeight: 1.5, fontWeight: 500 }}>
+            <div style={{ textAlign: 'center', color: '#333', fontSize: 16, lineHeight: 1.5, fontWeight: 500, marginBottom: 16 }}>
               {friends.length === 0 ? 
                 (isTestMode ? '測試模式已啟用，請選擇測試好友開始聊天！' : '還沒有朋友,去交友區加好友吧!') : 
-                '選擇好友開始聊天'
+                (selectedFriend ? `與 ${selectedFriend.name} 聊天` : '請選擇好友開始聊天')
               }
+            </div>
+            {/* 聊天訊息顯示區域 */}
+            {selectedFriend && (
+              <div style={{ maxHeight: 150, overflowY: 'auto', background: '#f7f7f7', borderRadius: 8, padding: 12, marginBottom: 16 }}>
+                {messages.length === 0 ? (
+                  <div style={{ textAlign: 'center', color: '#888', fontSize: 14 }}>
+                    {isTestMode && selectedFriend.id.startsWith('test-friend-') ? '開始測試聊天吧！' : '開始聊天吧！'}
+                  </div>
+                ) : (
+                  messages.map((msg, i) => (
+                    <div key={msg.id || i} style={{ textAlign: msg.fromUserId === user?.uid ? 'right' : 'left', marginBottom: 8 }}>
+                      <span style={{ fontWeight: 600, color: msg.fromUserId === user?.uid ? '#2a5d8f' : '#888', fontSize: 12 }}>
+                        {msg.fromUserName}：
+                      </span>
+                      <span style={{ marginLeft: 4, fontSize: 12 }}>{msg.text}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+            {/* 訊息輸入框和按鈕 */}
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 48 }}>
+              <input 
+                value={input} 
+                onChange={e => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                style={{ flex: 1, borderRadius: 6, border: '1px solid #ccc', padding: 8, fontSize: 14 }} 
+                placeholder={
+                  isTestMode && selectedFriend?.id.startsWith('test-friend-') ? 
+                  '輸入測試訊息...' : 
+                  TEXTS[lang].placeholder
+                } 
+                disabled={friends.length === 0 || !selectedFriend}
+              />
+              <button
+                onClick={selectedFriend ? sendMessage : undefined}
+                disabled={friends.length === 0 || !selectedFriend}
+                style={{ background: '#8ec6f7', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 12px', fontWeight: 700, fontSize: 14, cursor: friends.length === 0 || !selectedFriend ? 'not-allowed' : 'pointer', opacity: friends.length === 0 || !selectedFriend ? 0.5 : 1 }}
+              >
+                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '測試發送' : TEXTS[lang].send}
+              </button>
+              <button
+                onClick={selectedFriend ? () => setVideoOpen(true) : undefined}
+                disabled={friends.length === 0 || !selectedFriend}
+                style={{ background: '#6B5BFF', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 12px', fontWeight: 700, fontSize: 14, cursor: friends.length === 0 || !selectedFriend ? 'not-allowed' : 'pointer', opacity: friends.length === 0 || !selectedFriend ? 0.5 : 1 }}
+              >
+                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '測試視訊' : '視訊聊天'}
+              </button>
             </div>
           </div>
         </div>
