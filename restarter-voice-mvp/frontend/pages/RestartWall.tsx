@@ -658,17 +658,23 @@ export default function RestartWall() {
       return;
     }
 
-    // 檢查語音權限
-    const permission = await checkPermission('aiChat');
-    if (!permission.allowed) {
-      if (permission.canRenew) {
-        setPermissionResult(permission);
-        setShowRenewalModal(true);
-                        } else {
-                    setPermissionResult(permission);
-                    setShowRenewalModal(true);
-                  }
-      return;
+    // 檢查測試模式
+    const isTestMode = localStorage.getItem('testMode') === 'true';
+    
+    // 如果不是測試模式，才檢查語音權限
+    if (!isTestMode) {
+      // 檢查語音權限
+      const permission = await checkPermission('aiChat');
+      if (!permission.allowed) {
+        if (permission.canRenew) {
+          setPermissionResult(permission);
+          setShowRenewalModal(true);
+        } else {
+          setPermissionResult(permission);
+          setShowRenewalModal(true);
+        }
+        return;
+      }
     }
 
     // 顯示確認對話框
