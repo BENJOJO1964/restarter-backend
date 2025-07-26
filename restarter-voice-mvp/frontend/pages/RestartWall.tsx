@@ -1204,8 +1204,9 @@ export default function RestartWall() {
             display: 'flex',
             gap: 8,
             justifyContent: 'space-between',
-            width: '100%',
-            padding: window.innerWidth <= 768 ? '0 8px' : '0 8px 0 16px'
+            width: window.innerWidth <= 768 ? '100%' : 'calc(100% - 32px)',
+            padding: window.innerWidth <= 768 ? '0 8px' : '0 8px 0 16px',
+            margin: window.innerWidth <= 768 ? undefined : '0 auto'
           }}>
             <button
               className="tone-card selected"
