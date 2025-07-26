@@ -1465,7 +1465,7 @@ export default function MyStory() {
               marginTop: 20px !important;
             }
             footer > div {
-              gap: 12px !important;
+              gap: 8px !important;
               flex-direction: column !important;
               justify-content: center !important;
             }
@@ -1477,7 +1477,7 @@ export default function MyStory() {
               flex-wrap: wrap !important;
             }
             footer > div > a {
-              padding: 4px 6px !important;
+              padding: 4px 8px !important;
               fontSize: 12px !important;
             }
           }

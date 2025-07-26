@@ -507,7 +507,31 @@ export default function EmotionRelease() {
       )}
       
       {/* Footer 5個按鈕 - 原封不動複製自 RestartWall */}
-      {currentGame === null && <Footer />}
+      {currentGame === null && (
+        <>
+          {window.innerWidth <= 768 ? (
+            // 手機版 Footer - 2行排列
+            <div style={{ width: '100%', margin: '0 auto', marginTop: 24 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+                  <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
+                  <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
+                  <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
+                </div>
+                {/* 第二行：我們是誰、意見箱 */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+                  <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
+                  <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
+                </div>
+              </div>
+            </div>
+          ) : (
+            // 桌面版 Footer
+            <Footer />
+          )}
+        </>
+      )}
     </div>
   );
 }
