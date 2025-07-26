@@ -1409,95 +1409,86 @@ export default function MyStory() {
       )}
       
       {/* Footer 5個按鈕 - 原封不動複製自 RestartWall */}
-      <footer
-        style={{
-          width: '100%',
-          textAlign: 'center',
-          fontSize: 14,
-          color: '#888',
-          marginTop: 40,
-          padding: '16px 0',
-          background: 'rgba(255,255,255,0.92)',
+      {window.innerWidth <= 768 ? (
+        // 手機版 Footer - 複製自心聲釋放頁面
+        <footer style={{ 
+          textAlign: 'center', 
+          fontSize: 12, 
+          color: '#888', 
+          marginTop: 20, 
+          padding: 12,
+          background: 'rgba(255,255,255,0.95)',
           borderTop: '1px solid #eee',
-          boxShadow: '0 -2px 8px #0001',
-        }}
-      >
-        <div
-          style={{
-            width: '100%',
-            maxWidth: 800,
-            margin: '0 auto',
-            display: 'flex',
-            flexDirection: window.innerWidth <= 768 ? 'column' : 'column', // 手機版強制column
-            alignItems: 'center',
-            gap: window.innerWidth <= 768 ? 8 : 20,
-            padding: '0 20px'
-          }}
-        >
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8
+        }}>
           {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 20,
-            flexWrap: 'wrap'
-          }}>
-            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
-            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
+              {lang === 'zh-TW' ? '隱私權政策' : 
+               lang === 'zh-CN' ? '隐私政策' : 
+               lang === 'en' ? 'Privacy Policy' : 
+               lang === 'ja' ? 'プライバシーポリシー' : 
+               lang === 'ko' ? '개인정보 처리방침' : 
+               lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
+               lang === 'vi' ? 'Chính sách bảo mật' : 
+               lang === 'ms' ? 'Dasar Privasi' : 
+               'Consilium de Privata'}
+            </a>
+            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
+              {lang === 'zh-TW' ? '條款/聲明' : 
+               lang === 'zh-CN' ? '条款/声明' : 
+               lang === 'en' ? 'Terms/Statement' : 
+               lang === 'ja' ? '規約/声明' : 
+               lang === 'ko' ? '약관/성명' : 
+               lang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
+               lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
+               lang === 'ms' ? 'Terma/Pernyataan' : 
+               'Termini/Declaratio'}
+            </a>
+            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
+              {lang === 'zh-TW' ? '資料刪除說明' : 
+               lang === 'zh-CN' ? '数据删除说明' : 
+               lang === 'en' ? 'Data Deletion' : 
+               lang === 'ja' ? 'データ削除について' : 
+               lang === 'ko' ? '데이터 삭제 안내' : 
+               lang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
+               lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
+               lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
+               'Explicatio Deletionis Datae'}
+            </a>
           </div>
           {/* 第二行：我們是誰、意見箱 */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 20,
-            flexWrap: 'wrap'
-          }}>
-            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
-            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
+              {lang === 'zh-TW' ? '🧬 我們是誰' : 
+               lang === 'zh-CN' ? '🧬 我们是谁' : 
+               lang === 'en' ? '🧬 Who We Are' : 
+               lang === 'ja' ? '🧬 私たちについて' : 
+               lang === 'ko' ? '🧬 우리는 누구인가' : 
+               lang === 'th' ? '🧬 เราเป็นใคร' : 
+               lang === 'vi' ? '🧬 Chúng tôi là ai' : 
+               lang === 'ms' ? '🧬 Siapa Kami' : 
+               '🧬 Quis sumus'}
+            </a>
+            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
+              {lang === 'zh-TW' ? '💬 意見箱' : 
+               lang === 'zh-CN' ? '💬 意见箱' : 
+               lang === 'en' ? '💬 Feedback' : 
+               lang === 'ja' ? '💬 ご意見箱' : 
+               lang === 'ko' ? '💬 피드백' : 
+               lang === 'th' ? '💬 กล่องความคิดเห็น' : 
+               lang === 'vi' ? '💬 Hộp góp ý' : 
+               lang === 'ms' ? '💬 Kotak Maklum Balas' : 
+               '💬 Arca Consilii'}
+            </a>
           </div>
-        </div>
-        <style>{`
-          @media (max-width: 768px) {
-            footer {
-              padding: 8px 16px 40px 16px !important;
-              marginTop: 20px !important;
-            }
-            footer > div {
-              gap: 8px !important;
-              flex-direction: column !important;
-              justify-content: center !important;
-            }
-            footer > div > div {
-              display: flex !important;
-              flex-direction: row !important;
-              justify-content: center !important;
-              gap: 20px !important;
-              flex-wrap: wrap !important;
-            }
-            footer > div > a {
-              padding: 4px 8px !important;
-              fontSize: 12px !important;
-            }
-          }
-          @media (min-width: 700px) {
-            footer {
-              padding: 16px !important;
-            }
-            footer > div {
-              flex-direction: row !important;
-              gap: 40px !important;
-              justify-content: space-between !important;
-            }
-            footer > div > a {
-              padding: 4px 8px !important;
-            }
-          }
-        `}</style>
-      </footer>
+        </footer>
+      ) : (
+        // 桌面版 Footer
+        <Footer />
+      )}
     </div>
   );
 } 
