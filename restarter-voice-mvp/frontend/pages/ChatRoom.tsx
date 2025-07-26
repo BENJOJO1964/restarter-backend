@@ -306,6 +306,13 @@ export default function ChatRoom() {
       {/* 手機版：2個淺灰色卡片框 */}
       {window.innerWidth <= 768 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, justifyContent: 'center', alignItems: 'center', width: '100%', maxWidth: 400, padding: '20px' }}>
+          {/* 調試信息 */}
+          {isTestMode && (
+            <div style={{ background: 'rgba(255,255,255,0.9)', padding: '8px 12px', borderRadius: 8, fontSize: 12, color: '#666', marginBottom: 10 }}>
+              測試模式：好友數量 {friends.length}，選中好友 {selectedFriend?.name || '無'}
+            </div>
+          )}
+          
           {/* 上面一個淺灰色卡片框是【好友列表】 */}
           <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: '24px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', width: '95%', maxWidth: 320, border: '2px solid rgba(107,91,255,0.3)' }}>
             <div style={{ fontWeight: 800, fontSize: 22, color: '#6B5BFF', marginBottom: 16, textAlign: 'center', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>好友列表</div>
