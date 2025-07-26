@@ -132,9 +132,16 @@ const Footer: React.FC = () => {
             marginTop: 0 !important;
           }
           footer > div {
-            gap: 16px !important;
+            gap: 12px !important;
             flex-direction: column !important;
             justify-content: center !important;
+          }
+          footer > div > div {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: center !important;
+            gap: 20px !important;
+            flex-wrap: wrap !important;
           }
           footer > div > a {
             padding: 4px 6px !important;
