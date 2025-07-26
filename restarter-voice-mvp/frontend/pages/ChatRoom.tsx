@@ -299,9 +299,9 @@ export default function ChatRoom() {
       {window.innerWidth <= 768 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, justifyContent: 'center', alignItems: 'center', width: '100%', maxWidth: 400, padding: '20px' }}>
           {/* 上面一個淺灰色卡片框是【好友列表】 */}
-          <div style={{ background: 'rgba(128,128,128,0.15)', borderRadius: 16, padding: '24px', boxShadow: '0 6px 16px rgba(0,0,0,0.2)', width: '95%', maxWidth: 320, border: '1px solid rgba(128,128,128,0.2)' }}>
-            <div style={{ fontWeight: 800, fontSize: 20, color: '#6B5BFF', marginBottom: 16, textAlign: 'center' }}>好友列表</div>
-            <div style={{ textAlign: 'center', color: '#666', fontSize: 15, lineHeight: 1.4 }}>
+          <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: '24px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', width: '95%', maxWidth: 320, border: '2px solid rgba(107,91,255,0.3)' }}>
+            <div style={{ fontWeight: 800, fontSize: 22, color: '#6B5BFF', marginBottom: 16, textAlign: 'center', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>好友列表</div>
+            <div style={{ textAlign: 'center', color: '#333', fontSize: 16, lineHeight: 1.5, fontWeight: 500 }}>
               {friends.length === 0 ? 
                 (isTestMode ? '測試模式已啟用，但沒有測試好友' : '請先加好友,才能開始聊天') : 
                 '選擇好友開始聊天'
@@ -310,9 +310,9 @@ export default function ChatRoom() {
           </div>
           
           {/* 下面一個淺灰色卡片框是【聊天訊息框】 */}
-          <div style={{ background: 'rgba(128,128,128,0.15)', borderRadius: 16, padding: '24px', boxShadow: '0 6px 16px rgba(0,0,0,0.2)', width: '95%', maxWidth: 320, border: '1px solid rgba(128,128,128,0.2)' }}>
-            <div style={{ fontWeight: 800, fontSize: 20, color: '#6B5BFF', marginBottom: 16, textAlign: 'center' }}>聊天訊息框</div>
-            <div style={{ textAlign: 'center', color: '#666', fontSize: 15, lineHeight: 1.4 }}>
+          <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: '24px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', width: '95%', maxWidth: 320, border: '2px solid rgba(107,91,255,0.3)' }}>
+            <div style={{ fontWeight: 800, fontSize: 22, color: '#6B5BFF', marginBottom: 16, textAlign: 'center', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>聊天訊息框</div>
+            <div style={{ textAlign: 'center', color: '#333', fontSize: 16, lineHeight: 1.5, fontWeight: 500 }}>
               {friends.length === 0 ? 
                 (isTestMode ? '測試模式已啟用，請選擇測試好友開始聊天！' : '還沒有朋友,去交友區加好友吧!') : 
                 '選擇好友開始聊天'
