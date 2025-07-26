@@ -1076,18 +1076,8 @@ export default function Home() {
           flexDirection: 'column',
           gap: 8
         }}>
+          {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
-              {lang === 'zh-TW' ? '🧬 我們是誰' : 
-               lang === 'zh-CN' ? '🧬 我们是谁' : 
-               lang === 'en' ? '🧬 Who We Are' : 
-               lang === 'ja' ? '🧬 私たちについて' : 
-               lang === 'ko' ? '🧬 우리는 누구인가' : 
-               lang === 'th' ? '🧬 เราเป็นใคร' : 
-               lang === 'vi' ? '🧬 Chúng tôi là ai' : 
-               lang === 'ms' ? '🧬 Siapa Kami' : 
-               '🧬 Quis sumus'}
-            </a>
             <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
               {lang === 'zh-TW' ? '隱私權政策' : 
                lang === 'zh-CN' ? '隐私政策' : 
@@ -1120,6 +1110,20 @@ export default function Home() {
                lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
                lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
                'Explicatio Deletionis Datae'}
+            </a>
+          </div>
+          {/* 第二行：我們是誰、意見箱 */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
+              {lang === 'zh-TW' ? '🧬 我們是誰' : 
+               lang === 'zh-CN' ? '🧬 我们是谁' : 
+               lang === 'en' ? '🧬 Who We Are' : 
+               lang === 'ja' ? '🧬 私たちについて' : 
+               lang === 'ko' ? '🧬 우리는 누구인가' : 
+               lang === 'th' ? '🧬 เราเป็นใคร' : 
+               lang === 'vi' ? '🧬 Chúng tôi là ai' : 
+               lang === 'ms' ? '🧬 Siapa Kami' : 
+               '🧬 Quis sumus'}
             </a>
             <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
               {lang === 'zh-TW' ? '💬 意見箱' : 
