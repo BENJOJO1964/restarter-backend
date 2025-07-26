@@ -143,6 +143,14 @@ export default function ChatRoom() {
     
     setFriends(friendsArr);
     setLoading(false);
+    
+    // 測試模式：自動選擇第一個測試好友
+    if (isTestMode && friendsArr.length > 0) {
+      const testFriend = friendsArr.find(f => f.id.startsWith('test-friend-'));
+      if (testFriend) {
+        setSelectedFriend(testFriend);
+      }
+    }
   };
 
   useEffect(() => {
