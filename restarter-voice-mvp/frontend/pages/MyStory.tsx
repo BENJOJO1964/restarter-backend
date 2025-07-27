@@ -514,6 +514,7 @@ export default function MyStory() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Test-Mode': isTestMode ? 'true' : 'false'
         },
         body: JSON.stringify(assessmentData)
       });
