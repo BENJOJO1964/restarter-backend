@@ -583,7 +583,7 @@ export default function EchoBox() {
   };
 
   const handleDeleteDiary = (id: number) => {
-    if (window.confirm('確定要刪除這個心聲日記嗎？')) {
+    if (window.confirm('這個心聲對您來說很重要嗎？\n\n刪除後將無法恢復，請確認是否真的要刪除？')) {
       const updatedDiaries = diaries.filter(d => d.id !== id);
       setDiaries(updatedDiaries);
       saveDiariesToStorage(updatedDiaries);
