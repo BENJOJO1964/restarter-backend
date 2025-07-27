@@ -256,6 +256,8 @@ export default function MyStory() {
   
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showSocialIntegrationDialog, setShowSocialIntegrationDialog] = useState(false);
+  const [showSocialIntegrationReport, setShowSocialIntegrationReport] = useState(false);
+  const [socialIntegrationReport, setSocialIntegrationReport] = useState<any>(null);
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null);
   const [newMilestone, setNewMilestone] = useState({
     title: '',
@@ -508,25 +510,61 @@ export default function MyStory() {
     const averageScore = score / answers.length;
     let result = '';
     let description = '';
+    let recommendations = [];
     
     if (averageScore >= 4.5) {
       result = '優秀';
       description = '你的社會融入度非常高，在人際關係、就業狀況、家庭關係等方面都表現出色。';
+      recommendations = [
+        '繼續保持現有的良好狀態',
+        '可以考慮擔任志工幫助其他更生人',
+        '分享你的成功經驗給其他需要幫助的人'
+      ];
     } else if (averageScore >= 3.5) {
       result = '良好';
       description = '你的社會融入度良好，在大部分方面都有不錯的表現，還有提升空間。';
+      recommendations = [
+        '參加更多社交活動擴大交友圈',
+        '尋求職業技能培訓提升就業競爭力',
+        '與家人多溝通改善家庭關係'
+      ];
     } else if (averageScore >= 2.5) {
       result = '一般';
       description = '你的社會融入度一般，在某些方面需要改善，建議尋求更多支持。';
+      recommendations = [
+        '建議尋求專業輔導師協助',
+        '參加更生人互助團體',
+        '制定具體的改善計劃'
+      ];
     } else {
       result = '需要改善';
       description = '你的社會融入度需要改善，建議尋求專業輔導和支持。';
+      recommendations = [
+        '立即聯繫專業輔導師',
+        '參加更生人支持計劃',
+        '尋求心理諮商服務'
+      ];
     }
+    
+    // 生成詳細報告
+    const report = {
+      score: averageScore,
+      result: result,
+      description: description,
+      recommendations: recommendations,
+      details: {
+        relationships: socialIntegrationAnswers.q1,
+        employment: socialIntegrationAnswers.q2,
+        family: socialIntegrationAnswers.q3,
+        confidence: socialIntegrationAnswers.q4,
+        acceptance: socialIntegrationAnswers.q5
+      }
+    };
     
     const milestone: Milestone = {
       id: Date.now(),
       title: `${t.socialIntegrationTitle} - ${result}`,
-      description: `${description} 評估分數: ${averageScore.toFixed(1)}/5.0`,
+      description: `${description} 評估分數: ${averageScore.toFixed(1)}/5.0\n\n建議：\n${recommendations.map(rec => `• ${rec}`).join('\n')}`,
       date: new Date().toISOString(),
       type: 'social',
       completed: true
@@ -537,6 +575,10 @@ export default function MyStory() {
     saveMilestonesToStorage(updatedMilestones);
     setSocialIntegrationAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '' });
     setShowSocialIntegrationDialog(false);
+    
+    // 顯示詳細報告
+    setShowSocialIntegrationReport(true);
+    setSocialIntegrationReport(report);
   };
 
   const handleAudio = (audioBlob: Blob, duration: number) => {
@@ -1744,6 +1786,178 @@ export default function MyStory() {
                 }}
               >
                 提交評估
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 社會融入度評估詳細報告對話框 */}
+      {showSocialIntegrationReport && socialIntegrationReport && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '30px',
+            width: '90%',
+            maxWidth: '600px',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+          }}>
+            <h3 style={{ marginBottom: '20px', color: '#333', textAlign: 'center' }}>
+              📊 社會融入度評估報告
+            </h3>
+            
+            {/* 總體評分 */}
+            <div style={{ 
+              background: 'linear-gradient(135deg, #6B5BFF 0%, #5A4FCF 100%)',
+              borderRadius: '12px',
+              padding: '20px',
+              color: 'white',
+              marginBottom: '20px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>
+                {socialIntegrationReport.result}
+              </div>
+              <div style={{ fontSize: '18px', marginBottom: '8px' }}>
+                總分：{socialIntegrationReport.score.toFixed(1)}/5.0
+              </div>
+              <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                {socialIntegrationReport.description}
+              </div>
+            </div>
+            
+            {/* 詳細分析 */}
+            <div style={{ marginBottom: '20px' }}>
+              <h4 style={{ color: '#333', marginBottom: '12px', fontWeight: '600' }}>
+                📋 詳細分析
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <span style={{ color: '#666' }}>人際關係</span>
+                  <span style={{ fontWeight: '600', color: '#6B5BFF' }}>
+                    {socialIntegrationReport.details.relationships === 'excellent' ? '優秀' :
+                     socialIntegrationReport.details.relationships === 'good' ? '良好' :
+                     socialIntegrationReport.details.relationships === 'fair' ? '一般' : '需要改善'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <span style={{ color: '#666' }}>就業狀況</span>
+                  <span style={{ fontWeight: '600', color: '#6B5BFF' }}>
+                    {socialIntegrationReport.details.employment === 'excellent' ? '優秀' :
+                     socialIntegrationReport.details.employment === 'good' ? '良好' :
+                     socialIntegrationReport.details.employment === 'fair' ? '一般' : '需要改善'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <span style={{ color: '#666' }}>家庭關係</span>
+                  <span style={{ fontWeight: '600', color: '#6B5BFF' }}>
+                    {socialIntegrationReport.details.family === 'excellent' ? '優秀' :
+                     socialIntegrationReport.details.family === 'good' ? '良好' :
+                     socialIntegrationReport.details.family === 'fair' ? '一般' : '需要改善'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <span style={{ color: '#666' }}>未來信心</span>
+                  <span style={{ fontWeight: '600', color: '#6B5BFF' }}>
+                    {socialIntegrationReport.details.confidence === 'excellent' ? '優秀' :
+                     socialIntegrationReport.details.confidence === 'good' ? '良好' :
+                     socialIntegrationReport.details.confidence === 'fair' ? '一般' : '需要改善'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <span style={{ color: '#666' }}>社會接納</span>
+                  <span style={{ fontWeight: '600', color: '#6B5BFF' }}>
+                    {socialIntegrationReport.details.acceptance === 'excellent' ? '優秀' :
+                     socialIntegrationReport.details.acceptance === 'good' ? '良好' :
+                     socialIntegrationReport.details.acceptance === 'fair' ? '一般' : '需要改善'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            {/* 改善建議 */}
+            <div style={{ marginBottom: '20px' }}>
+              <h4 style={{ color: '#333', marginBottom: '12px', fontWeight: '600' }}>
+                💡 改善建議
+              </h4>
+              <div style={{ background: '#f8f9fa', borderRadius: '8px', padding: '16px' }}>
+                {socialIntegrationReport.recommendations.map((rec: string, index: number) => (
+                  <div key={index} style={{ 
+                    display: 'flex', 
+                    alignItems: 'flex-start', 
+                    gap: '8px', 
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    lineHeight: '1.4'
+                  }}>
+                    <span style={{ color: '#6B5BFF', fontWeight: 'bold' }}>•</span>
+                    <span style={{ color: '#333' }}>{rec}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* 專業輔導建議 */}
+            <div style={{ 
+              background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+              borderRadius: '8px',
+              padding: '16px',
+              marginBottom: '20px'
+            }}>
+              <h4 style={{ color: 'white', marginBottom: '8px', fontWeight: '600' }}>
+                🎯 專業輔導建議
+              </h4>
+              <p style={{ color: 'white', fontSize: '14px', lineHeight: '1.4', margin: 0 }}>
+                基於您的評估結果，我們建議您考慮尋求專業輔導師的協助。專業輔導師可以為您提供個性化的改善計劃和持續的支持。
+              </p>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                onClick={() => setShowSocialIntegrationReport(false)}
+                style={{
+                  background: '#f5f5f5',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: '#666',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                關閉報告
+              </button>
+              <button
+                onClick={() => {
+                  setShowSocialIntegrationReport(false);
+                  // 這裡可以添加聯繫輔導師的功能
+                  alert('功能開發中：聯繫專業輔導師');
+                }}
+                style={{
+                  background: 'linear-gradient(45deg, #6B5BFF, #5A4FCF)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}
+              >
+                聯繫輔導師
               </button>
             </div>
           </div>
