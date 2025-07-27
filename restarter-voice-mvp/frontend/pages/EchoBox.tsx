@@ -360,6 +360,10 @@ export default function EchoBox() {
   const [playingDiaryId, setPlayingDiaryId] = useState<number | null>(null);
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
   const { isTestMode } = useTestMode();
+  
+  // 刪除確認跳窗狀態
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
   // 簡化的錄音控制函數
   const handleRecordingClick = async () => {
@@ -583,11 +587,23 @@ export default function EchoBox() {
   };
 
   const handleDeleteDiary = (id: number) => {
-    if (window.confirm('這個心聲對您來說很重要嗎？\n\n刪除後將無法恢復，請確認是否真的要刪除？')) {
-      const updatedDiaries = diaries.filter(d => d.id !== id);
+    setDeleteTargetId(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    if (deleteTargetId) {
+      const updatedDiaries = diaries.filter(d => d.id !== deleteTargetId);
       setDiaries(updatedDiaries);
       saveDiariesToStorage(updatedDiaries);
+      setShowDeleteConfirm(false);
+      setDeleteTargetId(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setDeleteTargetId(null);
   };
 
   const toggleExpand = (id: number) => {
@@ -1520,6 +1536,114 @@ export default function EchoBox() {
                   }}
                 >
                   {t.submit}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 刪除確認跳窗 */}
+        {showDeleteConfirm && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: '20px',
+              padding: '40px',
+              width: '90%',
+              maxWidth: '450px',
+              textAlign: 'center',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+              border: '2px solid rgba(255,255,255,0.2)'
+            }}>
+              <div style={{ 
+                fontSize: '64px', 
+                marginBottom: '20px',
+                animation: 'pulse 2s infinite'
+              }}>
+                💔
+              </div>
+              
+              <h3 style={{ 
+                marginBottom: '15px', 
+                color: 'white',
+                fontSize: '22px',
+                fontWeight: '600',
+                textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+              }}>
+                這個心聲對您來說很重要嗎？
+              </h3>
+              
+              <p style={{ 
+                marginBottom: '30px', 
+                color: 'rgba(255,255,255,0.9)',
+                fontSize: '16px',
+                lineHeight: '1.5',
+                textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+              }}>
+                刪除後將無法恢復，請確認是否真的要刪除？
+              </p>
+              
+              <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+                <button
+                  onClick={cancelDelete}
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    border: '2px solid rgba(255,255,255,0.3)',
+                    borderRadius: '12px',
+                    padding: '14px 28px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.3)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  取消
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  style={{
+                    background: 'linear-gradient(45deg, #ff6b6b, #ee5a52)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '14px 28px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    boxShadow: '0 8px 20px rgba(255,107,107,0.4)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 12px 25px rgba(255,107,107,0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(255,107,107,0.4)';
+                  }}
+                >
+                  確定刪除
                 </button>
               </div>
             </div>
