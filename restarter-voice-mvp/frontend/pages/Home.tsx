@@ -799,7 +799,15 @@ export default function Home() {
               }}
             >
               <span style={{ fontSize: '18px' }}>📊</span>
-              社會融入度評估
+              {lang === 'zh-TW' ? '社會融入度評估' :
+               lang === 'zh-CN' ? '社会融入度评估' :
+               lang === 'ja' ? '社会統合度評価' :
+               lang === 'en' ? 'Social Integration Assessment' :
+               lang === 'ko' ? '사회 통합도 평가' :
+               lang === 'th' ? 'การประเมินการผสมผสานทางสังคม' :
+               lang === 'vi' ? 'Đánh Giá Hòa Nhập Xã Hội' :
+               lang === 'ms' ? 'Penilaian Integrasi Sosial' :
+               'Aestimatio Integrationis Socialis'}
             </button>
             <div style={{
               position: 'absolute',
@@ -820,7 +828,15 @@ export default function Home() {
               pointerEvents: 'none',
               maxWidth: '200px'
             }}>
-              評估個人社會融入度，獲得專業建議和改善方向
+              {lang === 'zh-TW' ? '評估個人社會融入度，獲得專業建議和改善方向' :
+               lang === 'zh-CN' ? '评估个人社会融入度，获得专业建议和改善方向' :
+               lang === 'ja' ? '個人の社会統合度を評価し、専門的なアドバイスと改善方向を獲得' :
+               lang === 'en' ? 'Assess personal social integration, get professional advice and improvement direction' :
+               lang === 'ko' ? '개인 사회 통합도를 평가하고 전문적인 조언과 개선 방향을 얻으세요' :
+               lang === 'th' ? 'ประเมินการผสมผสานทางสังคมส่วนบุคคล รับคำแนะนำจากผู้เชี่ยวชาญและทิศทางการปรับปรุง' :
+               lang === 'vi' ? 'Đánh giá mức độ hòa nhập xã hội cá nhân, nhận lời khuyên chuyên môn và hướng cải thiện' :
+               lang === 'ms' ? 'Nilai integrasi sosial peribadi, dapatkan nasihat profesional dan arah penambahbaikan' :
+               'Aestima integrationem socialem personalem, consilium professionalem et directionem meliorationis accipe'}
             </div>
           </div>
           
@@ -1035,7 +1051,15 @@ export default function Home() {
                   }}
                 >
                   <span style={{ fontSize: '24px' }}>📊</span>
-                  社會融入度評估
+                  {lang === 'zh-TW' ? '社會融入度評估' :
+                   lang === 'zh-CN' ? '社会融入度评估' :
+                   lang === 'ja' ? '社会統合度評価' :
+                   lang === 'en' ? 'Social Integration Assessment' :
+                   lang === 'ko' ? '사회 통합도 평가' :
+                   lang === 'th' ? 'การประเมินการผสมผสานทางสังคม' :
+                   lang === 'vi' ? 'Đánh Giá Hòa Nhập Xã Hội' :
+                   lang === 'ms' ? 'Penilaian Integrasi Sosial' :
+                   'Aestimatio Integrationis Socialis'}
                 </button>
                 <div style={{
                   position: 'absolute',
@@ -1055,7 +1079,15 @@ export default function Home() {
                   zIndex: 1000,
                   pointerEvents: 'none'
                 }}>
-                  評估個人社會融入度，獲得專業建議和改善方向
+                  {lang === 'zh-TW' ? '評估個人社會融入度，獲得專業建議和改善方向' :
+                   lang === 'zh-CN' ? '评估个人社会融入度，获得专业建议和改善方向' :
+                   lang === 'ja' ? '個人の社会統合度を評価し、専門的なアドバイスと改善方向を獲得' :
+                   lang === 'en' ? 'Assess personal social integration, get professional advice and improvement direction' :
+                   lang === 'ko' ? '개인 사회 통합도를 평가하고 전문적인 조언과 개선 방향을 얻으세요' :
+                   lang === 'th' ? 'ประเมินการผสมผสานทางสังคมส่วนบุคคล รับคำแนะนำจากผู้เชี่ยวชาญและทิศทางการปรับปรุง' :
+                   lang === 'vi' ? 'Đánh giá mức độ hòa nhập xã hội cá nhân, nhận lời khuyên chuyên môn và hướng cải thiện' :
+                   lang === 'ms' ? 'Nilai integrasi sosial peribadi, dapatkan nasihat profesional dan arah penambahbaikan' :
+                   'Aestima integrationem socialem personalem, consilium professionalem et directionem meliorationis accipe'}
                 </div>
               </div>
               
