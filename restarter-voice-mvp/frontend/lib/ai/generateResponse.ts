@@ -10,9 +10,7 @@ export async function* generateResponse(userText: string, lang: string, systemPr
       throw new Error('用戶未登入');
     }
 
-    // 檢查是否為測試模式
-    const isTestMode = localStorage.getItem('testMode') === 'true';
-    
+    // 使用傳入的isTestMode參數，而不是從localStorage讀取
     const response = await axios.post('/api/gpt', {
       messages: [
         { sender: 'user', text: userText }

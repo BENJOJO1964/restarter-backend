@@ -363,15 +363,14 @@ export default function ChatCompanion() {
             setAIStreaming(true);
             
                           try {
-                const stream = await generateResponse(fullText, lang, t.aiSystemPrompt, isTestMode);
-                let fullReply = '';
-                for await (const chunk of stream) {
-                  fullReply += chunk;
-                  setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: fullReply } : m));
-                }
-
-                setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
-              } catch (error) {
+              const stream = await generateResponse(fullText, lang, t.aiSystemPrompt, isTestMode);
+              let fullReply = '';
+              for await (const chunk of stream) {
+                fullReply += chunk;
+                setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: fullReply } : m));
+              }
+              setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
+            } catch (error) {
               console.error("Error in AI pipeline: ", error);
               const errorMessage = error instanceof Error ? error.message : '未知錯誤';
               setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: `API錯誤：${errorMessage}`, status: 'done' } : m));
@@ -579,13 +578,12 @@ export default function ChatCompanion() {
     setAIStreaming(true);
     
     try {
-              const stream = await generateResponse(text, lang, t.aiSystemPrompt, isTestMode);
+      const stream = await generateResponse(text, lang, t.aiSystemPrompt, isTestMode);
       let fullReply = '';
       for await (const chunk of stream) {
         fullReply += chunk;
         setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: fullReply } : m));
       }
-
       setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
       
       setIsSpeaking(true);
