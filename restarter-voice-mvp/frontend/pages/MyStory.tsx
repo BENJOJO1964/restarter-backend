@@ -257,7 +257,6 @@ export default function MyStory() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showSocialIntegrationDialog, setShowSocialIntegrationDialog] = useState(false);
   const [showSocialIntegrationReport, setShowSocialIntegrationReport] = useState(false);
-  const [showLoadingDialog, setShowLoadingDialog] = useState(false);
   const [socialIntegrationReport, setSocialIntegrationReport] = useState<any>(null);
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null);
   const [newMilestone, setNewMilestone] = useState({
@@ -495,77 +494,128 @@ export default function MyStory() {
     q5: ''
   });
 
-  const handleSocialIntegrationSubmit = async () => {
-    // 顯示載入狀態
-    setShowSocialIntegrationDialog(false);
-    setShowLoadingDialog(true);
+  // 預設評估結果映射表
+  const getAssessmentResult = (answers: any) => {
+    const answerMap = {
+      'excellent': 5,
+      'good': 4,
+      'fair': 3,
+      'poor': 2
+    };
     
-    try {
-      // 準備發送給AI的數據
-      const assessmentData = {
-        answers: socialIntegrationAnswers,
-        userMilestones: milestones.slice(0, 10), // 最近10個里程碑
-        assessmentDate: new Date().toISOString(),
-        context: "更生人社會融入度評估"
+    // 計算總分
+    const scores = [
+      answerMap[answers.q1 as keyof typeof answerMap] || 3,
+      answerMap[answers.q2 as keyof typeof answerMap] || 3,
+      answerMap[answers.q3 as keyof typeof answerMap] || 3,
+      answerMap[answers.q4 as keyof typeof answerMap] || 3,
+      answerMap[answers.q5 as keyof typeof answerMap] || 3
+    ];
+    
+    const totalScore = scores.reduce((sum, score) => sum + score, 0);
+    const averageScore = totalScore / 5;
+    
+    // 根據分數範圍返回評估結果
+    if (averageScore >= 4.5) {
+      return {
+        score: averageScore,
+        result: '優秀',
+        description: '你的社會融入度非常高，在人際關係、就業狀況、家庭關係等方面都表現出色。',
+        recommendations: [
+          '繼續保持現有的良好狀態',
+          '可以考慮擔任志工幫助其他更生人',
+          '分享你的成功經驗給其他需要幫助的人',
+          '參與社區活動擴大影響力'
+        ],
+        analysis: '基於你的評估結果，你在各個方面都表現優秀，顯示出良好的社會適應能力和積極的生活態度。建議繼續保持這種狀態，並可以考慮幫助其他需要支持的人。'
       };
-      
-      // 調用OpenAI API進行智能分析
-      const response = await fetch('/api/social-integration-assessment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Test-Mode': isTestMode ? 'true' : 'false'
-        },
-        body: JSON.stringify(assessmentData)
-      });
-      
-      if (!response.ok) {
-        throw new Error('AI分析失敗');
-      }
-      
-      const aiResult = await response.json();
-      
-      // 生成詳細報告
-      const report = {
-        score: aiResult.score,
-        result: aiResult.result,
-        description: aiResult.description,
-        recommendations: aiResult.recommendations,
-        aiAnalysis: aiResult.aiAnalysis,
-        details: {
-          relationships: socialIntegrationAnswers.q1,
-          employment: socialIntegrationAnswers.q2,
-          family: socialIntegrationAnswers.q3,
-          confidence: socialIntegrationAnswers.q4,
-          acceptance: socialIntegrationAnswers.q5
-        }
+    } else if (averageScore >= 3.5) {
+      return {
+        score: averageScore,
+        result: '良好',
+        description: '你的社會融入度良好，在大部分方面都有不錯的表現，還有提升空間。',
+        recommendations: [
+          '參加更多社交活動擴大交友圈',
+          '尋求職業技能培訓提升就業競爭力',
+          '與家人多溝通改善家庭關係',
+          '制定具體的個人發展計劃'
+        ],
+        analysis: '你的社會融入度處於良好水平，顯示出積極的改善趨勢。建議在現有基礎上進一步提升，特別是在就業技能和人際關係方面。'
       };
-      
-      const milestone: Milestone = {
-        id: Date.now(),
-        title: `${t.socialIntegrationTitle} - ${aiResult.result}`,
-        description: `${aiResult.description} 評估分數: ${aiResult.score.toFixed(1)}/5.0\n\nAI分析：\n${aiResult.aiAnalysis}\n\n建議：\n${aiResult.recommendations.map((rec: string) => `• ${rec}`).join('\n')}`,
-        date: new Date().toISOString(),
-        type: 'social',
-        completed: true
+    } else if (averageScore >= 2.5) {
+      return {
+        score: averageScore,
+        result: '一般',
+        description: '你的社會融入度一般，在某些方面需要改善，建議尋求更多支持。',
+        recommendations: [
+          '建議尋求專業輔導師協助',
+          '參加更生人互助團體',
+          '制定具體的改善計劃',
+          '逐步建立支持網絡'
+        ],
+        analysis: '你的社會融入度處於一般水平，這表明在某些方面還需要改善。建議尋求專業支持，制定具體的改善計劃，並逐步建立支持網絡。'
       };
-      
-      const updatedMilestones = [milestone, ...milestones];
-      setMilestones(updatedMilestones);
-      saveMilestonesToStorage(updatedMilestones);
-      setSocialIntegrationAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '' });
-      
-      // 顯示詳細報告
-      setShowSocialIntegrationReport(true);
-      setSocialIntegrationReport(report);
-      
-    } catch (error) {
-      console.error('AI評估失敗:', error);
-      alert('AI評估暫時無法使用，請稍後再試');
-      setShowSocialIntegrationDialog(true);
-    } finally {
-      setShowLoadingDialog(false);
+    } else {
+      return {
+        score: averageScore,
+        result: '需要改善',
+        description: '你的社會融入度需要改善，建議尋求專業輔導和支持。',
+        recommendations: [
+          '立即聯繫專業輔導師',
+          '參加更生人支持計劃',
+          '尋求心理諮商服務',
+          '建立穩定的生活規律'
+        ],
+        analysis: '你的社會融入度需要改善，建議立即尋求專業輔導和支持。這不是失敗，而是需要更多幫助的表現。專業輔導師可以幫助你制定適合的改善計劃。'
+      };
     }
+  };
+
+  const handleSocialIntegrationSubmit = () => {
+    // 檢查是否所有問題都已回答
+    const allAnswered = Object.values(socialIntegrationAnswers).every(answer => answer !== '');
+    if (!allAnswered) {
+      alert('請回答所有問題');
+      return;
+    }
+    
+    // 獲取預設評估結果
+    const assessmentResult = getAssessmentResult(socialIntegrationAnswers);
+    
+    // 生成詳細報告
+    const report = {
+      score: assessmentResult.score,
+      result: assessmentResult.result,
+      description: assessmentResult.description,
+      recommendations: assessmentResult.recommendations,
+      analysis: assessmentResult.analysis,
+      details: {
+        relationships: socialIntegrationAnswers.q1,
+        employment: socialIntegrationAnswers.q2,
+        family: socialIntegrationAnswers.q3,
+        confidence: socialIntegrationAnswers.q4,
+        acceptance: socialIntegrationAnswers.q5
+      }
+    };
+    
+    const milestone: Milestone = {
+      id: Date.now(),
+      title: `${t.socialIntegrationTitle} - ${assessmentResult.result}`,
+      description: `${assessmentResult.description} 評估分數: ${assessmentResult.score.toFixed(1)}/5.0\n\n分析：\n${assessmentResult.analysis}\n\n建議：\n${assessmentResult.recommendations.map(rec => `• ${rec}`).join('\n')}`,
+      date: new Date().toISOString(),
+      type: 'social',
+      completed: true
+    };
+    
+    const updatedMilestones = [milestone, ...milestones];
+    setMilestones(updatedMilestones);
+    saveMilestonesToStorage(updatedMilestones);
+    setSocialIntegrationAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '' });
+    setShowSocialIntegrationDialog(false);
+    
+    // 顯示詳細報告
+    setShowSocialIntegrationReport(true);
+    setSocialIntegrationReport(report);
   };
 
   const handleAudio = (audioBlob: Blob, duration: number) => {
@@ -1779,72 +1829,7 @@ export default function MyStory() {
         </div>
       )}
 
-      {/* AI分析載入對話框 */}
-      {showLoadingDialog && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            padding: '30px',
-            width: '90%',
-            maxWidth: '400px',
-            textAlign: 'center'
-          }}>
-            <div style={{ 
-              fontSize: '48px', 
-              marginBottom: '20px',
-              animation: 'spin 2s linear infinite'
-            }}>
-              🤖
-            </div>
-            
-            <h3 style={{ 
-              marginBottom: '16px', 
-              color: '#333',
-              fontSize: '20px',
-              fontWeight: '600'
-            }}>
-              AI正在分析您的評估...
-            </h3>
-            
-            <p style={{ 
-              marginBottom: '20px', 
-              color: '#666',
-              fontSize: '14px',
-              lineHeight: '1.5'
-            }}>
-              正在使用人工智能分析您的社會融入度評估結果，請稍候...
-            </p>
-            
-            <div style={{
-              width: '100%',
-              height: '4px',
-              background: '#f0f0f0',
-              borderRadius: '2px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                width: '60%',
-                height: '100%',
-                background: 'linear-gradient(90deg, #6B5BFF, #5A4FCF)',
-                borderRadius: '2px',
-                animation: 'loading 2s ease-in-out infinite'
-              }} />
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* 社會融入度評估詳細報告對話框 */}
       {showSocialIntegrationReport && socialIntegrationReport && (
