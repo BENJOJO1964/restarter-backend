@@ -362,7 +362,7 @@ export default function ChatCompanion() {
             setMessages(prev => [...prev, { id: newMsgId, text: '', sender: 'ai', status: 'streaming' }]);
             setAIStreaming(true);
             
-                          try {
+            try {
               const stream = await generateResponse(fullText, lang, t.aiSystemPrompt, isTestMode);
               let fullReply = '';
               for await (const chunk of stream) {

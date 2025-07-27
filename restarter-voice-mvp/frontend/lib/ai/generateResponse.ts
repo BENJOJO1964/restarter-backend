@@ -34,16 +34,16 @@ export async function* generateResponse(userText: string, lang: string, systemPr
         await new Promise(resolve => setTimeout(resolve, 50)); // 50ms 延遲
       }
     } else {
-      // 如果沒有回覆，顯示錯誤訊息
+      // 如果沒有回覆，拋出錯誤而不是yield錯誤訊息
       console.error('Empty reply from API');
-      yield '抱歉，AI回覆為空，請稍後再試。';
+      throw new Error('AI回覆為空，請稍後再試。');
     }
   } catch (error) {
     console.error('Error calling GPT API:', error);
     if (error instanceof Error) {
-      yield `API錯誤：${error.message}`;
+      throw new Error(`API錯誤：${error.message}`);
     } else {
-      yield '抱歉，我現在無法回應，請稍後再試。';
+      throw new Error('抱歉，我現在無法回應，請稍後再試。');
     }
   }
 } 
