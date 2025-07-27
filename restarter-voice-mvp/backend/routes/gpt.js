@@ -9,9 +9,21 @@ const hasOpenAI = process.env.OPENAI_API_KEY;
 // 檢查用戶權限的中間件
 const checkUserPermission = async (req, res, next) => {
   try {
+    const testMode = req.headers['x-test-mode'] === 'true';
+    console.log('測試模式:', testMode);
+    
     const { userId } = req.body;
     if (!userId) {
       return res.status(400).json({ error: '缺少用戶ID' });
+    }
+
+    // 測試模式下跳過Firebase檢查
+    if (testMode) {
+      console.log('測試模式：跳過Firebase檢查，使用預設值');
+      req.userSubscription = 'basic';
+      req.userUsage = { aiCost: 0, aiChats: 0 };
+      req.userPlan = { aiCostLimit: 999999, aiChats: 999999 };
+      return next();
     }
 
     // 檢查用戶是否存在
@@ -22,13 +34,11 @@ const checkUserPermission = async (req, res, next) => {
 
     const userData = userDoc.data();
     const subscription = userData.subscription || 'free';
-
-    // 檢查測試模式
-    const testMode = req.headers['x-test-mode'] === 'true';
     
     // 測試模式下跳過權限檢查
     if (testMode) {
-      req.userSubscription = subscription;
+      console.log('測試模式：跳過權限檢查');
+      req.userSubscription = subscription || 'basic';
       req.userUsage = { aiCost: 0, aiChats: 0 }; // 測試模式給予初始使用量
       req.userPlan = { aiCostLimit: 999999, aiChats: 999999 }; // 測試模式給予高額度
       return next();
@@ -102,12 +112,14 @@ const checkUserPermission = async (req, res, next) => {
     next();
   } catch (error) {
     console.error('權限檢查錯誤:', error);
-    res.status(500).json({ error: '內部服務器錯誤' });
+    console.error('錯誤詳情:', error.message);
+    res.status(500).json({ error: '內部服務器錯誤', details: error.message });
   }
 };
 
 // POST /api/gpt
 router.post('/', checkUserPermission, async (req, res) => {
+  console.log('收到GPT API請求:', req.body);
   const { messages, system_prompt, title, description, userId } = req.body;
   if (!messages || !Array.isArray(messages)) {
     return res.status(400).json({ error: 'messages required' });
@@ -144,21 +156,28 @@ router.post('/', checkUserPermission, async (req, res) => {
       console.log('OpenAI completion:', completion);
       console.log('Generated reply:', reply);
       
-      // 記錄使用量
-      const currentMonth = new Date().toISOString().slice(0, 7);
-      const usageRef = admin.firestore()
-        .collection('usage')
-        .doc(userId)
-        .collection('monthly')
-        .doc(currentMonth);
+      // 記錄使用量（測試模式下跳過）
+      const testMode = req.headers['x-test-mode'] === 'true';
+      if (!testMode) {
+        try {
+          const currentMonth = new Date().toISOString().slice(0, 7);
+          const usageRef = admin.firestore()
+            .collection('usage')
+            .doc(userId)
+            .collection('monthly')
+            .doc(currentMonth);
 
-      const currentUsage = req.userUsage;
-      const estimatedTokens = completion.usage?.total_tokens || 50; // 估算 token 使用量
-      
-      await usageRef.set({
-        aiCost: (currentUsage.aiCost || 0) + estimatedTokens,
-        aiChats: (currentUsage.aiChats || 0) + 1
-      }, { merge: true });
+          const currentUsage = req.userUsage;
+          const estimatedTokens = completion.usage?.total_tokens || 50; // 估算 token 使用量
+          
+          await usageRef.set({
+            aiCost: (currentUsage.aiCost || 0) + estimatedTokens,
+            aiChats: (currentUsage.aiChats || 0) + 1
+          }, { merge: true });
+        } catch (error) {
+          console.error('記錄使用量失敗:', error.message);
+        }
+      }
 
       console.log('Sending reply:', { reply });
       return res.json({ reply });

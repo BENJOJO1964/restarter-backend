@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 
-export async function* generateResponse(userText: string, lang: string, systemPrompt: string): AsyncGenerator<string> {
+export async function* generateResponse(userText: string, lang: string, systemPrompt: string, isTestMode: boolean): AsyncGenerator<string> {
   try {
     // 獲取當前用戶ID
     const auth = getAuth();

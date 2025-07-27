@@ -1,6 +1,9 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 const admin = require('firebase-admin');
 
+// 檢查是否為測試模式
+const isTestMode = process.env.NODE_ENV === 'test' || process.env.TEST_MODE === 'true';
+
 // 使用環境變量配置Firebase
 let serviceAccount;
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
@@ -12,9 +15,19 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
 }
 
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log('Firebase初始化成功');
+  } catch (error) {
+    console.error('Firebase初始化失敗:', error.message);
+    if (isTestMode) {
+      console.log('測試模式：繼續運行，跳過Firebase');
+    } else {
+      throw error;
+    }
+  }
 }
 // server.js - WebSocket + REST API 入口
 const express = require('express');

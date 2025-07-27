@@ -351,20 +351,19 @@ export default function ChatCompanion() {
           const fullText = lastTranscript + finalTranscript;
           setLastTranscript(prev => prev + finalTranscript);
           
-          // 測試模式下也調用真實的AI API
-          if (isTestMode) {
-            (async () => {
-              const newUserMsg: ChatMsg = { id: `user-${Date.now()}`, text: fullText, sender: 'user' };
-              setMessages(prev => [...prev, newUserMsg]);
-              setInput('');
-              
-              if (aiTimeout.current) clearTimeout(aiTimeout.current);
-              const newMsgId = `ai-${Date.now()}`;
-              setMessages(prev => [...prev, { id: newMsgId, text: '', sender: 'ai', status: 'streaming' }]);
-              setAIStreaming(true);
-              
-              try {
-                const stream = await generateResponse(fullText, lang, t.aiSystemPrompt);
+          // 無論是測試模式還是正常模式，都自動發送語音辨識結果
+          (async () => {
+            const newUserMsg: ChatMsg = { id: `user-${Date.now()}`, text: fullText, sender: 'user' };
+            setMessages(prev => [...prev, newUserMsg]);
+            setInput('');
+            
+            if (aiTimeout.current) clearTimeout(aiTimeout.current);
+            const newMsgId = `ai-${Date.now()}`;
+            setMessages(prev => [...prev, { id: newMsgId, text: '', sender: 'ai', status: 'streaming' }]);
+            setAIStreaming(true);
+            
+                          try {
+                const stream = await generateResponse(fullText, lang, t.aiSystemPrompt, isTestMode);
                 let fullReply = '';
                 for await (const chunk of stream) {
                   fullReply += chunk;
@@ -373,16 +372,13 @@ export default function ChatCompanion() {
 
                 setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
               } catch (error) {
-                console.error("Error in AI pipeline: ", error);
-                const errorMessage = error instanceof Error ? error.message : '未知錯誤';
-                setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: `API錯誤：${errorMessage}`, status: 'done' } : m));
-              } finally {
-                setAIStreaming(false);
-              }
-            })();
-          } else {
-            handleSend(fullText);
-          }
+              console.error("Error in AI pipeline: ", error);
+              const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+              setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: `API錯誤：${errorMessage}`, status: 'done' } : m));
+            } finally {
+              setAIStreaming(false);
+            }
+          })();
           // 移除自動停止錄音，讓語音辨識持續進行
         }
       };
@@ -540,7 +536,7 @@ export default function ChatCompanion() {
         setAIStreaming(true);
         
         try {
-          const stream = await generateResponse(text, lang, t.aiSystemPrompt);
+          const stream = await generateResponse(text, lang, t.aiSystemPrompt, isTestMode);
           let fullReply = '';
           for await (const chunk of stream) {
             fullReply += chunk;
@@ -583,7 +579,7 @@ export default function ChatCompanion() {
     setAIStreaming(true);
     
     try {
-      const stream = await generateResponse(text, lang, t.aiSystemPrompt);
+              const stream = await generateResponse(text, lang, t.aiSystemPrompt, isTestMode);
       let fullReply = '';
       for await (const chunk of stream) {
         fullReply += chunk;
