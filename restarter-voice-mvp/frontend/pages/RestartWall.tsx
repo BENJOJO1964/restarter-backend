@@ -9,6 +9,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { usePermission } from '../hooks/usePermission';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
 import Footer from '../components/Footer';
+import { useTestMode } from '../App';
 type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'vi' | 'th' | 'la' | 'ms';
 
 const LANGS: { code: LanguageCode; label: string }[] = [
@@ -452,6 +453,8 @@ export default function RestartWall() {
   const [showRenewalModal, setShowRenewalModal] = useState(false);
   const [permissionResult, setPermissionResult] = useState<any>(null);
 
+  const { isTestMode } = useTestMode();
+
   // 從 Firestore 獲取用戶完整個人信息
   const getUserProfile = async (userId: string) => {
     try {
@@ -666,13 +669,9 @@ export default function RestartWall() {
       // 檢查語音權限
       const permission = await checkPermission('aiChat');
       if (!permission.allowed) {
-        if (permission.canRenew) {
-          setPermissionResult(permission);
-          setShowRenewalModal(true);
-        } else {
-          setPermissionResult(permission);
-          setShowRenewalModal(true);
-        }
+        if (isTestMode) return;
+        setPermissionResult(permission);
+        setShowRenewalModal(true);
         return;
       }
     }

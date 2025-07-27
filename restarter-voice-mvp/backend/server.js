@@ -79,6 +79,7 @@ const moodRouter = require('./routes/mood');
 const feedbackRouter = require('./routes/feedback');
 const subscriptionRouter = require('./routes/subscription');
 const weatherRouter = require('./routes/weather');
+const socialIntegrationRouter = require('./routes/social-integration-assessment');
 
 app.use(express.json());
 app.use('/api/tts', ttsRouter);
@@ -96,6 +97,7 @@ app.use('/api/mood', moodRouter);
 app.use('/api/feedback', feedbackRouter);
 app.use('/api/subscription', subscriptionRouter);
 app.use('/api/weather', weatherRouter);
+app.use('/api', socialIntegrationRouter);
 
 // 後端只提供API，不提供靜態文件
 app.get('/', (req, res) => {

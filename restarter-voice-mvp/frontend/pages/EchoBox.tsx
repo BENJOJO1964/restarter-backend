@@ -6,6 +6,7 @@ import AudioRecorder from '../components/AudioRecorder';
 import { usePermission } from '../hooks/usePermission';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
 import Footer from '../components/Footer';
+import { useTestMode } from '../App';
 
 const TEXTS = {
   'zh-TW': {
@@ -358,6 +359,7 @@ export default function EchoBox() {
   const [permissionResult, setPermissionResult] = useState<any>(null);
   const [playingDiaryId, setPlayingDiaryId] = useState<number | null>(null);
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
+  const { isTestMode } = useTestMode();
 
   // 簡化的錄音控制函數
   const handleRecordingClick = async () => {
@@ -379,6 +381,7 @@ export default function EchoBox() {
     // 檢查語音權限
     const permission = await checkPermission('aiChat');
     if (!permission.allowed) {
+      if (isTestMode) return;
       if (permission.canRenew) {
         setPermissionResult(permission);
         setShowRenewalModal(true);

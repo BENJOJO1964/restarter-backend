@@ -7,6 +7,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { usePermission } from '../hooks/usePermission';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
+import { useTestMode } from '../App';
 type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'th' | 'vi' | 'ms' | 'la';
 
 const LANGS: { code: LanguageCode; label: string }[] = [
@@ -82,6 +83,7 @@ export default function PracticePage() {
     const { checkPermission, recordUsage } = usePermission();
     const [showRenewalModal, setShowRenewalModal] = useState(false);
     const [permissionResult, setPermissionResult] = useState<any>(null);
+    const { isTestMode } = useTestMode();
 
     // 判斷是否為完整句子
     function isMeaningfulInput(input: string) {
@@ -144,6 +146,7 @@ export default function PracticePage() {
 
             const permission = await checkPermission('aiChat');
             if (!permission.allowed) {
+                if (isTestMode) return;
                 if (permission.canRenew) {
                     setPermissionResult(permission);
                     setShowRenewalModal(true);
@@ -199,6 +202,7 @@ export default function PracticePage() {
 
         const permission = await checkPermission('aiChat');
         if (!permission.allowed) {
+            if (isTestMode) return;
             if (permission.canRenew) {
                 setPermissionResult(permission);
                 setShowRenewalModal(true);

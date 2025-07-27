@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { usePermission } from '../hooks/usePermission';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
+import { useTestMode } from '../App';
 
 const SIGNAL_SERVER_URL = 'wss://restarter-backend-6e9s.onrender.com'; // 後端 WebSocket 信令伺服器
 
@@ -23,6 +24,7 @@ const VideoChat: React.FC<VideoChatProps> = ({ roomId: propRoomId }) => {
   const { checkPermission, recordUsage } = usePermission();
   const [showRenewalModal, setShowRenewalModal] = useState(false);
   const [permissionResult, setPermissionResult] = useState<any>(null);
+  const { isTestMode } = useTestMode();
 
   // 若有傳入 roomId，進入房間
   useEffect(() => {
@@ -37,6 +39,7 @@ const VideoChat: React.FC<VideoChatProps> = ({ roomId: propRoomId }) => {
   const checkVideoChatPermission = async () => {
     const permission = await checkPermission('aiChat');
     if (!permission.allowed) {
+      if (isTestMode) return;
       if (permission.canRenew) {
         setPermissionResult(permission);
         setShowRenewalModal(true);

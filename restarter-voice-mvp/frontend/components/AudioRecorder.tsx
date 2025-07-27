@@ -3,6 +3,7 @@ import { useVAD } from '../hooks/useVAD';
 import { usePermission } from '../hooks/usePermission';
 import { useLanguage } from '../contexts/LanguageContext';
 import { TokenRenewalModal } from './TokenRenewalModal';
+import { useTestMode } from '../App';
 
 const AUDIO_TEXT = {
   'zh-TW': { start: '開始說話', stop: '停止', noPermission: '需要訂閱才能使用語音功能' },
@@ -29,6 +30,7 @@ export default function AudioRecorder({ onAudio, lang: propLang }: { onAudio: (a
   const { checkPermission, recordUsage } = usePermission();
   const [showRenewalModal, setShowRenewalModal] = useState(false);
   const [permissionResult, setPermissionResult] = useState<any>(null);
+  const { isTestMode } = useTestMode();
 
   const handleButtonClick = async () => {
     if (isListening) {
@@ -39,6 +41,7 @@ export default function AudioRecorder({ onAudio, lang: propLang }: { onAudio: (a
     // 檢查語音權限
     const permission = await checkPermission('aiChat');
     if (!permission.allowed) {
+      if (isTestMode) return;
       if (permission.canRenew) {
         setPermissionResult(permission);
         setShowRenewalModal(true);
