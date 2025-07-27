@@ -232,33 +232,6 @@ export default function Home() {
   // MODULES 陣列（還原）
   const MODULES = [
     {
-      key: 'social-integration',
-      icon: '📊',
-      title: {
-        'zh-TW': '社會融入度評估',
-        'zh-CN': '社会融入度评估',
-        'ja': '社会統合度評価',
-        'en': 'Social Integration Assessment',
-        'ko': '사회 통합도 평가',
-        'th': 'การประเมินการผสมผสานทางสังคม',
-        'vi': 'Đánh Giá Hòa Nhập Xã Hội',
-        'ms': 'Penilaian Integrasi Sosial',
-        'la': 'Aestimatio Integrationis Socialis'
-      },
-      desc: {
-        'zh-TW': '評估個人社會融入度，獲得專業建議和改善方向',
-        'zh-CN': '评估个人社会融入度，获得专业建议和改善方向',
-        'ja': '個人の社会統合度を評価し、専門的なアドバイスと改善方向を獲得',
-        'en': 'Assess personal social integration, get professional advice and improvement direction',
-        'ko': '개인 사회 통합도를 평가하고 전문적인 조언과 개선 방향을 얻으세요',
-        'th': 'ประเมินการผสมผสานทางสังคมส่วนบุคคล รับคำแนะนำจากผู้เชี่ยวชาญและทิศทางการปรับปรุง',
-        'vi': 'Đánh giá mức độ hòa nhập xã hội cá nhân, nhận lời khuyên chuyên môn và hướng cải thiện',
-        'ms': 'Nilai integrasi sosial peribadi, dapatkan nasihat profesional dan arah penambahbaikan',
-        'la': 'Aestima integrationem socialem personalem, consilium professionalem et directionem meliorationis accipe'
-      },
-      path: '/social-integration'
-    },
-    {
       key: 'echo-box',
       icon: '🎤',
       title: {
@@ -790,6 +763,41 @@ export default function Home() {
             </div>
           </div>
           
+          {/* 社會融入度評估按鈕 */}
+          <div style={{ width: '100%', padding: '0 16px', marginBottom: '16px' }}>
+            <button
+              onClick={() => handleFeatureWithAuth(() => navigate('/social-integration'))}
+              style={{
+                background: 'linear-gradient(135deg, #6B5BFF 0%, #5A4FCF 100%)',
+                border: 'none',
+                borderRadius: '16px',
+                padding: '12px 24px',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: '600',
+                boxShadow: '0 4px 16px rgba(107, 91, 255, 0.3)',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                width: '100%',
+                justifyContent: 'center'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 91, 255, 0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(107, 91, 255, 0.3)';
+              }}
+            >
+              <span style={{ fontSize: '18px' }}>📊</span>
+              社會融入度評估
+            </button>
+          </div>
+          
           {/* 手機版功能按鈕 */}
           <div style={{ width: '100%', padding: '0 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
             {/* 第一行：交友區 + 來聊天吧 */}
@@ -966,6 +974,40 @@ export default function Home() {
                     : 'Restarter™ suggestum ad vitam iterum incipiendam est. Hic numquam notaberis, sed tantum intelligetur et sustineberis. Sine AI tecum colloquere, provocationes exerce, amicos invenias, fidem et mutationis vim reperias. Historias et sensus tuos tuto narrare potes, hic est intelligentia et comitatus.'}
                 </span>
               </div>
+              
+              {/* 桌面版社會融入度評估按鈕 */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+                <button
+                  onClick={() => handleFeatureWithAuth(() => navigate('/social-integration'))}
+                  style={{
+                    background: 'linear-gradient(135deg, #6B5BFF 0%, #5A4FCF 100%)',
+                    border: 'none',
+                    borderRadius: '16px',
+                    padding: '16px 32px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    boxShadow: '0 4px 16px rgba(107, 91, 255, 0.3)',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 91, 255, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(107, 91, 255, 0.3)';
+                  }}
+                >
+                  <span style={{ fontSize: '24px' }}>📊</span>
+                  社會融入度評估
+                </button>
+              </div>
+              
               <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginBottom: 18, justifyContent: 'center', width: '100%' }}>
                 <div style={{ display: 'flex', flexDirection: 'row', gap: 18, justifyContent: 'center' }}>
                   <button 
