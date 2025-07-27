@@ -1,12 +1,28 @@
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 
 export async function* generateResponse(userText: string, lang: string, systemPrompt: string): AsyncGenerator<string> {
   try {
+    // 獲取當前用戶ID
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('用戶未登入');
+    }
+
+    // 檢查是否為測試模式
+    const isTestMode = localStorage.getItem('testMode') === 'true';
+    
     const response = await axios.post('/api/gpt', {
       messages: [
         { sender: 'user', text: userText }
       ],
-      system_prompt: systemPrompt
+      system_prompt: systemPrompt,
+      userId: user.uid
+    }, {
+      headers: {
+        'x-test-mode': isTestMode ? 'true' : 'false'
+      }
     });
     
     const reply = response.data.reply;

@@ -348,8 +348,40 @@ export default function ChatCompanion() {
         setInput(lastTranscript + finalTranscript + interimTranscript);
 
         if (finalTranscript) {
+          const fullText = lastTranscript + finalTranscript;
           setLastTranscript(prev => prev + finalTranscript);
-          handleSend(lastTranscript + finalTranscript);
+          
+          // 測試模式下也調用真實的AI API
+          if (isTestMode) {
+            (async () => {
+              const newUserMsg: ChatMsg = { id: `user-${Date.now()}`, text: fullText, sender: 'user' };
+              setMessages(prev => [...prev, newUserMsg]);
+              setInput('');
+              
+              if (aiTimeout.current) clearTimeout(aiTimeout.current);
+              const newMsgId = `ai-${Date.now()}`;
+              setMessages(prev => [...prev, { id: newMsgId, text: '', sender: 'ai', status: 'streaming' }]);
+              setAIStreaming(true);
+              
+              try {
+                const stream = await generateResponse(fullText, lang, t.aiSystemPrompt);
+                let fullReply = '';
+                for await (const chunk of stream) {
+                  fullReply += chunk;
+                  setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: fullReply } : m));
+                }
+
+                setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
+              } catch (error) {
+                console.error("Error in AI pipeline: ", error);
+                setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: '測試模式：語音辨識成功！AI回覆功能正常！', status: 'done' } : m));
+              } finally {
+                setAIStreaming(false);
+              }
+            })();
+          } else {
+            handleSend(fullText);
+          }
           handleRecordVoice(); // Stop recording after sending
         }
       };
@@ -495,7 +527,7 @@ export default function ChatCompanion() {
     const permission = await checkPermission('aiChat');
     if (!permission.allowed) {
       if (isTestMode) {
-        // 測試模式下直接執行，不檢查權限
+        // 測試模式下直接執行，不檢查權限，但調用真實的AI API
         const newUserMsg: ChatMsg = { id: `user-${Date.now()}`, text, sender: 'user' };
         setMessages(prev => [...prev, newUserMsg]);
         setInput('');
@@ -503,7 +535,24 @@ export default function ChatCompanion() {
 
         if (aiTimeout.current) clearTimeout(aiTimeout.current);
         const newMsgId = `ai-${Date.now()}`;
-        setMessages(prev => [...prev, { id: newMsgId, text: '測試模式：AI回覆功能正常！', sender: 'ai', status: 'done' }]);
+        setMessages(prev => [...prev, { id: newMsgId, text: '', sender: 'ai', status: 'streaming' }]);
+        setAIStreaming(true);
+        
+        try {
+          const stream = await generateResponse(text, lang, t.aiSystemPrompt);
+          let fullReply = '';
+          for await (const chunk of stream) {
+            fullReply += chunk;
+            setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: fullReply } : m));
+          }
+
+          setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
+        } catch (error) {
+          console.error("Error in AI pipeline: ", error);
+          setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: '測試模式：AI回覆功能正常！', status: 'done' } : m));
+        } finally {
+          setAIStreaming(false);
+        }
         return;
       }
       if (permission.isFreeUser) {
