@@ -141,6 +141,8 @@ router.post('/', checkUserPermission, async (req, res) => {
         temperature: 0.8,
       });
       const reply = completion.choices[0].message.content.trim();
+      console.log('OpenAI completion:', completion);
+      console.log('Generated reply:', reply);
       
       // 記錄使用量
       const currentMonth = new Date().toISOString().slice(0, 7);
@@ -158,6 +160,7 @@ router.post('/', checkUserPermission, async (req, res) => {
         aiChats: (currentUsage.aiChats || 0) + 1
       }, { merge: true });
 
+      console.log('Sending reply:', { reply });
       return res.json({ reply });
     } catch (e) {
       // 強化錯誤訊息，回傳詳細錯誤內容

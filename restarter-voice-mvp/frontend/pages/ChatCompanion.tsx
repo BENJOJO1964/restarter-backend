@@ -383,7 +383,7 @@ export default function ChatCompanion() {
           } else {
             handleSend(fullText);
           }
-          handleRecordVoice(); // Stop recording after sending
+          // 移除自動停止錄音，讓語音辨識持續進行
         }
       };
 
