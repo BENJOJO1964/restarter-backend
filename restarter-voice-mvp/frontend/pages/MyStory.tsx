@@ -1603,7 +1603,7 @@ export default function MyStory() {
           featureName="語音錄製功能"
         />
       )}
-
+      
       {/* 社會融入度評估對話框 */}
       {showSocialIntegrationDialog && (
         <div style={{
@@ -1649,8 +1649,8 @@ export default function MyStory() {
                 <select
                   value={socialIntegrationAnswers.q1}
                   onChange={(e) => setSocialIntegrationAnswers(prev => ({ ...prev, q1: e.target.value }))}
-                  style={{
-                    width: '100%',
+        style={{
+          width: '100%',
                     padding: '12px',
                     borderRadius: '8px',
                     border: '1px solid #ddd',
@@ -1673,8 +1673,8 @@ export default function MyStory() {
                 <select
                   value={socialIntegrationAnswers.q2}
                   onChange={(e) => setSocialIntegrationAnswers(prev => ({ ...prev, q2: e.target.value }))}
-                  style={{
-                    width: '100%',
+          style={{
+            width: '100%',
                     padding: '12px',
                     borderRadius: '8px',
                     border: '1px solid #ddd',
@@ -1811,8 +1811,8 @@ export default function MyStory() {
           right: 0,
           bottom: 0,
           background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
+            display: 'flex',
+            alignItems: 'center',
           justifyContent: 'center',
           zIndex: 1000
         }}>
@@ -1969,7 +1969,7 @@ export default function MyStory() {
               >
                 聯繫輔導師
               </button>
-            </div>
+        </div>
           </div>
         </div>
       )}
@@ -2050,7 +2050,7 @@ export default function MyStory() {
                '💬 Arca Consilii'}
             </a>
           </div>
-        </footer>
+      </footer>
       ) : (
         // 桌面版 Footer
         <Footer />

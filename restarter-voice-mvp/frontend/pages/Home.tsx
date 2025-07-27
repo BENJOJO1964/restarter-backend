@@ -765,24 +765,20 @@ export default function Home() {
           
           {/* 社會融入度評估按鈕 */}
           <div style={{ width: '100%', padding: '0 16px', marginBottom: '16px' }}>
-            <button
+            <div
               onClick={() => handleFeatureWithAuth(() => navigate('/social-integration'))}
               style={{
                 background: 'linear-gradient(135deg, #6B5BFF 0%, #5A4FCF 100%)',
-                border: 'none',
                 borderRadius: '16px',
-                padding: '12px 24px',
-                color: 'white',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: '600',
+                padding: '12px 16px',
                 boxShadow: '0 4px 16px rgba(107, 91, 255, 0.3)',
                 transition: 'all 0.3s ease',
+                cursor: 'pointer',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                gap: '8px',
-                width: '100%',
-                justifyContent: 'center'
+                gap: '6px',
+                width: '100%'
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -793,9 +789,23 @@ export default function Home() {
                 e.currentTarget.style.boxShadow = '0 4px 16px rgba(107, 91, 255, 0.3)';
               }}
             >
-              <span style={{ fontSize: '18px' }}>📊</span>
-              社會融入度評估
-            </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
+                <span style={{ fontSize: '18px' }}>📊</span>
+                <span style={{ fontSize: '16px', fontWeight: '600' }}>社會融入度評估</span>
+              </div>
+              <div style={{
+                background: '#232946',
+                color: 'white',
+                padding: '3px 8px',
+                borderRadius: '6px',
+                fontSize: '10px',
+                fontWeight: '500',
+                textAlign: 'center',
+                lineHeight: '1.2'
+              }}>
+                評估個人社會融入度，獲得專業建議和改善方向
+              </div>
+            </div>
           </div>
           
           {/* 手機版功能按鈕 */}
@@ -977,35 +987,46 @@ export default function Home() {
               
               {/* 桌面版社會融入度評估按鈕 */}
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-                <button
-                  onClick={() => handleFeatureWithAuth(() => navigate('/social-integration'))}
-                  style={{
-                    background: 'linear-gradient(135deg, #6B5BFF 0%, #5A4FCF 100%)',
-                    border: 'none',
-                    borderRadius: '16px',
-                    padding: '16px 32px',
-                    color: 'white',
-                    cursor: 'pointer',
-                    fontSize: '18px',
-                    fontWeight: '600',
-                    boxShadow: '0 4px 16px rgba(107, 91, 255, 0.3)',
-                    transition: 'all 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 91, 255, 0.4)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(107, 91, 255, 0.3)';
-                  }}
+                <div style={{ 
+                  background: 'linear-gradient(135deg, #6B5BFF 0%, #5A4FCF 100%)',
+                  borderRadius: '16px',
+                  padding: '16px 32px',
+                  boxShadow: '0 4px 16px rgba(107, 91, 255, 0.3)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                  minWidth: '200px'
+                }}
+                onClick={() => handleFeatureWithAuth(() => navigate('/social-integration'))}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 91, 255, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(107, 91, 255, 0.3)';
+                }}
                 >
-                  <span style={{ fontSize: '24px' }}>📊</span>
-                  社會融入度評估
-                </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'white' }}>
+                    <span style={{ fontSize: '24px' }}>📊</span>
+                    <span style={{ fontSize: '18px', fontWeight: '600' }}>社會融入度評估</span>
+                  </div>
+                  <div style={{
+                    background: '#232946',
+                    color: 'white',
+                    padding: '4px 12px',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    textAlign: 'center',
+                    marginTop: '4px'
+                  }}>
+                    評估個人社會融入度，獲得專業建議和改善方向
+                  </div>
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginBottom: 18, justifyContent: 'center', width: '100%' }}>
