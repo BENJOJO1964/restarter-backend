@@ -811,7 +811,7 @@ export default function Home() {
             </button>
             <div style={{
               position: 'absolute',
-              top: '-40px',
+              bottom: '100%',
               left: '50%',
               transform: 'translateX(-50%)',
               background: '#232946',
@@ -826,7 +826,8 @@ export default function Home() {
               transition: 'opacity 0.3s ease',
               zIndex: 1000,
               pointerEvents: 'none',
-              maxWidth: '200px'
+              maxWidth: '200px',
+              marginBottom: '8px'
             }}>
               {lang === 'zh-TW' ? '評估個人社會融入度，獲得專業建議和改善方向' :
                lang === 'zh-CN' ? '评估个人社会融入度，获得专业建议和改善方向' :
