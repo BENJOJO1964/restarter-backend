@@ -381,14 +381,18 @@ export default function EchoBox() {
     // 檢查語音權限
     const permission = await checkPermission('aiChat');
     if (!permission.allowed) {
-      if (isTestMode) return;
+      if (isTestMode) {
+        // 測試模式下直接顯示確認對話框，跳過權限檢查
+        setShowRecordingConfirm(true);
+        return;
+      }
       if (permission.canRenew) {
         setPermissionResult(permission);
         setShowRenewalModal(true);
-                        } else {
-                    setPermissionResult(permission);
-                    setShowRenewalModal(true);
-                  }
+      } else {
+        setPermissionResult(permission);
+        setShowRenewalModal(true);
+      }
       return;
     }
 
