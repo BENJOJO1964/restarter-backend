@@ -97,7 +97,7 @@ app.use('/api/mood', moodRouter);
 app.use('/api/feedback', feedbackRouter);
 app.use('/api/subscription', subscriptionRouter);
 app.use('/api/weather', weatherRouter);
-app.use('/api', socialIntegrationRouter);
+app.use('/api/social-integration-assessment', socialIntegrationRouter);
 
 // 後端只提供API，不提供靜態文件
 app.get('/', (req, res) => {

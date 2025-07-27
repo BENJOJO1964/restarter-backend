@@ -8,9 +8,19 @@ const openai = new OpenAI({
 });
 
 // 社會融入度評估API
-router.post('/social-integration-assessment', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
+    console.log('收到社會融入度評估請求');
     const { answers, userMilestones, assessmentDate, context } = req.body;
+    
+    // 檢查OpenAI API Key
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OpenAI API Key 未設置');
+      return res.status(500).json({
+        error: 'OpenAI API Key 未配置',
+        message: '請檢查環境變量設置'
+      });
+    }
 
     // 檢查權限（測試模式跳過）
     if (!req.headers['x-test-mode']) {

@@ -23,8 +23,19 @@ const checkUserPermission = async (req, res, next) => {
     const userData = userDoc.data();
     const subscription = userData.subscription || 'free';
 
-    // 免費版無法使用 AI 功能
-    if (subscription === 'free') {
+    // 檢查測試模式
+    const testMode = req.headers['x-test-mode'] === 'true';
+    
+    // 測試模式下跳過權限檢查
+    if (testMode) {
+      req.userSubscription = subscription;
+      req.userUsage = { aiCost: 0, aiChats: 0 }; // 測試模式給予初始使用量
+      req.userPlan = { aiCostLimit: 999999, aiChats: 999999 }; // 測試模式給予高額度
+      return next();
+    }
+    
+    // 免費版無法使用 AI 功能（除非測試模式）
+    if (subscription === 'free' && !testMode) {
       return res.status(403).json({ 
         error: '此功能需要訂閱',
         requiredPlan: 'basic'
@@ -101,9 +112,12 @@ router.post('/', checkUserPermission, async (req, res) => {
   if (!messages || !Array.isArray(messages)) {
     return res.status(400).json({ error: 'messages required' });
   }
-  if (hasOpenAI) {
+  // 檢查是否有OpenAI API KEY
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+  console.log('OpenAI API KEY status:', openaiApiKey ? 'Found' : 'Missing');
+  if (openaiApiKey) {
     try {
-      const gpt = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const gpt = new openai.OpenAI({ apiKey: openaiApiKey });
       // 修正: 強制 messages 格式正確
       let formattedMessages = messages.filter(m => m && m.text && m.text.trim()).map(m => ({
         role: m.sender === 'user' ? 'user' : 'assistant',
@@ -158,7 +172,8 @@ router.post('/', checkUserPermission, async (req, res) => {
     }
   } else {
     // 沒有 OpenAI API Key 時的 fallback
-    res.json({ reply: 'AI 服務暫時無法使用，請稍後再試。' });
+    console.error('OpenAI API KEY not found');
+    res.json({ reply: 'AI 服務暫時無法使用，請檢查 OPENAI_API_KEY 環境變數設置。' });
   }
 });
 

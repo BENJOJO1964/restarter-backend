@@ -374,7 +374,8 @@ export default function ChatCompanion() {
                 setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
               } catch (error) {
                 console.error("Error in AI pipeline: ", error);
-                setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: '測試模式：語音辨識成功！AI回覆功能正常！', status: 'done' } : m));
+                const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+                setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: `API錯誤：${errorMessage}`, status: 'done' } : m));
               } finally {
                 setAIStreaming(false);
               }
@@ -549,7 +550,8 @@ export default function ChatCompanion() {
           setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
         } catch (error) {
           console.error("Error in AI pipeline: ", error);
-          setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: '測試模式：AI回覆功能正常！', status: 'done' } : m));
+          const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+          setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: `API錯誤：${errorMessage}`, status: 'done' } : m));
         } finally {
           setAIStreaming(false);
         }

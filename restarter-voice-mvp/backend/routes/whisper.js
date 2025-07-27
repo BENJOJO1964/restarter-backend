@@ -23,8 +23,11 @@ const checkUserPermission = async (req, res, next) => {
     const userData = userDoc.data();
     const subscription = userData.subscription || 'free';
 
-    // 免費版無法使用語音功能
-    if (subscription === 'free') {
+    // 檢查測試模式
+    const testMode = req.headers['x-test-mode'] === 'true';
+    
+    // 免費版無法使用語音功能（除非測試模式）
+    if (subscription === 'free' && !testMode) {
       return res.status(403).json({ 
         error: '語音功能需要訂閱',
         requiredPlan: 'basic'
