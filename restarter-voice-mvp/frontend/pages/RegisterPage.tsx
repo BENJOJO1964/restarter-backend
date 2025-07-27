@@ -546,10 +546,8 @@ const ageRanges = ["18-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54"
 function validateEmail(email: string) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email); }
 function validatePassword(pw: string) { return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(pw); }
 function validateNickname(nick: string) {
-  // 6~16位，只允許英數字和底線，且必須同時有英文字母和數字
-  if (!/^[A-Za-z0-9_]{6,16}$/.test(nick)) return false;
-  if (!/[A-Za-z]/.test(nick)) return false;
-  if (!/[0-9]/.test(nick)) return false;
+  // 2-16位，允許任何字符
+  if (!nick || nick.length < 2 || nick.length > 16) return false;
   return true;
 }
 function validateAge(age: string) { return ageRanges.includes(age); }
