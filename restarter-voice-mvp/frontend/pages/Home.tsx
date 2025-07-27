@@ -232,6 +232,33 @@ export default function Home() {
   // MODULES 陣列（還原）
   const MODULES = [
     {
+      key: 'social-integration',
+      icon: '📊',
+      title: {
+        'zh-TW': '社會融入度評估',
+        'zh-CN': '社会融入度评估',
+        'ja': '社会統合度評価',
+        'en': 'Social Integration Assessment',
+        'ko': '사회 통합도 평가',
+        'th': 'การประเมินการผสมผสานทางสังคม',
+        'vi': 'Đánh Giá Hòa Nhập Xã Hội',
+        'ms': 'Penilaian Integrasi Sosial',
+        'la': 'Aestimatio Integrationis Socialis'
+      },
+      desc: {
+        'zh-TW': '評估個人社會融入度，獲得專業建議和改善方向',
+        'zh-CN': '评估个人社会融入度，获得专业建议和改善方向',
+        'ja': '個人の社会統合度を評価し、専門的なアドバイスと改善方向を獲得',
+        'en': 'Assess personal social integration, get professional advice and improvement direction',
+        'ko': '개인 사회 통합도를 평가하고 전문적인 조언과 개선 방향을 얻으세요',
+        'th': 'ประเมินการผสมผสานทางสังคมส่วนบุคคล รับคำแนะนำจากผู้เชี่ยวชาญและทิศทางการปรับปรุง',
+        'vi': 'Đánh giá mức độ hòa nhập xã hội cá nhân, nhận lời khuyên chuyên môn và hướng cải thiện',
+        'ms': 'Nilai integrasi sosial peribadi, dapatkan nasihat profesional dan arah penambahbaikan',
+        'la': 'Aestima integrationem socialem personalem, consilium professionalem et directionem meliorationis accipe'
+      },
+      path: '/social-integration'
+    },
+    {
       key: 'echo-box',
       icon: '🎤',
       title: {

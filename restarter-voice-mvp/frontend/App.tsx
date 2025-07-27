@@ -42,6 +42,7 @@ import DataDeletion from './pages/DataDeletion';
 import { LanguageProvider } from './contexts/LanguageContext';
 import HelpLab from './pages/HelpLab';
 import EmotionRelease from './pages/EmotionRelease';
+import SocialIntegration from './pages/SocialIntegration';
 
 import Plans from './pages/Plans';
 import Payment from './pages/Payment';
@@ -152,6 +153,7 @@ function App() {
                   <Route path="/data-deletion" element={<DataDeletion />} />
                   <Route path="/HelpLab" element={<HelpLab />} />
                   <Route path="/emotion-release" element={<EmotionRelease />} />
+{user && <Route path="/social-integration" element={<SocialIntegration />} />}
 
                   <Route path="/plans" element={<Plans />} />
                   <Route path="/payment" element={<Payment />} />

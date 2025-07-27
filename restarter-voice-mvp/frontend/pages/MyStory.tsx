@@ -995,36 +995,7 @@ export default function MyStory() {
             {isRecording ? `錄音中 ${Math.floor(recordingDuration / 60)}:${(recordingDuration % 60).toString().padStart(2, '0')}` : '語音輸入'}
           </button>
 
-          {/* 社會融入度評估按鈕 */}
-          <button
-            onClick={() => setShowSocialIntegrationDialog(true)}
-            style={{
-              background: 'linear-gradient(135deg, #6B5BFF 0%, #5A4FCF 100%)',
-              border: 'none',
-              borderRadius: '16px',
-              padding: '12px 24px',
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '16px',
-              fontWeight: '600',
-              boxShadow: '0 4px 16px rgba(107, 91, 255, 0.3)',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 91, 255, 0.4)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(107, 91, 255, 0.3)';
-            }}
-          >
-            <span style={{ fontSize: '18px' }}>📊</span>
-            {t.socialIntegration}
-          </button>
+
         </div>
 
         {/* 里程碑區域 */}
