@@ -8,6 +8,7 @@ import { usePermission } from '../hooks/usePermission';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
 import { UpgradeModal } from '../components/UpgradeModal';
 import Footer from '../components/Footer';
+import { useTestMode } from '../App';
 
 const TEXTS = {
   'zh-TW': {
@@ -26,13 +27,30 @@ const TEXTS = {
     days: '天',
     myMilestones: '我的里程碑',
     noMilestones: '還沒有里程碑，開始記錄你的故事吧！',
+    socialIntegration: '社會融入度評估',
+    socialIntegrationTitle: '社會融入度評估',
+    socialIntegrationDesc: '評估你在社會中的融入程度，包括人際關係、就業狀況、家庭關係等',
+    socialIntegrationQuestions: {
+      q1: '你覺得與他人的關係如何？',
+      q2: '你對目前的工作/學習狀況滿意嗎？',
+      q3: '你與家人的關係如何？',
+      q4: '你對未來有信心嗎？',
+      q5: '你覺得社會對你的接納程度如何？'
+    },
+    socialIntegrationOptions: {
+      excellent: '非常好',
+      good: '良好',
+      fair: '一般',
+      poor: '需要改善'
+    },
     milestoneTypes: {
       start: '開始',
       achievement: '成就',
       growth: '成長',
       habit: '習慣',
       help: '幫助',
-      goal: '目標'
+      goal: '目標',
+      social: '社會融入'
     }
   },
   'zh-CN': {
@@ -51,13 +69,30 @@ const TEXTS = {
     days: '天',
     myMilestones: '我的里程碑',
     noMilestones: '还没有里程碑，开始记录你的故事吧！',
+    socialIntegration: '社会融入度评估',
+    socialIntegrationTitle: '社会融入度评估',
+    socialIntegrationDesc: '评估你在社会中的融入程度，包括人际关系、就业状况、家庭关系等',
+    socialIntegrationQuestions: {
+      q1: '你觉得与他人的关系如何？',
+      q2: '你对目前的工作/学习状况满意吗？',
+      q3: '你与家人的关系如何？',
+      q4: '你对未来有信心吗？',
+      q5: '你觉得社会对你的接纳程度如何？'
+    },
+    socialIntegrationOptions: {
+      excellent: '非常好',
+      good: '良好',
+      fair: '一般',
+      poor: '需要改善'
+    },
     milestoneTypes: {
       start: '开始',
       achievement: '成就',
       growth: '成长',
       habit: '习惯',
       help: '帮助',
-      goal: '目标'
+      goal: '目标',
+      social: '社会融入'
     }
   },
   'en': {
@@ -76,13 +111,30 @@ const TEXTS = {
     days: 'days',
     myMilestones: 'My Milestones',
     noMilestones: 'No milestones yet, start recording your story!',
+    socialIntegration: 'Social Integration Assessment',
+    socialIntegrationTitle: 'Social Integration Assessment',
+    socialIntegrationDesc: 'Assess your level of social integration, including relationships, employment status, family relationships, etc.',
+    socialIntegrationQuestions: {
+      q1: 'How do you feel about your relationships with others?',
+      q2: 'Are you satisfied with your current work/study situation?',
+      q3: 'How are your relationships with family?',
+      q4: 'Do you have confidence in the future?',
+      q5: 'How do you feel about society\'s acceptance of you?'
+    },
+    socialIntegrationOptions: {
+      excellent: 'Excellent',
+      good: 'Good',
+      fair: 'Fair',
+      poor: 'Needs Improvement'
+    },
     milestoneTypes: {
       start: 'Start',
       achievement: 'Achievement',
       growth: 'Growth',
       habit: 'Habit',
       help: 'Help',
-      goal: 'Goal'
+      goal: 'Goal',
+      social: 'Social Integration'
     }
   }
 };
@@ -110,6 +162,7 @@ export default function MyStory() {
   const navigate = useNavigate();
   const { lang, setLang } = useLanguage();
   const t = TEXTS[lang] || TEXTS['zh-TW'];
+  const { isTestMode } = useTestMode();
 
   // 獲取用戶頭像
   const getUserAvatar = async () => {
@@ -202,6 +255,7 @@ export default function MyStory() {
   });
   
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showSocialIntegrationDialog, setShowSocialIntegrationDialog] = useState(false);
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null);
   const [newMilestone, setNewMilestone] = useState({
     title: '',
@@ -308,6 +362,7 @@ export default function MyStory() {
     // 檢查語音權限
     const permission = await checkPermission('aiChat');
     if (!permission.allowed) {
+      if (isTestMode) return;
       if (permission.isFreeUser) {
         // 免費用戶顯示升級跳窗
         setShowUpgradeModal(true);
@@ -428,6 +483,62 @@ export default function MyStory() {
     setShowSubmitDialog(false);
   };
 
+  // 社會融入度評估相關函數
+  const [socialIntegrationAnswers, setSocialIntegrationAnswers] = useState({
+    q1: '',
+    q2: '',
+    q3: '',
+    q4: '',
+    q5: ''
+  });
+
+  const handleSocialIntegrationSubmit = () => {
+    // 計算評估結果
+    const answers = Object.values(socialIntegrationAnswers);
+    const score = answers.reduce((total, answer) => {
+      switch (answer) {
+        case 'excellent': return total + 5;
+        case 'good': return total + 4;
+        case 'fair': return total + 3;
+        case 'poor': return total + 2;
+        default: return total;
+      }
+    }, 0);
+    
+    const averageScore = score / answers.length;
+    let result = '';
+    let description = '';
+    
+    if (averageScore >= 4.5) {
+      result = '優秀';
+      description = '你的社會融入度非常高，在人際關係、就業狀況、家庭關係等方面都表現出色。';
+    } else if (averageScore >= 3.5) {
+      result = '良好';
+      description = '你的社會融入度良好，在大部分方面都有不錯的表現，還有提升空間。';
+    } else if (averageScore >= 2.5) {
+      result = '一般';
+      description = '你的社會融入度一般，在某些方面需要改善，建議尋求更多支持。';
+    } else {
+      result = '需要改善';
+      description = '你的社會融入度需要改善，建議尋求專業輔導和支持。';
+    }
+    
+    const milestone: Milestone = {
+      id: Date.now(),
+      title: `${t.socialIntegrationTitle} - ${result}`,
+      description: `${description} 評估分數: ${averageScore.toFixed(1)}/5.0`,
+      date: new Date().toISOString(),
+      type: 'social',
+      completed: true
+    };
+    
+    const updatedMilestones = [milestone, ...milestones];
+    setMilestones(updatedMilestones);
+    saveMilestonesToStorage(updatedMilestones);
+    setSocialIntegrationAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '' });
+    setShowSocialIntegrationDialog(false);
+  };
+
   const handleAudio = (audioBlob: Blob, duration: number) => {
     // 創建音頻URL
     const audioUrl = URL.createObjectURL(audioBlob);
@@ -467,7 +578,8 @@ export default function MyStory() {
       growth: '#9C27B0',
       habit: '#FF9800',
       help: '#E91E63',
-      goal: '#F44336'
+      goal: '#F44336',
+      social: '#6B5BFF'
     };
     return colors[type] || '#9E9E9E';
   };
@@ -730,7 +842,8 @@ export default function MyStory() {
           display: 'flex', 
           justifyContent: 'center', 
           gap: '16px',
-          marginBottom: '24px'
+          marginBottom: '24px',
+          flexWrap: 'wrap'
         }}>
           {/* 文字添加按鈕 */}
           <button
@@ -801,6 +914,37 @@ export default function MyStory() {
           >
             <span style={{ fontSize: '18px' }}>🎤</span>
             {isRecording ? `錄音中 ${Math.floor(recordingDuration / 60)}:${(recordingDuration % 60).toString().padStart(2, '0')}` : '語音輸入'}
+          </button>
+
+          {/* 社會融入度評估按鈕 */}
+          <button
+            onClick={() => setShowSocialIntegrationDialog(true)}
+            style={{
+              background: 'linear-gradient(135deg, #6B5BFF 0%, #5A4FCF 100%)',
+              border: 'none',
+              borderRadius: '16px',
+              padding: '12px 24px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '600',
+              boxShadow: '0 4px 16px rgba(107, 91, 255, 0.3)',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 91, 255, 0.4)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(107, 91, 255, 0.3)';
+            }}
+          >
+            <span style={{ fontSize: '18px' }}>📊</span>
+            {t.socialIntegration}
           </button>
         </div>
 
@@ -1074,6 +1218,7 @@ export default function MyStory() {
                 <option value="habit">{t.milestoneTypes.habit}</option>
                 <option value="help">{t.milestoneTypes.help}</option>
                 <option value="goal">{t.milestoneTypes.goal}</option>
+                <option value="social">{t.milestoneTypes.social}</option>
               </select>
             </div>
             
@@ -1349,6 +1494,7 @@ export default function MyStory() {
                 <option value="habit">{t.milestoneTypes.habit}</option>
                 <option value="help">{t.milestoneTypes.help}</option>
                 <option value="goal">{t.milestoneTypes.goal}</option>
+                <option value="social">{t.milestoneTypes.social}</option>
               </select>
             </div>
             
@@ -1406,6 +1552,202 @@ export default function MyStory() {
           onClose={() => setShowUpgradeModal(false)}
           featureName="語音錄製功能"
         />
+      )}
+
+      {/* 社會融入度評估對話框 */}
+      {showSocialIntegrationDialog && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '30px',
+            width: '90%',
+            maxWidth: '600px',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+          }}>
+            <h3 style={{ marginBottom: '20px', color: '#333', textAlign: 'center' }}>
+              {t.socialIntegrationTitle}
+            </h3>
+            
+            <p style={{ 
+              marginBottom: '24px', 
+              color: '#666', 
+              textAlign: 'center',
+              lineHeight: '1.5'
+            }}>
+              {t.socialIntegrationDesc}
+            </p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {/* 問題1 */}
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
+                  {t.socialIntegrationQuestions.q1}
+                </label>
+                <select
+                  value={socialIntegrationAnswers.q1}
+                  onChange={(e) => setSocialIntegrationAnswers(prev => ({ ...prev, q1: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #ddd',
+                    fontSize: '14px'
+                  }}
+                >
+                  <option value="">請選擇...</option>
+                  <option value="excellent">{t.socialIntegrationOptions.excellent}</option>
+                  <option value="good">{t.socialIntegrationOptions.good}</option>
+                  <option value="fair">{t.socialIntegrationOptions.fair}</option>
+                  <option value="poor">{t.socialIntegrationOptions.poor}</option>
+                </select>
+              </div>
+              
+              {/* 問題2 */}
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
+                  {t.socialIntegrationQuestions.q2}
+                </label>
+                <select
+                  value={socialIntegrationAnswers.q2}
+                  onChange={(e) => setSocialIntegrationAnswers(prev => ({ ...prev, q2: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #ddd',
+                    fontSize: '14px'
+                  }}
+                >
+                  <option value="">請選擇...</option>
+                  <option value="excellent">{t.socialIntegrationOptions.excellent}</option>
+                  <option value="good">{t.socialIntegrationOptions.good}</option>
+                  <option value="fair">{t.socialIntegrationOptions.fair}</option>
+                  <option value="poor">{t.socialIntegrationOptions.poor}</option>
+                </select>
+              </div>
+              
+              {/* 問題3 */}
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
+                  {t.socialIntegrationQuestions.q3}
+                </label>
+                <select
+                  value={socialIntegrationAnswers.q3}
+                  onChange={(e) => setSocialIntegrationAnswers(prev => ({ ...prev, q3: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #ddd',
+                    fontSize: '14px'
+                  }}
+                >
+                  <option value="">請選擇...</option>
+                  <option value="excellent">{t.socialIntegrationOptions.excellent}</option>
+                  <option value="good">{t.socialIntegrationOptions.good}</option>
+                  <option value="fair">{t.socialIntegrationOptions.fair}</option>
+                  <option value="poor">{t.socialIntegrationOptions.poor}</option>
+                </select>
+              </div>
+              
+              {/* 問題4 */}
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
+                  {t.socialIntegrationQuestions.q4}
+                </label>
+                <select
+                  value={socialIntegrationAnswers.q4}
+                  onChange={(e) => setSocialIntegrationAnswers(prev => ({ ...prev, q4: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #ddd',
+                    fontSize: '14px'
+                  }}
+                >
+                  <option value="">請選擇...</option>
+                  <option value="excellent">{t.socialIntegrationOptions.excellent}</option>
+                  <option value="good">{t.socialIntegrationOptions.good}</option>
+                  <option value="fair">{t.socialIntegrationOptions.fair}</option>
+                  <option value="poor">{t.socialIntegrationOptions.poor}</option>
+                </select>
+              </div>
+              
+              {/* 問題5 */}
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
+                  {t.socialIntegrationQuestions.q5}
+                </label>
+                <select
+                  value={socialIntegrationAnswers.q5}
+                  onChange={(e) => setSocialIntegrationAnswers(prev => ({ ...prev, q5: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #ddd',
+                    fontSize: '14px'
+                  }}
+                >
+                  <option value="">請選擇...</option>
+                  <option value="excellent">{t.socialIntegrationOptions.excellent}</option>
+                  <option value="good">{t.socialIntegrationOptions.good}</option>
+                  <option value="fair">{t.socialIntegrationOptions.fair}</option>
+                  <option value="poor">{t.socialIntegrationOptions.poor}</option>
+                </select>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '24px' }}>
+              <button
+                onClick={() => setShowSocialIntegrationDialog(false)}
+                style={{
+                  background: '#f5f5f5',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: '#666',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                {t.cancel}
+              </button>
+              <button
+                onClick={handleSocialIntegrationSubmit}
+                disabled={!Object.values(socialIntegrationAnswers).every(answer => answer !== '')}
+                style={{
+                  background: Object.values(socialIntegrationAnswers).every(answer => answer !== '') 
+                    ? 'linear-gradient(45deg, #6B5BFF, #5A4FCF)' 
+                    : '#ccc',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  color: 'white',
+                  cursor: Object.values(socialIntegrationAnswers).every(answer => answer !== '') ? 'pointer' : 'not-allowed',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}
+              >
+                提交評估
+              </button>
+            </div>
+          </div>
+        </div>
       )}
       
       {/* Footer 5個按鈕 - 原封不動複製自 RestartWall */}
