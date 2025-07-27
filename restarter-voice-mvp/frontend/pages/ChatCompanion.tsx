@@ -494,7 +494,18 @@ export default function ChatCompanion() {
     // 檢查 AI 聊天權限
     const permission = await checkPermission('aiChat');
     if (!permission.allowed) {
-      if (isTestMode) return;
+      if (isTestMode) {
+        // 測試模式下直接執行，不檢查權限
+        const newUserMsg: ChatMsg = { id: `user-${Date.now()}`, text, sender: 'user' };
+        setMessages(prev => [...prev, newUserMsg]);
+        setInput('');
+        setLastTranscript('');
+
+        if (aiTimeout.current) clearTimeout(aiTimeout.current);
+        const newMsgId = `ai-${Date.now()}`;
+        setMessages(prev => [...prev, { id: newMsgId, text: '測試模式：AI回覆功能正常！', sender: 'ai', status: 'done' }]);
+        return;
+      }
       if (permission.isFreeUser) {
         // 免費用戶顯示升級跳窗
         setShowUpgradeModal(true);
@@ -569,7 +580,18 @@ export default function ChatCompanion() {
       // 檢查語音權限
       const permission = await checkPermission('aiChat');
       if (!permission.allowed) {
-        if (isTestMode) return;
+        if (isTestMode) {
+          // 測試模式下直接執行，不檢查權限
+          setLastTranscript('');
+          setInput('');
+          recognitionRef.current.start();
+          setRecording(true);
+          setRecognizing(true);
+          setSpeechError('');
+          setAutoVoiceLoop(true); // 啟動自動循環
+          setForceStop(false);
+          return;
+        }
         if (permission.isFreeUser) {
           // 免費用戶顯示升級跳窗
           setShowUpgradeModal(true);
