@@ -1102,7 +1102,15 @@ export default function MyStory() {
               fontWeight: 'bold',
               marginBottom: '6px'
             }}>
-              里程碑
+              {lang === 'zh-TW' ? '里程碑' : 
+               lang === 'zh-CN' ? '里程碑' : 
+               lang === 'en' ? 'Milestone' : 
+               lang === 'ja' ? 'マイルストーン' : 
+               lang === 'ko' ? '마일스톤' : 
+               lang === 'th' ? 'จุดหมาย' : 
+               lang === 'vi' ? 'Cột mốc' : 
+               lang === 'ms' ? 'Pencapaian' : 
+               'Lapis Milliarius'}
             </h2>
             
             <p style={{ 
