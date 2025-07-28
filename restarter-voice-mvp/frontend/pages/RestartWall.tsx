@@ -1656,6 +1656,7 @@ export default function RestartWall() {
           </div>
         )}
       </div>
+    </div>
       
       {/* 錄音確認對話框 */}
       {showRecordingConfirm && (
