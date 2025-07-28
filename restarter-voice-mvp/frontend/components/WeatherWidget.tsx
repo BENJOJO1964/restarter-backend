@@ -47,7 +47,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
       setError(null);
       
       // 使用預設城市，不根據瀏覽器位置
-      const defaultCity = '台北';
+      const defaultCity = 'Taipei';
       console.log('Fetching weather for:', defaultCity);
       const response = await fetch(`https://restarter-backend-6e9s.onrender.com/api/weather/current?city=${defaultCity}`);
       const data = await response.json();
