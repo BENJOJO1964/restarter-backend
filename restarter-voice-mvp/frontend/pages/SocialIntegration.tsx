@@ -19,7 +19,7 @@ const TEXTS = {
     title: '社會融入度評估',
     subtitle: '評估您的社會融入度，獲得專業建議',
     subtitle2: '勇敢面對並定期檢測自身社會融入程度進步狀況，每一次評估都是成長的機會',
-    backToHome: '返回首頁',
+    backToHome: '返回',
     startAssessment: '開始評估',
     submitAssessment: '提交評估',
     cancelAssessment: '取消',
@@ -79,13 +79,19 @@ const TEXTS = {
     resultLabel: '評估結果',
     descriptionLabel: '詳細分析',
     recommendationsLabel: '改善建議',
-    analysisLabel: '專業分析'
+    analysisLabel: '專業分析',
+    // Footer
+    privacyPolicy: '隱私權政策',
+    terms: '條款/聲明',
+    dataDeletion: '資料刪除說明',
+    about: '🧬 Restarter™｜我們是誰',
+    feedback: '💬 意見箱｜我們想聽你說'
   },
   'zh-CN': {
     title: '社会融入度评估',
     subtitle: '评估您的社会融入度，获得专业建议',
     subtitle2: '勇敢面对并定期检测自身社会融入程度进步状况，每一次评估都是成长的机会',
-    backToHome: '返回首页',
+    backToHome: '返回',
     startAssessment: '开始评估',
     submitAssessment: '提交评估',
     cancelAssessment: '取消',
@@ -145,13 +151,19 @@ const TEXTS = {
     resultLabel: '评估结果',
     descriptionLabel: '详细分析',
     recommendationsLabel: '改善建议',
-    analysisLabel: '专业分析'
+    analysisLabel: '专业分析',
+    // Footer
+    privacyPolicy: '隐私权政策',
+    terms: '条款/声明',
+    dataDeletion: '资料删除说明',
+    about: '🧬 Restarter™｜我们是谁',
+    feedback: '💬 意见箱｜我们想听你说'
   },
   'en': {
     title: 'Social Integration Assessment',
     subtitle: 'Assess your social integration and get professional advice',
     subtitle2: 'Face challenges bravely and regularly monitor your social integration progress, every assessment is an opportunity for growth',
-    backToHome: 'Back to Home',
+    backToHome: 'Back',
     startAssessment: 'Start Assessment',
     submitAssessment: 'Submit Assessment',
     cancelAssessment: 'Cancel',
@@ -211,7 +223,13 @@ const TEXTS = {
     resultLabel: 'Assessment Result',
     descriptionLabel: 'Detailed Analysis',
     recommendationsLabel: 'Improvement Suggestions',
-    analysisLabel: 'Professional Analysis'
+    analysisLabel: 'Professional Analysis',
+    // Footer
+    privacyPolicy: 'Privacy Policy',
+    terms: 'Terms/Statement',
+    dataDeletion: 'Data Deletion Guide',
+    about: '🧬 Restarter™｜Who We Are',
+    feedback: '💬 Feedback｜We Want to Hear You'
   }
 };
 
@@ -1369,36 +1387,24 @@ export default function SocialIntegration() {
         </div>
       )}
 
-      {/* Footer 5個按鈕 - 原封不動複製自 RestartWall */}
-      {window.innerWidth <= 768 ? (
-        // 手機版 Footer - 2行排列 + 白色卡片背景
-        <div style={{ 
-          width: '100%', 
-          margin: '0 auto', 
-          marginTop: 24,
-          background: 'rgba(255,255,255,0.95)',
-          borderRadius: 16,
-          padding: '16px',
-          boxShadow: '0 2px 12px #6B5BFF22'
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-              <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-              <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
-              <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
-            </div>
-            {/* 第二行：我們是誰、意見箱 */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-              <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
-              <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
-            </div>
-          </div>
+      {/* Footer 5個按鈕 - 一行排列 */}
+      <div style={{ 
+        width: '100%', 
+        margin: '0 auto', 
+        marginTop: 24,
+        background: 'rgba(255,255,255,0.95)',
+        borderRadius: 16,
+        padding: '16px',
+        boxShadow: '0 2px 12px #6B5BFF22'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+          <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>{t.privacyPolicy}</a>
+          <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>{t.terms}</a>
+          <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>{t.dataDeletion}</a>
+          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>{t.about}</a>
+          <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>{t.feedback}</a>
         </div>
-      ) : (
-        // 桌面版 Footer
-        <Footer />
-      )}
+      </div>
     </div>
   );
 } 
