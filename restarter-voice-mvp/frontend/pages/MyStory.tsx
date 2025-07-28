@@ -136,6 +136,258 @@ const TEXTS = {
       goal: 'Goal',
       social: 'Social Integration'
     }
+  },
+  'ja': {
+    title: 'マイストーリー',
+    subtitle: '成長の旅を記録し、変化の一歩一歩を目撃する',
+    backToHome: '← ホームに戻る',
+    logout: 'ログアウト',
+    addMilestone: 'マイルストーンを追加',
+    editMilestone: 'マイルストーンを編集',
+    deleteMilestone: 'マイルストーンを削除',
+    save: '保存',
+    cancel: 'キャンセル',
+    totalDays: '総日数',
+    achievements: '達成',
+    currentStreak: '連続',
+    days: '日',
+    myMilestones: 'マイマイルストーン',
+    noMilestones: 'まだマイルストーンがありません。ストーリーを記録し始めましょう！',
+    socialIntegration: '社会的統合度評価',
+    socialIntegrationTitle: '社会的統合度評価',
+    socialIntegrationDesc: '人間関係、就業状況、家族関係などを含む社会的統合度を評価する',
+    socialIntegrationQuestions: {
+      q1: '他者との関係をどう感じていますか？',
+      q2: '現在の仕事/学習状況に満足していますか？',
+      q3: '家族との関係はどうですか？',
+      q4: '将来に自信がありますか？',
+      q5: '社会からの受け入れられ方をどう感じていますか？'
+    },
+    socialIntegrationOptions: {
+      excellent: '非常に良い',
+      good: '良い',
+      fair: '普通',
+      poor: '改善が必要'
+    },
+    milestoneTypes: {
+      start: '開始',
+      achievement: '達成',
+      growth: '成長',
+      habit: '習慣',
+      help: '支援',
+      goal: '目標',
+      social: '社会的統合'
+    }
+  },
+  'ko': {
+    title: '내 이야기',
+    subtitle: '성장 여정을 기록하고 변화의 모든 단계를 목격하세요',
+    backToHome: '← 홈으로',
+    logout: '로그아웃',
+    addMilestone: '마일스톤 추가',
+    editMilestone: '마일스톤 편집',
+    deleteMilestone: '마일스톤 삭제',
+    save: '저장',
+    cancel: '취소',
+    totalDays: '총 일수',
+    achievements: '성취',
+    currentStreak: '연속',
+    days: '일',
+    myMilestones: '내 마일스톤',
+    noMilestones: '아직 마일스톤이 없습니다. 이야기를 기록하기 시작하세요!',
+    socialIntegration: '사회 통합도 평가',
+    socialIntegrationTitle: '사회 통합도 평가',
+    socialIntegrationDesc: '인간관계, 고용상태, 가족관계 등을 포함한 사회 통합도를 평가하세요',
+    socialIntegrationQuestions: {
+      q1: '다른 사람과의 관계를 어떻게 느끼나요?',
+      q2: '현재의 일/학습 상황에 만족하나요?',
+      q3: '가족과의 관계는 어떠한가요?',
+      q4: '미래에 대한 자신감이 있나요?',
+      q5: '사회로부터의 수용도를 어떻게 느끼나요?'
+    },
+    socialIntegrationOptions: {
+      excellent: '매우 좋음',
+      good: '좋음',
+      fair: '보통',
+      poor: '개선 필요'
+    },
+    milestoneTypes: {
+      start: '시작',
+      achievement: '성취',
+      growth: '성장',
+      habit: '습관',
+      help: '도움',
+      goal: '목표',
+      social: '사회 통합'
+    }
+  },
+  'th': {
+    title: 'เรื่องราวของฉัน',
+    subtitle: 'บันทึกการเดินทางแห่งการเติบโต เป็นพยานทุกก้าวของการเปลี่ยนแปลง',
+    backToHome: '← กลับหน้าหลัก',
+    logout: 'ออกจากระบบ',
+    addMilestone: 'เพิ่มจุดหมาย',
+    editMilestone: 'แก้ไขจุดหมาย',
+    deleteMilestone: 'ลบจุดหมาย',
+    save: 'บันทึก',
+    cancel: 'ยกเลิก',
+    totalDays: 'จำนวนวันทั้งหมด',
+    achievements: 'ความสำเร็จ',
+    currentStreak: 'ต่อเนื่อง',
+    days: 'วัน',
+    myMilestones: 'จุดหมายของฉัน',
+    noMilestones: 'ยังไม่มีจุดหมาย เริ่มบันทึกเรื่องราวของคุณเลย!',
+    socialIntegration: 'การประเมินการรวมตัวทางสังคม',
+    socialIntegrationTitle: 'การประเมินการรวมตัวทางสังคม',
+    socialIntegrationDesc: 'ประเมินระดับการรวมตัวทางสังคมของคุณ รวมถึงความสัมพันธ์ สถานะการจ้างงาน ความสัมพันธ์ในครอบครัว',
+    socialIntegrationQuestions: {
+      q1: 'คุณรู้สึกอย่างไรกับความสัมพันธ์กับผู้อื่น?',
+      q2: 'คุณพอใจกับสถานการณ์การทำงาน/การเรียนปัจจุบันหรือไม่?',
+      q3: 'ความสัมพันธ์กับครอบครัวเป็นอย่างไร?',
+      q4: 'คุณมีความมั่นใจในอนาคตหรือไม่?',
+      q5: 'คุณรู้สึกอย่างไรกับการยอมรับจากสังคม?'
+    },
+    socialIntegrationOptions: {
+      excellent: 'ดีมาก',
+      good: 'ดี',
+      fair: 'ปานกลาง',
+      poor: 'ต้องปรับปรุง'
+    },
+    milestoneTypes: {
+      start: 'เริ่มต้น',
+      achievement: 'ความสำเร็จ',
+      growth: 'การเติบโต',
+      habit: 'นิสัย',
+      help: 'ความช่วยเหลือ',
+      goal: 'เป้าหมาย',
+      social: 'การรวมตัวทางสังคม'
+    }
+  },
+  'vi': {
+    title: 'Câu chuyện của tôi',
+    subtitle: 'Ghi lại hành trình phát triển, chứng kiến từng bước thay đổi',
+    backToHome: '← Về trang chủ',
+    logout: 'Đăng xuất',
+    addMilestone: 'Thêm cột mốc',
+    editMilestone: 'Chỉnh sửa cột mốc',
+    deleteMilestone: 'Xóa cột mốc',
+    save: 'Lưu',
+    cancel: 'Hủy',
+    totalDays: 'Tổng số ngày',
+    achievements: 'Thành tựu',
+    currentStreak: 'Liên tiếp',
+    days: 'ngày',
+    myMilestones: 'Cột mốc của tôi',
+    noMilestones: 'Chưa có cột mốc nào, hãy bắt đầu ghi lại câu chuyện của bạn!',
+    socialIntegration: 'Đánh giá hòa nhập xã hội',
+    socialIntegrationTitle: 'Đánh giá hòa nhập xã hội',
+    socialIntegrationDesc: 'Đánh giá mức độ hòa nhập xã hội của bạn, bao gồm các mối quan hệ, tình trạng việc làm, mối quan hệ gia đình',
+    socialIntegrationQuestions: {
+      q1: 'Bạn cảm thấy thế nào về mối quan hệ với người khác?',
+      q2: 'Bạn có hài lòng với tình hình công việc/học tập hiện tại không?',
+      q3: 'Mối quan hệ với gia đình như thế nào?',
+      q4: 'Bạn có tự tin về tương lai không?',
+      q5: 'Bạn cảm thấy thế nào về sự chấp nhận từ xã hội?'
+    },
+    socialIntegrationOptions: {
+      excellent: 'Rất tốt',
+      good: 'Tốt',
+      fair: 'Bình thường',
+      poor: 'Cần cải thiện'
+    },
+    milestoneTypes: {
+      start: 'Bắt đầu',
+      achievement: 'Thành tựu',
+      growth: 'Phát triển',
+      habit: 'Thói quen',
+      help: 'Hỗ trợ',
+      goal: 'Mục tiêu',
+      social: 'Hòa nhập xã hội'
+    }
+  },
+  'ms': {
+    title: 'Cerita Saya',
+    subtitle: 'Rakam perjalanan pertumbuhan anda, saksikan setiap langkah perubahan',
+    backToHome: '← Kembali ke Laman Utama',
+    logout: 'Log keluar',
+    addMilestone: 'Tambah Pencapaian',
+    editMilestone: 'Edit Pencapaian',
+    deleteMilestone: 'Padam Pencapaian',
+    save: 'Simpan',
+    cancel: 'Batal',
+    totalDays: 'Jumlah Hari',
+    achievements: 'Pencapaian',
+    currentStreak: 'Berturut-turut',
+    days: 'hari',
+    myMilestones: 'Pencapaian Saya',
+    noMilestones: 'Belum ada pencapaian, mulakan rakam cerita anda!',
+    socialIntegration: 'Penilaian Integrasi Sosial',
+    socialIntegrationTitle: 'Penilaian Integrasi Sosial',
+    socialIntegrationDesc: 'Nilai tahap integrasi sosial anda, termasuk hubungan, status pekerjaan, hubungan keluarga',
+    socialIntegrationQuestions: {
+      q1: 'Bagaimana perasaan anda tentang hubungan dengan orang lain?',
+      q2: 'Adakah anda berpuas hati dengan situasi kerja/pembelajaran semasa?',
+      q3: 'Bagaimana hubungan anda dengan keluarga?',
+      q4: 'Adakah anda yakin dengan masa hadapan?',
+      q5: 'Bagaimana perasaan anda tentang penerimaan masyarakat?'
+    },
+    socialIntegrationOptions: {
+      excellent: 'Sangat Baik',
+      good: 'Baik',
+      fair: 'Sederhana',
+      poor: 'Perlu Penambahbaikan'
+    },
+    milestoneTypes: {
+      start: 'Mula',
+      achievement: 'Pencapaian',
+      growth: 'Pertumbuhan',
+      habit: 'Tabiat',
+      help: 'Bantuan',
+      goal: 'Matlamat',
+      social: 'Integrasi Sosial'
+    }
+  },
+  'la': {
+    title: 'Fabula Mea',
+    subtitle: 'Iter incrementi tuum inscribe, mutationis gradum quemque testare',
+    backToHome: '← Redi ad domum',
+    logout: 'Exire',
+    addMilestone: 'Addere Lapidem Milliarium',
+    editMilestone: 'Lapidem Milliarium Edere',
+    deleteMilestone: 'Lapidem Milliarium Delere',
+    save: 'Servare',
+    cancel: 'Cancellare',
+    totalDays: 'Dies Totales',
+    achievements: 'Res Gestae',
+    currentStreak: 'Series',
+    days: 'dies',
+    myMilestones: 'Lapides Milliarii Mei',
+    noMilestones: 'Nondum lapides milliarii, incipe fabulam tuam inscribere!',
+    socialIntegration: 'Aestimatio Integrationis Socialis',
+    socialIntegrationTitle: 'Aestimatio Integrationis Socialis',
+    socialIntegrationDesc: 'Aestima gradum integrationis socialis tuae, includens relationes, statum operis, relationes familiae',
+    socialIntegrationQuestions: {
+      q1: 'Quomodo sentis de relationibus cum aliis?',
+      q2: 'Esne contentus cum statu operis/studii praesenti?',
+      q3: 'Quomodo sunt relationes tuae cum familia?',
+      q4: 'Habesne fiduciam in futuro?',
+      q5: 'Quomodo sentis de acceptatione societatis?'
+    },
+    socialIntegrationOptions: {
+      excellent: 'Optime',
+      good: 'Bene',
+      fair: 'Mediocriter',
+      poor: 'Emendatione Opus'
+    },
+    milestoneTypes: {
+      start: 'Initiare',
+      achievement: 'Res Gesta',
+      growth: 'Incrementum',
+      habit: 'Consuetudo',
+      help: 'Auxilium',
+      goal: 'Propositum',
+      social: 'Integratio Socialis'
+    }
   }
 };
 
@@ -760,7 +1012,7 @@ export default function MyStory() {
           margin: 0,
           marginBottom: '8px'
         }}>
-          我的里程碑
+          {t.myMilestones}
         </h1>
         <p style={{
           color: 'rgba(255,255,255,0.8)',
@@ -770,7 +1022,7 @@ export default function MyStory() {
           textAlign: 'center',
           lineHeight: 1.4
         }}>
-          記錄每個成長時刻，見證自我蛻變的旅程 ✨ 讓每個里程碑都成為你人生故事中的閃亮篇章
+          {t.subtitle}
         </p>
         
         <div style={{ display: 'flex', gap: '10px' }}>
