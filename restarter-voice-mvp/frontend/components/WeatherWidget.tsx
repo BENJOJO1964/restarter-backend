@@ -137,7 +137,8 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         'patchy light rain with thunder': '零星小雨伴雷',
         'moderate or heavy rain with thunder': '中到強雨伴雷',
         'patchy light snow with thunder': '零星小雪伴雷',
-        'moderate or heavy snow with thunder': '中到強雪伴雷'
+        'moderate or heavy snow with thunder': '中到強雪伴雷',
+        '局部多云': '局部多云'
       },
       'zh-CN': {
         'clear sky': '晴天',
@@ -203,7 +204,8 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         'patchy light rain with thunder': '零星小雨伴雷',
         'moderate or heavy rain with thunder': '中到强雨伴雷',
         'patchy light snow with thunder': '零星小雪伴雷',
-        'moderate or heavy snow with thunder': '中到强雪伴雷'
+        'moderate or heavy snow with thunder': '中到强雪伴雷',
+        '局部多云': 'Partly Cloudy'
       },
       'en': {
         'clear sky': 'Clear',
@@ -269,7 +271,8 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         'patchy light rain with thunder': 'Patchy Light Rain with Thunder',
         'moderate or heavy rain with thunder': 'Moderate or Heavy Rain with Thunder',
         'patchy light snow with thunder': 'Patchy Light Snow with Thunder',
-        'moderate or heavy snow with thunder': 'Moderate or Heavy Snow with Thunder'
+        'moderate or heavy snow with thunder': 'Moderate or Heavy Snow with Thunder',
+        '局部多云': 'Partly Cloudy'
       },
       'ja': {
         'clear sky': '晴天',
@@ -335,7 +338,8 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         'patchy light rain with thunder': 'にわか小雨と雷',
         'moderate or heavy rain with thunder': '中程度または強い雨と雷',
         'patchy light snow with thunder': 'にわか小雪と雷',
-        'moderate or heavy snow with thunder': '中程度または強い雪と雷'
+        'moderate or heavy snow with thunder': '中程度または強い雪と雷',
+        '局部多云': '晴れ時々曇り'
       },
       'ko': {
         'clear sky': '맑음',
@@ -401,7 +405,8 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         'patchy light rain with thunder': '가벼운 비와 천둥',
         'moderate or heavy rain with thunder': '중간 또는 강한 비와 천둥',
         'patchy light snow with thunder': '가벼운 눈과 천둥',
-        'moderate or heavy snow with thunder': '중간 또는 강한 눈과 천둥'
+        'moderate or heavy snow with thunder': '중간 또는 강한 눈과 천둥',
+        '局部多云': '구름 조금'
       },
       'th': {
         'clear sky': 'ท้องฟ้าแจ่มใส',
@@ -467,7 +472,8 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         'patchy light rain with thunder': 'ฝนเบาเป็นช่วงพร้อมฟ้าผ่า',
         'moderate or heavy rain with thunder': 'ฝนปานกลางหรือแรงพร้อมฟ้าผ่า',
         'patchy light snow with thunder': 'หิมะเบาเป็นช่วงพร้อมฟ้าผ่า',
-        'moderate or heavy snow with thunder': 'หิมะปานกลางหรือแรงพร้อมฟ้าผ่า'
+        'moderate or heavy snow with thunder': 'หิมะปานกลางหรือแรงพร้อมฟ้าผ่า',
+        '局部多云': 'มีเมฆบางส่วน'
       },
       'vi': {
         'clear sky': 'Trời quang',
@@ -533,7 +539,8 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         'patchy light rain with thunder': 'Mưa nhẹ có sấm',
         'moderate or heavy rain with thunder': 'Mưa vừa hoặc mạnh có sấm',
         'patchy light snow with thunder': 'Tuyết nhẹ có sấm',
-        'moderate or heavy snow with thunder': 'Tuyết vừa hoặc mạnh có sấm'
+        'moderate or heavy snow with thunder': 'Tuyết vừa hoặc mạnh có sấm',
+        '局部多云': 'Ít mây'
       },
       'ms': {
         'clear sky': 'Cerah',
@@ -599,7 +606,8 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         'patchy light rain with thunder': 'Hujan ringan dengan petir',
         'moderate or heavy rain with thunder': 'Hujan sederhana atau lebat dengan petir',
         'patchy light snow with thunder': 'Salji ringan dengan petir',
-        'moderate or heavy snow with thunder': 'Salji sederhana atau lebat dengan petir'
+        'moderate or heavy snow with thunder': 'Salji sederhana atau lebat dengan petir',
+        '局部多云': 'Sedikit berawan'
       },
       'la': {
         'clear sky': 'Serenum',
@@ -665,7 +673,8 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
         'patchy light rain with thunder': 'Levis pluvia cum tonitru',
         'moderate or heavy rain with thunder': 'Moderata vel gravis pluvia cum tonitru',
         'patchy light snow with thunder': 'Levis nix cum tonitru',
-        'moderate or heavy snow with thunder': 'Moderata vel gravis nix cum tonitru'
+        'moderate or heavy snow with thunder': 'Moderata vel gravis nix cum tonitru',
+        '局部多云': 'Nubibus paucis'
       }
     };
 
