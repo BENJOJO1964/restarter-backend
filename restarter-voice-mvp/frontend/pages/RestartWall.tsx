@@ -1636,25 +1636,7 @@ export default function RestartWall() {
             </>
           )}
         </div>
-        {showUser && (
-          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div style={{ background: '#fff', borderRadius: 28, padding: 36, minWidth: 300, maxWidth: window.innerWidth <= 768 ? '80vw' : 450, width: window.innerWidth <= 768 ? '80vw' : '450px', boxShadow: '0 6px 32px #6B5BFF22', textAlign: 'center', position: 'relative', border: '2px solid #6B5BFF22', overflow: 'hidden' }}>
-              <button onClick={() => setShowUser(null)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', fontSize: 22, color: '#6B4F27', cursor: 'pointer' }}>×</button>
-              <img src={showUser.user.avatar} alt="avatar" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', marginBottom: 14, border: '2.5px solid #6B5BFF' }} />
-              <div style={{ fontWeight: 900, color: '#6B5BFF', fontSize: 22, marginBottom: 8 }}>{showUser.user.name}</div>
-              <div style={{ color: '#6B4F27', fontSize: 17, marginBottom: 8 }}>{showUser.user.country}・{showUser.user.region}</div>
-              <div style={{ color: '#232946', fontSize: 16, marginBottom: 18 }}>{t.modalTitle}<br />{showUser.text}</div>
-              <div style={{ color: '#6B5BFF', fontWeight: 700, marginBottom: 8, fontSize: 16 }}>{t.modalAction}</div>
-              <div style={{ color: '#614425', fontSize: 14, marginBottom: 16, fontStyle: 'italic' }}>{t.supportDesc}</div>
-              <div style={{ color: '#666', fontSize: 12, marginBottom: 12, padding: '8px', background: '#f0f0f0', borderRadius: '6px' }}>
-                💡 系統將自動抓取您的個人信息，只有原貼文作者可以看到完整聯絡資訊
-              </div>
-              
-              <textarea placeholder={t.commentPlaceholder} value={commentInput} onChange={e => setCommentInput(e.target.value)} style={{ width: '92%', padding: 10, borderRadius: 8, border: '1px solid #ddd', minHeight: 54, fontSize: 16 }} />
-              <button onClick={() => handleAddComment(showUser)} style={{ marginTop: 12, padding: '10px 22px', background: 'linear-gradient(135deg, #6B5BFF 60%, #23c6e6 100%)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 900, fontSize: 16, letterSpacing: 1 }}>{t.submitComment}</button>
-            </div>
-          </div>
-        )}
+
       </div>
     </div>
       
