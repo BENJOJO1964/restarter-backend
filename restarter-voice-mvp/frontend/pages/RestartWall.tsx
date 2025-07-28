@@ -1638,7 +1638,7 @@ export default function RestartWall() {
         </div>
         {showUser && (
           <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div style={{ background: '#fff', borderRadius: 28, padding: 36, minWidth: 340, maxWidth: window.innerWidth <= 768 ? '85vw' : 500, width: window.innerWidth <= 768 ? '85vw' : '500px', boxShadow: '0 6px 32px #6B5BFF22', textAlign: 'center', position: 'relative', border: '2px solid #6B5BFF22', overflow: 'hidden' }}>
+            <div style={{ background: '#fff', borderRadius: 28, padding: 36, minWidth: 300, maxWidth: window.innerWidth <= 768 ? '80vw' : 450, width: window.innerWidth <= 768 ? '80vw' : '450px', boxShadow: '0 6px 32px #6B5BFF22', textAlign: 'center', position: 'relative', border: '2px solid #6B5BFF22', overflow: 'hidden' }}>
               <button onClick={() => setShowUser(null)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', fontSize: 22, color: '#6B4F27', cursor: 'pointer' }}>×</button>
               <img src={showUser.user.avatar} alt="avatar" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', marginBottom: 14, border: '2.5px solid #6B5BFF' }} />
               <div style={{ fontWeight: 900, color: '#6B5BFF', fontSize: 22, marginBottom: 8 }}>{showUser.user.name}</div>
