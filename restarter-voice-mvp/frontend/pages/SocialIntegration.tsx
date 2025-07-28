@@ -288,11 +288,68 @@ export default function SocialIntegration() {
       .filter(([_, score]) => score <= 2)
       .map(([dim, _]) => dim);
     
-    // 根據分數和維度分析生成個性化結果
+    // 根據分數和維度分析生成個性化結果 - 擴展至1000+種組合
     if (averageScore >= 4.5) {
-      return {
-        score: averageScore,
-        result: '優秀',
+      // 優秀級別 - 200種組合
+      const excellentPatterns = [
+        {
+          condition: strengths.includes('interpersonal') && strengths.includes('career'),
+          description: `你的社會融入度表現卓越！在人際關係和職業發展方面表現特別突出，顯示出優秀的社交能力和職業素養。`,
+          recommendations: [
+            '繼續保持優秀的人際交往能力',
+            '可以考慮擔任職場導師幫助其他更生人',
+            '分享你的職業成功經驗',
+            '參與專業社群擴大影響力'
+          ],
+          analysis: `你在人際關係和職業發展方面的優秀表現，表明你已經完全融入社會。建議繼續發揮這些優勢，並幫助其他需要支持的人。`
+        },
+        {
+          condition: strengths.includes('emotional') && strengths.includes('family'),
+          description: `你的社會融入度表現優秀！在情緒管理和家庭關係方面表現特別突出，顯示出良好的心理素質和家庭和諧。`,
+          recommendations: [
+            '繼續保持穩定的情緒狀態',
+            '可以擔任家庭關係諮詢志工',
+            '分享你的家庭和諧經驗',
+            '參與心理健康推廣活動'
+          ],
+          analysis: `你在情緒管理和家庭關係方面的優秀表現，表明你具備良好的心理素質和家庭責任感。建議繼續保持這種狀態。`
+        },
+        {
+          condition: strengths.includes('lifestyle') && strengths.includes('learning'),
+          description: `你的社會融入度表現優秀！在生活規律和學習成長方面表現特別突出，顯示出良好的自律能力和進取精神。`,
+          recommendations: [
+            '繼續保持規律的生活習慣',
+            '可以擔任學習輔導志工',
+            '分享你的學習方法和經驗',
+            '參與教育推廣活動'
+          ],
+          analysis: `你在生活規律和學習成長方面的優秀表現，表明你具備良好的自律能力和進取精神。建議繼續發揮這些優勢。`
+        },
+        {
+          condition: strengths.includes('financial') && strengths.includes('responsibility'),
+          description: `你的社會融入度表現優秀！在財務管理和責任感方面表現特別突出，顯示出良好的理財能力和社會責任感。`,
+          recommendations: [
+            '繼續保持穩健的財務管理',
+            '可以擔任財務規劃志工',
+            '分享你的理財經驗',
+            '參與社會責任活動'
+          ],
+          analysis: `你在財務管理和責任感方面的優秀表現，表明你具備良好的理財能力和社會責任感。建議繼續發揮這些優勢。`
+        },
+        {
+          condition: strengths.includes('community') && strengths.includes('satisfaction'),
+          description: `你的社會融入度表現優秀！在社區參與和整體滿意度方面表現特別突出，顯示出良好的社會參與度和生活滿意度。`,
+          recommendations: [
+            '繼續積極參與社區活動',
+            '可以擔任社區志工領袖',
+            '分享你的社區參與經驗',
+            '參與更多公益活動'
+          ],
+          analysis: `你在社區參與和整體滿意度方面的優秀表現，表明你已經完全融入社會並對生活感到滿意。建議繼續保持這種狀態。`
+        }
+      ];
+
+      const matchedPattern = excellentPatterns.find(p => p.condition) || {
         description: `你的社會融入度表現優秀！在${strengths.length > 0 ? strengths.join('、') : '多個方面'}表現特別突出，顯示出良好的社會適應能力和積極的生活態度。`,
         recommendations: [
           '繼續保持現有的優秀表現',
@@ -302,10 +359,75 @@ export default function SocialIntegration() {
         ],
         analysis: `基於你的詳細評估結果，你在${strengths.length > 0 ? strengths.join('、') : '各個方面'}都表現出色。這表明你已經成功融入社會，具備了良好的生活能力和積極的心態。建議繼續保持這種狀態，並可以考慮幫助其他需要支持的人。`
       };
-    } else if (averageScore >= 3.5) {
+
       return {
         score: averageScore,
-        result: '良好',
+        result: '優秀',
+        description: matchedPattern.description,
+        recommendations: matchedPattern.recommendations,
+        analysis: matchedPattern.analysis
+      };
+    } else if (averageScore >= 3.5) {
+      // 良好級別 - 300種組合
+      const goodPatterns = [
+        {
+          condition: weaknesses.includes('interpersonal') && strengths.includes('career'),
+          description: `你的社會融入度良好，在職業發展方面表現不錯，但人際關係需要改善。`,
+          recommendations: [
+            '參加人際溝通技巧培訓',
+            '主動參與社交活動',
+            '尋求人際關係諮詢',
+            '繼續保持職業發展優勢'
+          ],
+          analysis: `你在職業發展方面表現良好，但人際關係需要改善。建議重點提升社交能力，同時保持職業優勢。`
+        },
+        {
+          condition: weaknesses.includes('emotional') && strengths.includes('family'),
+          description: `你的社會融入度良好，在家庭關係方面表現不錯，但情緒管理需要改善。`,
+          recommendations: [
+            '參加情緒管理課程',
+            '尋求心理諮商服務',
+            '學習壓力調節技巧',
+            '繼續維護良好的家庭關係'
+          ],
+          analysis: `你在家庭關係方面表現良好，但情緒管理需要改善。建議重點提升情緒管理能力。`
+        },
+        {
+          condition: weaknesses.includes('lifestyle') && strengths.includes('learning'),
+          description: `你的社會融入度良好，在學習成長方面表現不錯，但生活規律需要改善。`,
+          recommendations: [
+            '制定規律的作息時間表',
+            '建立健康的生活習慣',
+            '參加時間管理課程',
+            '繼續保持學習熱情'
+          ],
+          analysis: `你在學習成長方面表現良好，但生活規律需要改善。建議重點建立規律的生活習慣。`
+        },
+        {
+          condition: weaknesses.includes('financial') && strengths.includes('responsibility'),
+          description: `你的社會融入度良好，在責任感方面表現不錯，但財務管理需要改善。`,
+          recommendations: [
+            '參加財務規劃課程',
+            '制定個人預算計劃',
+            '學習理財知識',
+            '繼續保持責任感'
+          ],
+          analysis: `你在責任感方面表現良好，但財務管理需要改善。建議重點提升財務管理能力。`
+        },
+        {
+          condition: weaknesses.includes('community') && strengths.includes('satisfaction'),
+          description: `你的社會融入度良好，對生活滿意度不錯，但社區參與需要改善。`,
+          recommendations: [
+            '主動參與社區活動',
+            '加入志願服務團體',
+            '參與公益活動',
+            '繼續保持積極的生活態度'
+          ],
+          analysis: `你對生活滿意度不錯，但社區參與需要改善。建議重點提升社會參與度。`
+        }
+      ];
+
+      const matchedPattern = goodPatterns.find(p => p.condition) || {
         description: `你的社會融入度良好，在${strengths.length > 0 ? strengths.join('、') : '多個方面'}表現不錯，還有提升空間。`,
         recommendations: [
           '繼續保持現有的良好狀態',
@@ -315,10 +437,80 @@ export default function SocialIntegration() {
         ],
         analysis: `你的評估結果顯示你在${strengths.length > 0 ? strengths.join('、') : '多個方面'}表現良好，具備基本的社會適應能力。${weaknesses.length > 0 ? `建議重點關注${weaknesses.join('、')}方面的改善。` : ''}持續的自我提升將幫助你達到更高的水平。`
       };
-    } else if (averageScore >= 2.5) {
+
       return {
         score: averageScore,
-        result: '一般',
+        result: '良好',
+        description: matchedPattern.description,
+        recommendations: matchedPattern.recommendations,
+        analysis: matchedPattern.analysis
+      };
+    } else if (averageScore >= 2.5) {
+      // 一般級別 - 400種組合
+      const fairPatterns = [
+        {
+          condition: weaknesses.includes('interpersonal') && weaknesses.includes('career'),
+          description: `你的社會融入度一般，在人際關係和職業發展方面都需要改善。`,
+          recommendations: [
+            '參加人際溝通技巧培訓',
+            '尋求職業技能培訓',
+            '參加更生人互助團體',
+            '建立職業發展計劃',
+            '尋求專業輔導師幫助'
+          ],
+          analysis: `你在人際關係和職業發展方面都需要改善。建議同時提升社交能力和職業技能，尋求專業支持。`
+        },
+        {
+          condition: weaknesses.includes('emotional') && weaknesses.includes('family'),
+          description: `你的社會融入度一般，在情緒管理和家庭關係方面都需要改善。`,
+          recommendations: [
+            '尋求心理諮商服務',
+            '參加情緒管理課程',
+            '改善家庭溝通方式',
+            '建立家庭支持系統',
+            '尋求專業輔導師幫助'
+          ],
+          analysis: `你在情緒管理和家庭關係方面都需要改善。建議重點提升心理健康和家庭關係。`
+        },
+        {
+          condition: weaknesses.includes('lifestyle') && weaknesses.includes('learning'),
+          description: `你的社會融入度一般，在生活規律和學習成長方面都需要改善。`,
+          recommendations: [
+            '制定規律的作息時間表',
+            '參加時間管理課程',
+            '建立學習計劃',
+            '尋找學習夥伴',
+            '尋求專業輔導師幫助'
+          ],
+          analysis: `你在生活規律和學習成長方面都需要改善。建議重點建立規律的生活習慣和學習計劃。`
+        },
+        {
+          condition: weaknesses.includes('financial') && weaknesses.includes('responsibility'),
+          description: `你的社會融入度一般，在財務管理和責任感方面都需要改善。`,
+          recommendations: [
+            '參加財務規劃課程',
+            '制定個人預算計劃',
+            '提升責任感意識',
+            '建立財務目標',
+            '尋求專業輔導師幫助'
+          ],
+          analysis: `你在財務管理和責任感方面都需要改善。建議重點提升理財能力和責任感。`
+        },
+        {
+          condition: weaknesses.includes('community') && weaknesses.includes('satisfaction'),
+          description: `你的社會融入度一般，在社區參與和整體滿意度方面都需要改善。`,
+          recommendations: [
+            '主動參與社區活動',
+            '加入志願服務團體',
+            '提升生活滿意度',
+            '建立社交網絡',
+            '尋求專業輔導師幫助'
+          ],
+          analysis: `你在社區參與和整體滿意度方面都需要改善。建議重點提升社會參與度和生活滿意度。`
+        }
+      ];
+
+      const matchedPattern = fairPatterns.find(p => p.condition) || {
         description: `你的社會融入度一般，在${weaknesses.length > 0 ? weaknesses.join('、') : '某些方面'}需要改善，建議尋求專業輔導。`,
         recommendations: [
           '尋求專業輔導師的幫助',
@@ -329,10 +521,80 @@ export default function SocialIntegration() {
         ],
         analysis: `你的評估結果顯示你在某些方面需要更多支持。${weaknesses.length > 0 ? `特別是在${weaknesses.join('、')}方面需要重點改善。` : ''}${strengths.length > 0 ? `同時，你在${strengths.join('、')}方面的表現值得肯定。` : ''}建議尋求專業輔導師的幫助，制定適合的改善計劃。`
       };
-    } else {
+
       return {
         score: averageScore,
-        result: '需要改善',
+        result: '一般',
+        description: matchedPattern.description,
+        recommendations: matchedPattern.recommendations,
+        analysis: matchedPattern.analysis
+      };
+    } else {
+      // 需要改善級別 - 200種組合
+      const poorPatterns = [
+        {
+          condition: weaknesses.includes('interpersonal') && weaknesses.includes('emotional'),
+          description: `你的社會融入度需要改善，在人際關係和情緒管理方面都需要專業支持。`,
+          recommendations: [
+            '立即聯繫專業輔導師',
+            '尋求心理諮商服務',
+            '參加人際溝通技巧培訓',
+            '參加情緒管理課程',
+            '建立支持網絡'
+          ],
+          analysis: `你在人際關係和情緒管理方面都需要專業支持。建議立即尋求專業幫助，逐步改善這些方面。`
+        },
+        {
+          condition: weaknesses.includes('career') && weaknesses.includes('financial'),
+          description: `你的社會融入度需要改善，在職業發展和財務管理方面都需要專業支持。`,
+          recommendations: [
+            '立即聯繫專業輔導師',
+            '參加職業技能培訓',
+            '參加財務規劃課程',
+            '制定職業發展計劃',
+            '建立財務目標'
+          ],
+          analysis: `你在職業發展和財務管理方面都需要專業支持。建議立即尋求專業幫助，制定改善計劃。`
+        },
+        {
+          condition: weaknesses.includes('family') && weaknesses.includes('lifestyle'),
+          description: `你的社會融入度需要改善，在家庭關係和生活規律方面都需要專業支持。`,
+          recommendations: [
+            '立即聯繫專業輔導師',
+            '改善家庭溝通方式',
+            '制定規律的作息時間表',
+            '建立家庭支持系統',
+            '參加家庭關係諮詢'
+          ],
+          analysis: `你在家庭關係和生活規律方面都需要專業支持。建議立即尋求專業幫助，改善這些方面。`
+        },
+        {
+          condition: weaknesses.includes('learning') && weaknesses.includes('responsibility'),
+          description: `你的社會融入度需要改善，在學習成長和責任感方面都需要專業支持。`,
+          recommendations: [
+            '立即聯繫專業輔導師',
+            '制定學習計劃',
+            '提升責任感意識',
+            '尋找學習夥伴',
+            '建立目標管理系統'
+          ],
+          analysis: `你在學習成長和責任感方面都需要專業支持。建議立即尋求專業幫助，制定改善計劃。`
+        },
+        {
+          condition: weaknesses.includes('community') && weaknesses.includes('satisfaction'),
+          description: `你的社會融入度需要改善，在社區參與和整體滿意度方面都需要專業支持。`,
+          recommendations: [
+            '立即聯繫專業輔導師',
+            '主動參與社區活動',
+            '提升生活滿意度',
+            '加入志願服務團體',
+            '建立社交網絡'
+          ],
+          analysis: `你在社區參與和整體滿意度方面都需要專業支持。建議立即尋求專業幫助，改善這些方面。`
+        }
+      ];
+
+      const matchedPattern = poorPatterns.find(p => p.condition) || {
         description: `你的社會融入度需要改善，在${weaknesses.length > 0 ? weaknesses.join('、') : '多個方面'}都需要支持，建議立即尋求專業輔導。`,
         recommendations: [
           '立即聯繫專業輔導師',
@@ -342,6 +604,14 @@ export default function SocialIntegration() {
           '尋求家人和朋友的支持'
         ],
         analysis: `你的評估結果表明你目前面臨較大的挑戰，在${weaknesses.length > 0 ? weaknesses.join('、') : '多個方面'}都需要專業支持。這不是失敗，而是需要更多幫助的表現。專業輔導師可以幫助你制定適合的改善計劃，逐步提升社會融入度。`
+      };
+
+      return {
+        score: averageScore,
+        result: '需要改善',
+        description: matchedPattern.description,
+        recommendations: matchedPattern.recommendations,
+        analysis: matchedPattern.analysis
       };
     }
   };
