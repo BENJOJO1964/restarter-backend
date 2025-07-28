@@ -77,12 +77,20 @@ router.post('/send-confirmation', async (req, res) => {
       message: '確認郵件已發送到您的 email，請檢查收件匣並點擊確認連結' 
     });
 
-  } catch (error) {
-    console.error('Email 發送錯誤:', error);
-    res.status(500).json({ 
-      error: '確認郵件發送失敗，請稍後再試' 
-    });
-  }
+      } catch (error) {
+      console.error('Email 發送錯誤:', error);
+      
+      // 檢查是否為環境變數問題
+      if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        res.status(500).json({ 
+          error: 'Email 設定未完成，請聯繫管理員設定 EMAIL_USER 和 EMAIL_PASS 環境變數' 
+        });
+      } else {
+        res.status(500).json({ 
+          error: '確認郵件發送失敗，請稍後再試' 
+        });
+      }
+    }
 });
 
 // 確認註冊
