@@ -28,50 +28,51 @@ const TEXTS = {
     closeReport: '關閉報告',
     // 評估問題
     q1Title: '人際關係',
-    q1Desc: '最近6個月，您與他人的互動和社交能力如何？',
+    q1Desc: '最近3個月，您與他人的互動和社交能力如何？包括與同事、朋友、鄰居的日常交流，以及在新環境中建立關係的能力。您是否能夠主動與他人溝通，建立信任關係，並在社交場合中感到自在？',
     q2Title: '就業狀況',
-    q2Desc: '最近1年，您的工作穩定性和發展前景如何？',
+    q2Desc: '最近1年，您的工作穩定性和發展前景如何？包括工作滿意度、薪資待遇、職業發展機會、工作環境適應性，以及對未來職業規劃的清晰度。您是否對當前工作感到滿意，並有明確的職業發展目標？',
     q3Title: '家庭關係',
-    q3Desc: '最近6個月，您與家人的相處和溝通狀況如何？',
+    q3Desc: '最近6個月，您與家人的相處和溝通狀況如何？包括與配偶、子女、父母或其他家庭成員的關係質量，溝通頻率和效果，以及家庭氛圍的和諧程度。您是否能夠有效處理家庭衝突，並為家庭成員提供情感支持？',
     q4Title: '未來信心',
-    q4Desc: '最近1年，您對未來的樂觀程度和規劃如何？',
+    q4Desc: '最近1年，您對未來的樂觀程度和規劃如何？包括對個人發展的信心，對生活目標的清晰度，以及面對挑戰時的積極態度。您是否對未來有明確的規劃，並相信自己能夠實現目標？',
     q5Title: '社會接納',
-    q5Desc: '最近6個月，您感覺被社會接受和認可的程度如何？',
+    q5Desc: '最近6個月，您感覺被社會接受和認可的程度如何？包括在社區中的融入度，社會地位的認同感，以及對社會規範的適應能力。您是否感到被社會接納，並對自己的社會角色感到滿意？',
     q6Title: '情緒管理',
-    q6Desc: '最近6個月，您處理壓力和負面情緒的能力如何？',
+    q6Desc: '最近3個月，您處理壓力和負面情緒的能力如何？包括面對挫折時的情緒反應，壓力調節方法，以及心理健康維護的意識。您是否能夠有效管理負面情緒，並在壓力下保持冷靜？',
     q7Title: '生活規律',
-    q7Desc: '最近1年，您的生活作息和規律性如何？',
+    q7Desc: '最近1年，您的生活作息和規律性如何？包括日常作息時間，飲食習慣，運動頻率，以及生活節奏的穩定性。您是否能夠維持健康的生活習慣，並建立規律的日常生活？',
     q8Title: '學習成長',
-    q8Desc: '最近1年，您在技能學習和個人成長方面的投入如何？',
+    q8Desc: '最近1年，您在技能學習和個人成長方面的投入如何？包括新技能學習，知識更新，自我提升的積極性，以及對個人發展的投資。您是否持續學習新知識，並主動尋求個人成長機會？',
     q9Title: '財務管理',
-    q9Desc: '最近1年，您的財務規劃和理財能力如何？',
+    q9Desc: '最近1年，您的財務規劃和理財能力如何？包括收入支出管理，儲蓄習慣，投資理財意識，以及對未來財務安全的規劃。您是否能夠有效管理個人財務，並為未來做好財務準備？',
     q10Title: '健康狀況',
-    q10Desc: '最近6個月，您的身體和心理健康狀況如何？',
+    q10Desc: '最近6個月，您的身體和心理健康狀況如何？包括身體健康狀況，心理健康狀態，醫療保健意識，以及對健康問題的預防和處理能力。您是否重視健康管理，並採取積極的健康維護措施？',
     q11Title: '社交網絡',
-    q11Desc: '最近6個月，您建立和維護社交關係的能力如何？',
+    q11Desc: '最近3個月，您建立和維護社交關係的能力如何？包括朋友數量，社交活動參與度，人際關係質量，以及社交網絡的廣度和深度。您是否擁有穩定的社交圈，並能夠與他人建立有意義的關係？',
     q12Title: '目標設定',
-    q12Desc: '最近1年，您設定和追求個人目標的能力如何？',
+    q12Desc: '最近1年，您設定和追求個人目標的能力如何？包括目標的明確性，計劃的可行性，執行力，以及對目標達成度的評估。您是否能夠設定清晰的目標，並有效執行計劃？',
     q13Title: '適應能力',
-    q13Desc: '最近6個月，您適應環境變化和挑戰的能力如何？',
+    q13Desc: '最近6個月，您適應環境變化和挑戰的能力如何？包括面對新環境的適應速度，應對變化的靈活性，以及從挫折中恢復的能力。您是否能夠快速適應新環境，並在變化中保持穩定？',
     q14Title: '責任感',
-    q14Desc: '最近1年，您對自己和他人負責的態度如何？',
+    q14Desc: '最近1年，您對自己和他人負責的態度如何？包括對個人行為的責任感，對他人承諾的履行，以及對社會責任的認知。您是否能夠承擔個人責任，並對他人和社會負責？',
     q15Title: '自我認同',
-    q15Desc: '最近6個月，您對自我價值和身份的認同感如何？',
+    q15Desc: '最近6個月，您對自我價值和身份的認同感如何？包括對個人價值的認知，自我接納程度，以及對個人身份的滿意度。您是否對自己有清晰的認知，並能夠接納自己的優缺點？',
     q16Title: '社區參與',
-    q16Desc: '最近1年，您參與社區活動和公益服務的情況如何？',
+    q16Desc: '最近3年，您參與社區活動和公益服務的情況如何？包括志願服務參與度，社區活動貢獻，以及對社會公益的關注和參與。您是否積極參與社區活動，並為社會做出貢獻？',
     q17Title: '職業發展',
-    q17Desc: '最近1年，您在職業技能提升和職涯規劃方面的表現如何？',
+    q17Desc: '最近1年，您在職業技能提升和職涯規劃方面的表現如何？包括專業技能發展，職業規劃清晰度，以及對職業發展機會的把握。您是否持續提升職業技能，並有明確的職業發展路徑？',
     q18Title: '人際衝突處理',
-    q18Desc: '最近6個月，您處理人際衝突和分歧的能力如何？',
+    q18Desc: '最近3個月，您處理人際衝突和分歧的能力如何？包括衝突解決技巧，溝通協調能力，以及維護關係的智慧。您是否能夠有效處理人際衝突，並在分歧中尋求共識？',
     q19Title: '時間管理',
-    q19Desc: '最近1年，您合理安排時間和優先級的能力如何？',
+    q19Desc: '最近1年，您合理安排時間和優先級的能力如何？包括時間規劃效率，任務優先級設定，以及工作生活平衡的維持。您是否能夠有效管理時間，並在多重任務中保持效率？',
     q20Title: '整體滿意度',
-    q20Desc: '最近6個月，您對整體生活狀況的滿意度如何？',
+    q20Desc: '最近6個月，您對整體生活狀況的滿意度如何？包括對生活質量的整體評價，對個人成就的滿意度，以及對未來生活前景的樂觀程度。您是否對當前的生活狀況感到滿意，並對未來充滿希望？',
     // 選項
     excellent: '非常好',
     good: '良好',
     fair: '一般',
     poor: '需要改善',
+    terrible: '非常糟糕',
     // 報告
     scoreLabel: '評估分數',
     resultLabel: '評估結果',
@@ -93,50 +94,51 @@ const TEXTS = {
     closeReport: '关闭报告',
     // 评估问题
     q1Title: '人际关系',
-    q1Desc: '最近6个月，您与他人的互动和社交能力如何？',
+    q1Desc: '最近3个月，您与他人的互动和社交能力如何？包括与同事、朋友、邻居的日常交流，以及在新环境中建立关系的能力。您是否能够主动与他人沟通，建立信任关系，并在社交场合中感到自在？',
     q2Title: '就业状况',
-    q2Desc: '最近1年，您的工作稳定性和发展前景如何？',
+    q2Desc: '最近1年，您的工作稳定性和发展前景如何？包括工作满意度、薪资待遇、职业发展机会、工作环境适应性，以及对未来职业规划的清晰度。您是否对当前工作感到满意，并有明确的职业发展目标？',
     q3Title: '家庭关系',
-    q3Desc: '最近6个月，您与家人的相处和沟通状况如何？',
+    q3Desc: '最近6个月，您与家人的相处和沟通状况如何？包括与配偶、子女、父母或其他家庭成员的关系质量，沟通频率和效果，以及家庭氛围的和谐程度。您是否能够有效处理家庭冲突，并为家庭成员提供情感支持？',
     q4Title: '未来信心',
-    q4Desc: '最近1年，您对未来的乐观程度和规划如何？',
+    q4Desc: '最近1年，您对未来的乐观程度和规划如何？包括对个人发展的信心，对生活目标的清晰度，以及面对挑战时的积极态度。您是否对未来有明确的规划，并相信自己能够实现目标？',
     q5Title: '社会接纳',
-    q5Desc: '最近6个月，您感觉被社会接受和认可的程度如何？',
+    q5Desc: '最近6个月，您感觉被社会接受和认可的程度如何？包括在社区中的融入度，社会地位的认同感，以及对社会规范的适应能力。您是否感到被社会接纳，并对自己的社会角色感到满意？',
     q6Title: '情绪管理',
-    q6Desc: '最近6个月，您处理压力和负面情绪的能力如何？',
+    q6Desc: '最近3个月，您处理压力和负面情绪的能力如何？包括面对挫折时的情绪反应，压力调节方法，以及心理健康维护的意识。您是否能够有效管理负面情绪，并在压力下保持冷静？',
     q7Title: '生活规律',
-    q7Desc: '最近1年，您的生活作息和规律性如何？',
+    q7Desc: '最近1年，您的生活作息和规律性如何？包括日常作息时间，饮食习惯，运动频率，以及生活节奏的稳定性。您是否能够维持健康的生活习惯，并建立规律的日常生活？',
     q8Title: '学习成长',
-    q8Desc: '最近1年，您在技能学习和个人成长方面的投入如何？',
+    q8Desc: '最近1年，您在技能学习和个人成长方面的投入如何？包括新技能学习，知识更新，自我提升的积极性，以及对个人发展的投资。您是否持续学习新知识，并主动寻求个人成长机会？',
     q9Title: '财务管理',
-    q9Desc: '最近1年，您的财务规划和理财能力如何？',
+    q9Desc: '最近1年，您的财务规划和理财能力如何？包括收入支出管理，储蓄习惯，投资理财意识，以及对未来财务安全的规划。您是否能够有效管理个人财务，并为未来做好财务准备？',
     q10Title: '健康状况',
-    q10Desc: '最近6个月，您的身体和心理健康状况如何？',
+    q10Desc: '最近6个月，您的身体和心理健康状况如何？包括身体健康状况，心理健康状态，医疗保健意识，以及对健康问题的预防和处理能力。您是否重视健康管理，并采取积极的健康维护措施？',
     q11Title: '社交网络',
-    q11Desc: '最近6个月，您建立和维护社交关系的能力如何？',
+    q11Desc: '最近3个月，您建立和维护社交关系的能力如何？包括朋友数量，社交活动参与度，人际关系质量，以及社交网络的广度和深度。您是否拥有稳定的社交圈，并能够与他人建立有意义的关系？',
     q12Title: '目标设定',
-    q12Desc: '最近1年，您设定和追求个人目标的能力如何？',
+    q12Desc: '最近1年，您设定和追求个人目标的能力如何？包括目标的明确性，计划的可行性，执行力，以及对目标达成度的评估。您是否能够设定清晰的目标，并有效执行计划？',
     q13Title: '适应能力',
-    q13Desc: '最近6个月，您适应环境变化和挑战的能力如何？',
+    q13Desc: '最近6个月，您适应环境变化和挑战的能力如何？包括面对新环境的适应速度，应对变化的灵活性，以及从挫折中恢复的能力。您是否能够快速适应新环境，并在变化中保持稳定？',
     q14Title: '责任感',
-    q14Desc: '最近1年，您对自己和他人负责的态度如何？',
+    q14Desc: '最近1年，您对自己和他人负责的态度如何？包括对个人行为的责任感，对他人承诺的履行，以及对社会责任的认识。您是否能够承担个人责任，并对他人和社会负责？',
     q15Title: '自我认同',
-    q15Desc: '最近6个月，您对自我价值和身份的认同感如何？',
+    q15Desc: '最近6个月，您对自我价值和身份的认同感如何？包括对个人价值的认知，自我接纳程度，以及对个人身份的满意度。您是否对自己有清晰的认知，并能够接纳自己的优缺点？',
     q16Title: '社区参与',
-    q16Desc: '最近1年，您参与社区活动和公益服务的情况如何？',
+    q16Desc: '最近3年，您参与社区活动和公益服务的情况如何？包括志愿服务参与度，社区活动贡献，以及对社会公益的关注和参与。您是否积极参与社区活动，并为社会做出贡献？',
     q17Title: '职业发展',
-    q17Desc: '最近1年，您在职业技能提升和职涯规划方面的表现如何？',
+    q17Desc: '最近1年，您在职业技能提升和职涯规划方面的表现如何？包括专业技能发展，职业规划清晰度，以及对职业发展机会的把握。您是否持续提升职业技能，并有明确的职业发展路径？',
     q18Title: '人际冲突处理',
-    q18Desc: '最近6个月，您处理人际冲突和分歧的能力如何？',
+    q18Desc: '最近3个月，您处理人际冲突和分歧的能力如何？包括冲突解决技巧，沟通协调能力，以及维护关系的智慧。您是否能够有效处理人际冲突，并在分歧中寻求共识？',
     q19Title: '时间管理',
-    q19Desc: '最近1年，您合理安排时间和优先级的能力如何？',
+    q19Desc: '最近1年，您合理安排时间和优先级的能力如何？包括时间规划效率，任务优先级设定，以及工作生活平衡的维持。您是否能够有效管理时间，并在多重任务中保持效率？',
     q20Title: '整体满意度',
-    q20Desc: '最近6个月，您对整体生活状况的满意度如何？',
+    q20Desc: '最近6个月，您对整体生活状况的满意度如何？包括对生活质量的整体评价，对个人成就的满意度，以及对未来生活前景的乐观程度。您是否对当前的生活状况感到满意，并对未来充满希望？',
     // 选项
     excellent: '非常好',
     good: '良好',
     fair: '一般',
     poor: '需要改善',
+    terrible: '非常糟糕',
     // 报告
     scoreLabel: '评估分数',
     resultLabel: '评估结果',
@@ -158,50 +160,51 @@ const TEXTS = {
     closeReport: 'Close Report',
     // Assessment questions
     q1Title: 'Interpersonal Relationships',
-    q1Desc: 'In the past 6 months, how is your interaction and social ability with others?',
+    q1Desc: 'In the past 3 months, how is your interaction and social ability with others? Including daily communication with colleagues, friends, and neighbors, as well as the ability to build relationships in new environments. Are you able to actively communicate with others, build trust relationships, and feel comfortable in social situations?',
     q2Title: 'Employment Status',
-    q2Desc: 'In the past year, how is your job stability and development prospects?',
+    q2Desc: 'In the past year, how is your job stability and development prospects? Including job satisfaction, salary benefits, career development opportunities, work environment adaptability, and clarity of future career planning. Are you satisfied with your current job and have clear career development goals?',
     q3Title: 'Family Relationships',
-    q3Desc: 'In the past 6 months, how is your relationship and communication with family?',
+    q3Desc: 'In the past 6 months, how is your relationship and communication with family? Including relationship quality with spouse, children, parents or other family members, communication frequency and effectiveness, and family atmosphere harmony. Are you able to effectively handle family conflicts and provide emotional support to family members?',
     q4Title: 'Future Confidence',
-    q4Desc: 'In the past year, how optimistic are you about the future and your planning?',
+    q4Desc: 'In the past year, how optimistic are you about the future and your planning? Including confidence in personal development, clarity of life goals, and positive attitude when facing challenges. Do you have clear plans for the future and believe you can achieve your goals?',
     q5Title: 'Social Acceptance',
-    q5Desc: 'In the past 6 months, how accepted and recognized do you feel by society?',
+    q5Desc: 'In the past 6 months, how accepted and recognized do you feel by society? Including community integration, social status recognition, and adaptation to social norms. Do you feel accepted by society and satisfied with your social role?',
     q6Title: 'Emotional Management',
-    q6Desc: 'In the past 6 months, how well do you handle stress and negative emotions?',
+    q6Desc: 'In the past 3 months, how well do you handle stress and negative emotions? Including emotional responses when facing setbacks, stress regulation methods, and awareness of mental health maintenance. Are you able to effectively manage negative emotions and stay calm under pressure?',
     q7Title: 'Life Routine',
-    q7Desc: 'In the past year, how regular is your daily routine and lifestyle?',
+    q7Desc: 'In the past year, how regular is your daily routine and lifestyle? Including daily schedule, eating habits, exercise frequency, and stability of life rhythm. Are you able to maintain healthy living habits and establish regular daily life?',
     q8Title: 'Learning & Growth',
-    q8Desc: 'In the past year, how much have you invested in skill learning and personal growth?',
+    q8Desc: 'In the past year, how much have you invested in skill learning and personal growth? Including new skill learning, knowledge updates, self-improvement initiative, and investment in personal development. Do you continuously learn new knowledge and actively seek personal growth opportunities?',
     q9Title: 'Financial Management',
-    q9Desc: 'In the past year, how is your financial planning and money management?',
+    q9Desc: 'In the past year, how is your financial planning and money management? Including income and expense management, saving habits, investment awareness, and planning for future financial security. Are you able to effectively manage personal finances and prepare for the future?',
     q10Title: 'Health Status',
-    q10Desc: 'In the past 6 months, how is your physical and mental health?',
+    q10Desc: 'In the past 6 months, how is your physical and mental health? Including physical health condition, mental health status, healthcare awareness, and ability to prevent and handle health issues. Do you value health management and take active health maintenance measures?',
     q11Title: 'Social Network',
-    q11Desc: 'In the past 6 months, how well do you build and maintain social relationships?',
+    q11Desc: 'In the past 3 months, how well do you build and maintain social relationships? Including number of friends, social activity participation, relationship quality, and breadth and depth of social network. Do you have a stable social circle and can build meaningful relationships with others?',
     q12Title: 'Goal Setting',
-    q12Desc: 'In the past year, how well do you set and pursue personal goals?',
+    q12Desc: 'In the past year, how well do you set and pursue personal goals? Including goal clarity, plan feasibility, execution ability, and assessment of goal achievement. Are you able to set clear goals and effectively execute plans?',
     q13Title: 'Adaptability',
-    q13Desc: 'In the past 6 months, how well do you adapt to environmental changes and challenges?',
+    q13Desc: 'In the past 6 months, how well do you adapt to environmental changes and challenges? Including adaptation speed to new environments, flexibility in coping with changes, and ability to recover from setbacks. Are you able to quickly adapt to new environments and maintain stability in changes?',
     q14Title: 'Responsibility',
-    q14Desc: 'In the past year, how responsible are you towards yourself and others?',
+    q14Desc: 'In the past year, how responsible are you towards yourself and others? Including personal behavior responsibility, fulfillment of commitments to others, and awareness of social responsibility. Are you able to take personal responsibility and be responsible for others and society?',
     q15Title: 'Self-Identity',
-    q15Desc: 'In the past 6 months, how strong is your sense of self-worth and identity?',
+    q15Desc: 'In the past 6 months, how strong is your sense of self-worth and identity? Including awareness of personal value, self-acceptance level, and satisfaction with personal identity. Do you have a clear understanding of yourself and can accept your strengths and weaknesses?',
     q16Title: 'Community Participation',
-    q16Desc: 'In the past year, how involved are you in community activities and public service?',
+    q16Desc: 'In the past 3 years, how involved are you in community activities and public service? Including volunteer service participation, community activity contribution, and attention and participation in social welfare. Do you actively participate in community activities and contribute to society?',
     q17Title: 'Career Development',
-    q17Desc: 'In the past year, how well have you performed in skill enhancement and career planning?',
+    q17Desc: 'In the past year, how well have you performed in skill enhancement and career planning? Including professional skill development, career planning clarity, and grasp of career development opportunities. Do you continuously improve professional skills and have clear career development paths?',
     q18Title: 'Conflict Resolution',
-    q18Desc: 'In the past 6 months, how well do you handle interpersonal conflicts and disagreements?',
+    q18Desc: 'In the past 3 months, how well do you handle interpersonal conflicts and disagreements? Including conflict resolution skills, communication coordination ability, and wisdom in maintaining relationships. Are you able to effectively handle interpersonal conflicts and seek consensus in disagreements?',
     q19Title: 'Time Management',
-    q19Desc: 'In the past year, how well do you manage time and prioritize tasks?',
+    q19Desc: 'In the past year, how well do you manage time and prioritize tasks? Including time planning efficiency, task priority setting, and maintenance of work-life balance. Are you able to effectively manage time and maintain efficiency in multiple tasks?',
     q20Title: 'Overall Satisfaction',
-    q20Desc: 'In the past 6 months, how satisfied are you with your overall life situation?',
+    q20Desc: 'In the past 6 months, how satisfied are you with your overall life situation? Including overall evaluation of life quality, satisfaction with personal achievements, and optimism about future life prospects. Are you satisfied with your current life situation and hopeful about the future?',
     // Options
     excellent: 'Excellent',
     good: 'Good',
     fair: 'Fair',
     poor: 'Needs Improvement',
+    terrible: 'Very Poor',
     // Report
     scoreLabel: 'Assessment Score',
     resultLabel: 'Assessment Result',
@@ -225,16 +228,17 @@ export default function SocialIntegration() {
   });
   const [assessmentReport, setAssessmentReport] = useState<any>(null);
 
-  // 預設評估結果映射表
+  // 智能評估結果系統 - 處理20題×5選項的所有可能組合
   const getAssessmentResult = (answers: any) => {
     const answerMap = {
       'excellent': 5,
       'good': 4,
       'fair': 3,
-      'poor': 2
+      'poor': 2,
+      'terrible': 1
     };
     
-    // 計算總分
+    // 計算各維度分數
     const scores = [
       answerMap[answers.q1 as keyof typeof answerMap] || 3,
       answerMap[answers.q2 as keyof typeof answerMap] || 3,
@@ -261,58 +265,83 @@ export default function SocialIntegration() {
     const totalScore = scores.reduce((sum, score) => sum + score, 0);
     const averageScore = totalScore / 20;
     
-    // 根據分數範圍返回評估結果
+    // 分析各維度表現
+    const dimensions = {
+      interpersonal: (scores[0] + scores[10] + scores[17]) / 3, // 人際關係、社交網絡、衝突處理
+      career: (scores[1] + scores[16]) / 2, // 就業狀況、職業發展
+      family: scores[2], // 家庭關係
+      emotional: (scores[5] + scores[14]) / 2, // 情緒管理、自我認同
+      lifestyle: (scores[6] + scores[9] + scores[18]) / 3, // 生活規律、健康狀況、時間管理
+      learning: (scores[7] + scores[11] + scores[12]) / 3, // 學習成長、目標設定、適應能力
+      financial: scores[8], // 財務管理
+      responsibility: scores[13], // 責任感
+      community: scores[15], // 社區參與
+      satisfaction: scores[19] // 整體滿意度
+    };
+    
+    // 找出強項和弱項
+    const strengths = Object.entries(dimensions)
+      .filter(([_, score]) => score >= 4)
+      .map(([dim, _]) => dim);
+    
+    const weaknesses = Object.entries(dimensions)
+      .filter(([_, score]) => score <= 2)
+      .map(([dim, _]) => dim);
+    
+    // 根據分數和維度分析生成個性化結果
     if (averageScore >= 4.5) {
       return {
         score: averageScore,
         result: '優秀',
-        description: '你的社會融入度非常高，在人際關係、就業狀況、家庭關係等方面都表現出色。',
+        description: `你的社會融入度表現優秀！在${strengths.length > 0 ? strengths.join('、') : '多個方面'}表現特別突出，顯示出良好的社會適應能力和積極的生活態度。`,
         recommendations: [
-          '繼續保持現有的良好狀態',
+          '繼續保持現有的優秀表現',
           '可以考慮擔任志工幫助其他更生人',
           '分享你的成功經驗給其他需要幫助的人',
-          '參與社區活動擴大影響力'
+          '參與社區活動擴大正面影響力'
         ],
-        analysis: '基於你的評估結果，你在各個方面都表現優秀，顯示出良好的社會適應能力和積極的生活態度。建議繼續保持這種狀態，並可以考慮幫助其他需要支持的人。'
+        analysis: `基於你的詳細評估結果，你在${strengths.length > 0 ? strengths.join('、') : '各個方面'}都表現出色。這表明你已經成功融入社會，具備了良好的生活能力和積極的心態。建議繼續保持這種狀態，並可以考慮幫助其他需要支持的人。`
       };
     } else if (averageScore >= 3.5) {
       return {
         score: averageScore,
         result: '良好',
-        description: '你的社會融入度良好，在大部分方面都有不錯的表現，還有提升空間。',
+        description: `你的社會融入度良好，在${strengths.length > 0 ? strengths.join('、') : '多個方面'}表現不錯，還有提升空間。`,
         recommendations: [
-          '參加更多社交活動擴大交友圈',
-          '尋求職業技能培訓提升就業競爭力',
-          '與家人多溝通改善家庭關係',
-          '制定具體的個人發展計劃'
+          '繼續保持現有的良好狀態',
+          weaknesses.length > 0 ? `重點改善${weaknesses.join('、')}方面` : '進一步提升各方面能力',
+          '尋求更多學習和成長機會',
+          '加強與社區的互動和參與'
         ],
-        analysis: '你的社會融入度處於良好水平，顯示出積極的改善趨勢。建議在現有基礎上進一步提升，特別是在就業技能和人際關係方面。'
+        analysis: `你的評估結果顯示你在${strengths.length > 0 ? strengths.join('、') : '多個方面'}表現良好，具備基本的社會適應能力。${weaknesses.length > 0 ? `建議重點關注${weaknesses.join('、')}方面的改善。` : ''}持續的自我提升將幫助你達到更高的水平。`
       };
     } else if (averageScore >= 2.5) {
       return {
         score: averageScore,
         result: '一般',
-        description: '你的社會融入度一般，在某些方面需要改善，建議尋求更多支持。',
+        description: `你的社會融入度一般，在${weaknesses.length > 0 ? weaknesses.join('、') : '某些方面'}需要改善，建議尋求專業輔導。`,
         recommendations: [
-          '建議尋求專業輔導師協助',
-          '參加更生人互助團體',
-          '制定具體的改善計劃',
-          '逐步建立支持網絡'
+          '尋求專業輔導師的幫助',
+          '參加更生人支持計劃',
+          '建立穩定的生活規律',
+          '加強人際關係建設',
+          strengths.length > 0 ? `發揮${strengths.join('、')}方面的優勢` : '尋找個人優勢並加以發揮'
         ],
-        analysis: '你的社會融入度處於一般水平，這表明在某些方面還需要改善。建議尋求專業支持，制定具體的改善計劃，並逐步建立支持網絡。'
+        analysis: `你的評估結果顯示你在某些方面需要更多支持。${weaknesses.length > 0 ? `特別是在${weaknesses.join('、')}方面需要重點改善。` : ''}${strengths.length > 0 ? `同時，你在${strengths.join('、')}方面的表現值得肯定。` : ''}建議尋求專業輔導師的幫助，制定適合的改善計劃。`
       };
     } else {
       return {
         score: averageScore,
         result: '需要改善',
-        description: '你的社會融入度需要改善，建議尋求專業輔導和支持。',
+        description: `你的社會融入度需要改善，在${weaknesses.length > 0 ? weaknesses.join('、') : '多個方面'}都需要支持，建議立即尋求專業輔導。`,
         recommendations: [
           '立即聯繫專業輔導師',
           '參加更生人支持計劃',
           '尋求心理諮商服務',
-          '建立穩定的生活規律'
+          '建立穩定的生活規律',
+          '尋求家人和朋友的支持'
         ],
-        analysis: '你的社會融入度需要改善，建議立即尋求專業輔導和支持。這不是失敗，而是需要更多幫助的表現。專業輔導師可以幫助你制定適合的改善計劃。'
+        analysis: `你的評估結果表明你目前面臨較大的挑戰，在${weaknesses.length > 0 ? weaknesses.join('、') : '多個方面'}都需要專業支持。這不是失敗，而是需要更多幫助的表現。專業輔導師可以幫助你制定適合的改善計劃，逐步提升社會融入度。`
       };
     }
   };
@@ -391,7 +420,8 @@ export default function SocialIntegration() {
     { value: 'excellent', label: t.excellent },
     { value: 'good', label: t.good },
     { value: 'fair', label: t.fair },
-    { value: 'poor', label: t.poor }
+    { value: 'poor', label: t.poor },
+    { value: 'terrible', label: t.terrible }
   ];
 
   return (
@@ -621,13 +651,14 @@ export default function SocialIntegration() {
                       <label key={option.value} style={{
                         display: 'flex',
                         alignItems: 'center',
-                        padding: '12px',
+                        padding: '10px',
                         borderRadius: '8px',
                         cursor: 'pointer',
                         background: assessmentAnswers[question.key as keyof typeof assessmentAnswers] === option.value ? '#6B5BFF' : 'white',
                         color: assessmentAnswers[question.key as keyof typeof assessmentAnswers] === option.value ? 'white' : '#333',
                         border: `2px solid ${assessmentAnswers[question.key as keyof typeof assessmentAnswers] === option.value ? '#6B5BFF' : '#ddd'}`,
-                        transition: 'all 0.2s ease'
+                        transition: 'all 0.2s ease',
+                        fontSize: '13px'
                       }}>
                         <input
                           type="radio"
@@ -638,7 +669,7 @@ export default function SocialIntegration() {
                             ...assessmentAnswers,
                             [question.key]: e.target.value
                           })}
-                          style={{ marginRight: '12px' }}
+                          style={{ marginRight: '10px' }}
                         />
                         {option.label}
                       </label>
