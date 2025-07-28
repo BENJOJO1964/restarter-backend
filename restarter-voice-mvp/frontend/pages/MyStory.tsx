@@ -1002,7 +1002,7 @@ export default function MyStory() {
             transition: 'all 0.3s ease'
           }}
         >
-          返回
+          {t.backToHome}
         </button>
         
         <h1 style={{ 
@@ -1244,7 +1244,7 @@ export default function MyStory() {
             }}
           >
             <span style={{ fontSize: '18px' }}>🎤</span>
-            {isRecording ? `錄音中 ${Math.floor(recordingDuration / 60)}:${(recordingDuration % 60).toString().padStart(2, '0')}` : '語音輸入'}
+            {isRecording ? `${lang === 'zh-TW' ? '錄音中' : lang === 'zh-CN' ? '录音中' : lang === 'en' ? 'Recording' : lang === 'ja' ? '録音中' : lang === 'ko' ? '녹음 중' : lang === 'th' ? 'กำลังบันทึก' : lang === 'vi' ? 'Đang ghi âm' : lang === 'ms' ? 'Sedang Merakam' : 'Recording'} ${Math.floor(recordingDuration / 60)}:${(recordingDuration % 60).toString().padStart(2, '0')}` : lang === 'zh-TW' ? '語音輸入' : lang === 'zh-CN' ? '语音输入' : lang === 'en' ? 'Voice Input' : lang === 'ja' ? '音声入力' : lang === 'ko' ? '음성 입력' : lang === 'th' ? 'ป้อนเสียง' : lang === 'vi' ? 'Nhập giọng nói' : lang === 'ms' ? 'Input Suara' : 'Input Vox'}
           </button>
 
 

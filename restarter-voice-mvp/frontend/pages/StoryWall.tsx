@@ -1215,11 +1215,61 @@ const StoryWall = () => {
           boxShadow: '0 2px 12px #6B5BFF22'
         }}>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
-            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
-            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
-            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
+            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+              {safeLang === 'zh-TW' ? '隱私權政策' : 
+               safeLang === 'zh-CN' ? '隐私政策' : 
+               safeLang === 'en' ? 'Privacy Policy' : 
+               safeLang === 'ja' ? 'プライバシーポリシー' : 
+               safeLang === 'ko' ? '개인정보 처리방침' : 
+               safeLang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
+               safeLang === 'vi' ? 'Chính sách bảo mật' : 
+               safeLang === 'ms' ? 'Dasar Privasi' : 
+               'Consilium de Privata'}
+            </a>
+            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+              {safeLang === 'zh-TW' ? '條款/聲明' : 
+               safeLang === 'zh-CN' ? '条款/声明' : 
+               safeLang === 'en' ? 'Terms/Statement' : 
+               safeLang === 'ja' ? '規約/声明' : 
+               safeLang === 'ko' ? '약관/성명' : 
+               safeLang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
+               safeLang === 'vi' ? 'Điều khoản/Tuyên bố' : 
+               safeLang === 'ms' ? 'Terma/Pernyataan' : 
+               'Termini/Declaratio'}
+            </a>
+            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+              {safeLang === 'zh-TW' ? '資料刪除說明' : 
+               safeLang === 'zh-CN' ? '数据删除说明' : 
+               safeLang === 'en' ? 'Data Deletion' : 
+               safeLang === 'ja' ? 'データ削除について' : 
+               safeLang === 'ko' ? '데이터 삭제 안내' : 
+               safeLang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
+               safeLang === 'vi' ? 'Giải thích xóa dữ liệu' : 
+               safeLang === 'ms' ? 'Penjelasan Penghapusan Data' : 
+               'Explicatio Deletionis Datae'}
+            </a>
+            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+              {safeLang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
+               safeLang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
+               safeLang === 'en' ? '🧬 Restarter™｜Who We Are' : 
+               safeLang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
+               safeLang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
+               safeLang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
+               safeLang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
+               safeLang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
+               '🧬 Restarter™｜Quis sumus'}
+            </a>
+            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+              {safeLang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
+               safeLang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
+               safeLang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
+               safeLang === 'ja' ? '💬 ご意見箱｜私たちはあなたの声を聞きたい' : 
+               safeLang === 'ko' ? '💬 피드백｜우리는 당신의 말을 듣고 싶습니다' : 
+               safeLang === 'th' ? '💬 กล่องความคิดเห็น｜เราอยากได้ยินจากคุณ' : 
+               safeLang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
+               safeLang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
+               '💬 Arca Consilii｜Volumus Audire a Te'}
+            </a>
           </div>
         </div>
       </>
