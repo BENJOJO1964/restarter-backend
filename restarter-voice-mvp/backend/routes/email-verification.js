@@ -6,7 +6,7 @@ const router = express.Router();
 const pendingRegistrations = new Map();
 
 // 創建郵件傳輸器
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
