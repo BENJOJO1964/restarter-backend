@@ -719,7 +719,7 @@ export default function Home() {
       )}
       {isMobile ? (
         // 手機版主內容
-        <div style={{ width: '100vw', minHeight: '100vh', background: `url('/plains.png') center center/cover no-repeat`, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 100 }}>
+        <div style={{ width: '100vw', minHeight: '100vh', background: `url('/plains.png') center center/cover no-repeat`, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 120 }}>
           
           {/* 手機版天氣組件 */}
           <div style={{ width: '100%', padding: '0 16px', marginBottom: 16 }}>
@@ -961,7 +961,7 @@ export default function Home() {
             <div className="fixed-logo-box" style={{ position: 'fixed', top: 16, left: 42, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 10000, paddingTop: 0, marginTop: 0 }}>
               <img src="/ctx-logo.png" className="fixed-logo-img" style={{ marginBottom: 0, width: 182, height: 182, cursor: 'pointer', marginTop: '-40px' }} onClick={() => navigate('/')} />
             </div>
-            <div className="column-content" style={{ justifyContent: 'center', alignItems: 'center', height: '100%', paddingTop: 48 }}>
+            <div className="column-content" style={{ justifyContent: 'center', alignItems: 'center', height: '100%', paddingTop: 80 }}>
               
               {/* 恢復主標語、主標題、說明等重要文字內容 */}
               <div
