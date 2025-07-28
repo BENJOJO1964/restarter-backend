@@ -309,11 +309,13 @@ export default function SocialIntegration() {
   const { lang } = useLanguage();
   const navigate = useNavigate();
   const { isTestMode } = useTestMode();
+  const [forceUpdate, setForceUpdate] = useState(0);
   const t = TEXTS[lang as keyof typeof TEXTS] || TEXTS['zh-TW'];
 
   // 確保語言變化時重新渲染
   useEffect(() => {
     console.log('Language changed to:', lang);
+    setForceUpdate(prev => prev + 1);
   }, [lang]);
 
   const [showAssessmentDialog, setShowAssessmentDialog] = useState(false);

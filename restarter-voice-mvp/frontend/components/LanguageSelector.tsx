@@ -13,16 +13,16 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   const { lang, setLang, LANGS } = useLanguage();
 
   const defaultStyle: React.CSSProperties = {
-    padding: '4px 8px',
-    borderRadius: 6,
+    padding: '3px 6px',
+    borderRadius: 4,
     fontWeight: 600,
-    fontSize: 12,
+    fontSize: 11,
     border: '1px solid #6B5BFF',
     color: '#6B5BFF',
     background: '#fff',
     cursor: 'pointer',
     transition: 'background 0.18s, color 0.18s, border 0.18s',
-    minWidth: 60,
+    minWidth: 50,
     ...style
   };
 
