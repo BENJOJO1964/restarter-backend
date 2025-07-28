@@ -43,6 +43,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import HelpLab from './pages/HelpLab';
 import EmotionRelease from './pages/EmotionRelease';
 import SocialIntegration from './pages/SocialIntegration';
+import ConfirmRegistration from './pages/ConfirmRegistration';
 
 import Plans from './pages/Plans';
 import Payment from './pages/Payment';
@@ -125,6 +126,7 @@ function App() {
                   <Route path="/" element={<SplashScreen />} />
                   <Route path="/home" element={<Home />} />
                   <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/confirm-registration" element={<ConfirmRegistration />} />
                   {user && <Route path="/wall" element={<RestartWall />} />}
                   {user && <Route path="/echo-box" element={<EchoBox />} />}
                   {user && <Route path="/my-story" element={<MyStory />} />}

@@ -711,6 +711,8 @@ export default function RegisterPage() {
   }, [loading]);
 
   const [slowNetwork, setSlowNetwork] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -726,7 +728,48 @@ export default function RegisterPage() {
     if (!age) { setError(t.errorAgeFormat); return; }
     if (!country) { setError(t.errorCountry); return; }
     
+    // 發送確認郵件
+    setSendingEmail(true);
+    try {
+      const registrationData = {
+        nickname,
+        password,
+        gender,
+        country,
+        region,
+        age,
+        interest,
+        eventType,
+        improvement
+      };
+
+      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/email-verification/send-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, registrationData })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setShowConfirmation(true);
+        setSendingEmail(false);
+        clearTimeout(slowTimer);
+        setSlowNetwork(false);
+      } else {
+        throw new Error(data.error || '確認郵件發送失敗');
+      }
+    } catch (err: any) {
+      setError(err.message || '確認郵件發送失敗，請稍後再試');
+      setSendingEmail(false);
+      clearTimeout(slowTimer);
+      setSlowNetwork(false);
+    }
+  };
+
+  const completeRegistration = async () => {
     setLoading(true);
+    let slowTimer: any = setTimeout(() => setSlowNetwork(true), 10000);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       // 先設 displayName
@@ -1220,16 +1263,60 @@ export default function RegisterPage() {
                     gap: 8, 
                     margin: '16px 0 8px 0' 
                   }}>
-                    <button type="submit" disabled={loading} style={{ ...unifiedButtonStyle, background: 'linear-gradient(90deg, #6e8efb, #a777e3)', color: 'white', opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
-                      {loading ? (
-                        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18 }}>
-                          {t.registering}{'.'.repeat(loadingDot + 1)}
-                        </span>
-                      ) : (
-                        <span style={{marginRight: 10}}>🚀</span>
-                      )}
-                      {!loading && t.register}
-                    </button>
+                    {showConfirmation ? (
+                      <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+                          <p style={{ color: '#6B5BFF', fontWeight: 600, marginBottom: '4px' }}>📧 確認郵件已發送到您的 email</p>
+                          <p style={{ color: '#666', fontSize: '14px' }}>請檢查您的收件匣並點擊確認連結完成註冊</p>
+                        </div>
+                        <div style={{ 
+                          background: '#f8f9ff', 
+                          padding: '16px', 
+                          borderRadius: '8px', 
+                          border: '1px solid #e0e7ff',
+                          textAlign: 'center'
+                        }}>
+                          <p style={{ color: '#6B5BFF', fontWeight: 600, marginBottom: '8px' }}>📬 請查看您的 email</p>
+                          <p style={{ color: '#666', fontSize: '14px', marginBottom: '12px' }}>
+                            我們已發送確認郵件到：<strong>{email}</strong>
+                          </p>
+                          <p style={{ color: '#666', fontSize: '12px' }}>
+                            點擊郵件中的「✅ 確認註冊」按鈕即可完成註冊
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowConfirmation(false);
+                            setError('');
+                          }}
+                          style={{
+                            ...unifiedButtonStyle,
+                            background: '#f5f5f5',
+                            color: '#666',
+                            border: '1px solid #ddd',
+                            width: '120px'
+                          }}
+                        >
+                          🔄 重新發送
+                        </button>
+                      </div>
+                    ) : (
+                      <button type="submit" disabled={loading || sendingEmail} style={{ ...unifiedButtonStyle, background: 'linear-gradient(90deg, #6e8efb, #a777e3)', color: 'white', opacity: (loading || sendingEmail) ? 0.6 : 1, cursor: (loading || sendingEmail) ? 'not-allowed' : 'pointer' }}>
+                        {loading ? (
+                          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18 }}>
+                            {t.registering}{'.'.repeat(loadingDot + 1)}
+                          </span>
+                        ) : sendingEmail ? (
+                          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18 }}>
+                            發送確認郵件中...
+                          </span>
+                        ) : (
+                          <span style={{marginRight: 10}}>🚀</span>
+                        )}
+                        {!loading && !sendingEmail && t.register}
+                      </button>
+                    )}
                     <button type="button" onClick={() => setShowLogin(true)} disabled={loading} style={{ ...unifiedButtonStyle, background: 'linear-gradient(90deg, #89f7fe, #66a6ff)', color: 'white', opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
                       <span style={{marginRight: 10}}>🔑</span>{t.login}
                     </button>

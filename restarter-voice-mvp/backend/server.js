@@ -93,11 +93,13 @@ const feedbackRouter = require('./routes/feedback');
 const subscriptionRouter = require('./routes/subscription');
 const weatherRouter = require('./routes/weather');
 const socialIntegrationRouter = require('./routes/social-integration-assessment');
+const emailVerificationRouter = require('./routes/email-verification');
 
 app.use(express.json());
 app.use('/api/tts', ttsRouter);
 app.use('/api/gpt', gptRoutes);
 app.use('/api/whisper', whisperRoutes);
+app.use('/api/email-verification', emailVerificationRouter);
 app.use('/api/quotes', quotesRoutes);
 app.use('/api/coaching', coachingRouter);
 app.use('/api/scenarios', scenariosRouter);
