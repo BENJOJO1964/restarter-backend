@@ -664,16 +664,18 @@ export default function RestartWall() {
     // 檢查測試模式
     const isTestMode = localStorage.getItem('testMode') === 'true';
     
-    // 如果不是測試模式，才檢查語音權限
-    if (!isTestMode) {
-      // 檢查語音權限
-      const permission = await checkPermission('aiChat');
-      if (!permission.allowed) {
-        if (isTestMode) return;
-        setPermissionResult(permission);
-        setShowRenewalModal(true);
-        return;
-      }
+    // 如果是測試模式，直接顯示確認對話框
+    if (isTestMode) {
+      setShowRecordingConfirm(true);
+      return;
+    }
+    
+    // 如果不是測試模式，檢查語音權限
+    const permission = await checkPermission('aiChat');
+    if (!permission.allowed) {
+      setPermissionResult(permission);
+      setShowRenewalModal(true);
+      return;
     }
 
     // 顯示確認對話框
