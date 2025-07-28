@@ -751,16 +751,14 @@ export default function RegisterPage() {
       
       const data = await response.json();
       
-      if (data.success) {
-        setShowConfirmation(true);
-        setSendingEmail(false);
-        clearTimeout(slowTimer);
-        setSlowNetwork(false);
-      } else {
-        throw new Error(data.error || '確認郵件發送失敗');
-      }
+              if (data.success) {
+          // 直接完成註冊
+          await completeRegistration();
+        } else {
+          throw new Error(data.error || '註冊失敗');
+        }
     } catch (err: any) {
-      setError(err.message || '確認郵件發送失敗，請稍後再試');
+      setError(err.message || '註冊失敗，請稍後再試');
       setSendingEmail(false);
       clearTimeout(slowTimer);
       setSlowNetwork(false);
@@ -1309,7 +1307,7 @@ export default function RegisterPage() {
                           </span>
                         ) : sendingEmail ? (
                           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18 }}>
-                            發送確認郵件中...
+                            註冊中...
                           </span>
                         ) : (
                           <span style={{marginRight: 10}}>🚀</span>
