@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTestMode } from '../App';
 import Footer from '../components/Footer';
+import { LanguageSelector } from '../components/LanguageSelector';
 
 interface Milestone {
   id: number;
@@ -350,7 +351,21 @@ export default function SocialIntegration() {
       ];
 
       const matchedPattern = excellentPatterns.find(p => p.condition) || {
-        description: `恭喜您！您的社會融入度評估結果顯示您已經達到了優秀水平。在${strengths.length > 0 ? strengths.join('、') : '多個重要維度'}方面，您展現出了卓越的能力和積極的態度。這表明您已經成功建立了穩定的社會支持網絡，具備了良好的生活技能和職業素養，並且對未來充滿信心。您的表現不僅為自己創造了美好的生活，也為其他更生人樹立了積極的榜樣。`,
+        description: `恭喜您！您的社會融入度評估結果顯示您已經達到了優秀水平。在${strengths.length > 0 ? strengths.map(s => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[s] || s;
+        }).join('、') : '多個重要維度'}方面，您展現出了卓越的能力和積極的態度。這表明您已經成功建立了穩定的社會支持網絡，具備了良好的生活技能和職業素養，並且對未來充滿信心。您的表現不僅為自己創造了美好的生活，也為其他更生人樹立了積極的榜樣。`,
         recommendations: [
           '繼續保持現有的優秀表現，定期進行自我評估以維持高水準',
           '考慮擔任更生人互助團體的導師或志工，分享您的成功經驗',
@@ -360,7 +375,21 @@ export default function SocialIntegration() {
           '考慮擔任職場導師，幫助其他更生人提升就業競爭力',
           '建立個人發展檔案，記錄成長歷程並分享給需要支持的人'
         ],
-        analysis: `基於您完成的20項詳細評估，我們發現您在${strengths.length > 0 ? strengths.join('、') : '各個關鍵維度'}都表現出色。這表明您已經完全融入了社會，具備了優秀的社會適應能力、職業素養和生活技能。您的成功不僅體現在個人成就上，更重要的是您展現出了積極的生活態度和對未來的清晰規劃。建議您繼續保持這種優秀狀態，並考慮將您的經驗分享給其他需要支持的人，成為更生人融入社會的典範。您的表現證明了更生人完全有能力重新融入社會並創造美好生活。`
+        analysis: `基於您完成的20項詳細評估，我們發現您在${strengths.length > 0 ? strengths.map(s => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[s] || s;
+        }).join('、') : '各個關鍵維度'}都表現出色。這表明您已經完全融入了社會，具備了優秀的社會適應能力、職業素養和生活技能。您的成功不僅體現在個人成就上，更重要的是您展現出了積極的生活態度和對未來的清晰規劃。建議您繼續保持這種優秀狀態，並考慮將您的經驗分享給其他需要支持的人，成為更生人融入社會的典範。您的表現證明了更生人完全有能力重新融入社會並創造美好生活。`
       };
 
       return {
@@ -431,7 +460,21 @@ export default function SocialIntegration() {
       ];
 
       const matchedPattern = goodPatterns.find(p => p.condition) || {
-        description: `您的社會融入度評估結果顯示您達到了良好水平。在${strengths.length > 0 ? strengths.join('、') : '多個重要維度'}方面，您展現出了穩定的能力和積極的態度。這表明您已經建立了基本的社會支持網絡，具備了良好的生活技能和職業素養，並且對未來有一定的規劃。雖然在某些方面還有提升空間，但您的整體表現已經為進一步發展奠定了堅實的基礎。`,
+        description: `您的社會融入度評估結果顯示您達到了良好水平。在${strengths.length > 0 ? strengths.map(s => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[s] || s;
+        }).join('、') : '多個重要維度'}方面，您展現出了穩定的能力和積極的態度。這表明您已經建立了基本的社會支持網絡，具備了良好的生活技能和職業素養，並且對未來有一定的規劃。雖然在某些方面還有提升空間，但您的整體表現已經為進一步發展奠定了堅實的基礎。`,
         recommendations: [
           '繼續保持現有的良好狀態，建立定期自我評估機制',
           weaknesses.length > 0 ? `制定${weaknesses.join('、')}方面的具體改善計劃，設定明確的目標和時間表` : '進一步提升各方面能力，設定更具挑戰性的目標',
@@ -441,7 +484,35 @@ export default function SocialIntegration() {
           '建立個人發展檔案，記錄進步歷程和成就',
           '參與更生人互助團體，與同路人分享經驗和互相支持'
         ],
-        analysis: `基於您完成的20項詳細評估，我們發現您在${strengths.length > 0 ? strengths.join('、') : '多個關鍵維度'}表現良好，具備了基本的社會適應能力和生活技能。${weaknesses.length > 0 ? `特別是在${weaknesses.join('、')}方面，建議您制定具體的改善計劃，尋求專業指導和支持。` : ''}您的整體表現表明您已經成功融入了社會，並且具備了進一步發展的潛力。建議您繼續保持積極的態度，設定更具挑戰性的目標，並尋求更多學習和成長的機會。您的進步證明了更生人完全有能力重新融入社會並創造美好生活。`
+        analysis: `基於您完成的20項詳細評估，我們發現您在${strengths.length > 0 ? strengths.map(s => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[s] || s;
+        }).join('、') : '多個關鍵維度'}表現良好，具備了基本的社會適應能力和生活技能。${weaknesses.length > 0 ? `特別是在${weaknesses.map(w => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[w] || w;
+        }).join('、')}方面，建議您制定具體的改善計劃，尋求專業指導和支持。` : ''}您的整體表現表明您已經成功融入了社會，並且具備了進一步發展的潛力。建議您繼續保持積極的態度，設定更具挑戰性的目標，並尋求更多學習和成長的機會。您的進步證明了更生人完全有能力重新融入社會並創造美好生活。`
       };
 
       return {
@@ -517,19 +588,103 @@ export default function SocialIntegration() {
       ];
 
       const matchedPattern = fairPatterns.find(p => p.condition) || {
-        description: `您的社會融入度評估結果顯示您目前處於一般水平。在${weaknesses.length > 0 ? weaknesses.join('、') : '某些重要維度'}方面，您需要更多的支持和改善。這表明您在社會融入過程中遇到了一些挑戰，但這並不意味著失敗，而是需要更多專業指導和支持的表現。${strengths.length > 0 ? `同時，您在${strengths.join('、')}方面的表現值得肯定，這些優勢將成為您改善其他方面的基礎。` : ''}建議您積極尋求專業支持，制定系統性的改善計劃。`,
+        description: `您的社會融入度評估結果顯示您目前處於一般水平。在${weaknesses.length > 0 ? weaknesses.map(w => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[w] || w;
+        }).join('、') : '某些重要維度'}方面，您需要更多的支持和改善。這表明您在社會融入過程中遇到了一些挑戰，但這並不意味著失敗，而是需要更多專業指導和支持的表現。${strengths.length > 0 ? `同時，您在${strengths.map(s => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[s] || s;
+        }).join('、')}方面的表現值得肯定，這些優勢將成為您改善其他方面的基礎。` : ''}建議您積極尋求專業支持，制定系統性的改善計劃。`,
         recommendations: [
           '立即聯繫專業輔導師，制定個人化的改善計劃',
           '參加更生人支持計劃和互助團體，獲得同路人支持',
           '建立穩定的生活規律，包括作息時間、飲食習慣和運動計劃',
           '加強人際關係建設，學習有效的溝通技巧',
-          strengths.length > 0 ? `充分發揮${strengths.join('、')}方面的優勢，建立自信心` : '尋找個人優勢並加以發揮，建立自信心',
+          strengths.length > 0 ? `充分發揮${strengths.map(s => {
+            const dimensionMap: { [key: string]: string } = {
+              'interpersonal': '人際關係',
+              'career': '職業發展',
+              'family': '家庭關係',
+              'emotional': '情緒管理',
+              'lifestyle': '生活規律',
+              'learning': '學習成長',
+              'financial': '財務管理',
+              'responsibility': '責任感',
+              'community': '社區參與',
+              'satisfaction': '整體滿意度'
+            };
+            return dimensionMap[s] || s;
+          }).join('、')}方面的優勢，建立自信心` : '尋找個人優勢並加以發揮，建立自信心',
           '參加職業技能培訓，提升就業競爭力',
           '建立支持網絡，包括家人、朋友和專業人士',
           '制定短期和長期目標，逐步改善各方面能力',
           '定期進行自我評估，追蹤改善進度'
         ],
-        analysis: `基於您完成的20項詳細評估，我們發現您在${weaknesses.length > 0 ? weaknesses.join('、') : '某些關鍵維度'}需要更多支持。${weaknesses.length > 0 ? `特別是在${weaknesses.join('、')}方面，建議您制定具體的改善計劃，尋求專業指導和支持。` : ''}${strengths.length > 0 ? `同時，您在${strengths.join('、')}方面的表現值得肯定，這些優勢將成為您改善其他方面的基礎。` : ''}您的評估結果表明您在社會融入過程中遇到了一些挑戰，但這並不意味著失敗。每個人的改善路徑都是不同的，重要的是您願意正視這些挑戰並尋求幫助。建議您積極尋求專業支持，制定系統性的改善計劃，並相信通過持續的努力，您一定能夠取得進步。`
+        analysis: `基於您完成的20項詳細評估，我們發現您在${weaknesses.length > 0 ? weaknesses.map(w => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[w] || w;
+        }).join('、') : '某些關鍵維度'}需要更多支持。${weaknesses.length > 0 ? `特別是在${weaknesses.map(w => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[w] || w;
+        }).join('、')}方面，建議您制定具體的改善計劃，尋求專業指導和支持。` : ''}${strengths.length > 0 ? `同時，您在${strengths.map(s => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[s] || s;
+        }).join('、')}方面的表現值得肯定，這些優勢將成為您改善其他方面的基礎。` : ''}您的評估結果表明您在社會融入過程中遇到了一些挑戰，但這並不意味著失敗。每個人的改善路徑都是不同的，重要的是您願意正視這些挑戰並尋求幫助。建議您積極尋求專業支持，制定系統性的改善計劃，並相信通過持續的努力，您一定能夠取得進步。`
       };
 
       return {
@@ -605,7 +760,21 @@ export default function SocialIntegration() {
       ];
 
       const matchedPattern = poorPatterns.find(p => p.condition) || {
-        description: `您的社會融入度評估結果顯示您目前面臨較大的挑戰，在${weaknesses.length > 0 ? weaknesses.join('、') : '多個重要維度'}都需要專業支持和改善。這表明您在社會融入過程中遇到了較多的困難，但這絕對不是失敗，而是需要更多專業幫助的表現。每個人的改善路徑都是不同的，重要的是您願意正視這些挑戰並積極尋求幫助。建議您立即聯繫專業輔導師，制定系統性的改善計劃，並相信通過持續的努力和專業支持，您一定能夠逐步改善並重新融入社會。`,
+        description: `您的社會融入度評估結果顯示您目前面臨較大的挑戰，在${weaknesses.length > 0 ? weaknesses.map(w => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[w] || w;
+        }).join('、') : '多個重要維度'}都需要專業支持和改善。這表明您在社會融入過程中遇到了較多的困難，但這絕對不是失敗，而是需要更多專業幫助的表現。每個人的改善路徑都是不同的，重要的是您願意正視這些挑戰並積極尋求幫助。建議您立即聯繫專業輔導師，制定系統性的改善計劃，並相信通過持續的努力和專業支持，您一定能夠逐步改善並重新融入社會。`,
         recommendations: [
           '立即聯繫專業輔導師，制定個人化的改善計劃和時間表',
           '參加更生人支持計劃和互助團體，獲得同路人支持和理解',
@@ -618,7 +787,21 @@ export default function SocialIntegration() {
           '學習有效的壓力管理和情緒調節技巧',
           '參與社區活動，逐步建立社交網絡'
         ],
-        analysis: `基於您完成的20項詳細評估，我們發現您在${weaknesses.length > 0 ? weaknesses.join('、') : '多個關鍵維度'}需要專業支持。您的評估結果表明您目前在社會融入過程中遇到了較多的挑戰，但這絕對不是失敗。每個人的改善路徑都是不同的，重要的是您願意正視這些挑戰並積極尋求幫助。專業輔導師可以幫助您制定適合的改善計劃，提供系統性的支持和指導。建議您立即聯繫專業輔導師，制定個人化的改善計劃，並相信通過持續的努力和專業支持，您一定能夠逐步改善並重新融入社會。記住，尋求幫助是勇敢的表現，也是成功改善的第一步。`
+        analysis: `基於您完成的20項詳細評估，我們發現您在${weaknesses.length > 0 ? weaknesses.map(w => {
+          const dimensionMap: { [key: string]: string } = {
+            'interpersonal': '人際關係',
+            'career': '職業發展',
+            'family': '家庭關係',
+            'emotional': '情緒管理',
+            'lifestyle': '生活規律',
+            'learning': '學習成長',
+            'financial': '財務管理',
+            'responsibility': '責任感',
+            'community': '社區參與',
+            'satisfaction': '整體滿意度'
+          };
+          return dimensionMap[w] || w;
+        }).join('、') : '多個關鍵維度'}需要專業支持。您的評估結果表明您目前在社會融入過程中遇到了較多的挑戰，但這絕對不是失敗。每個人的改善路徑都是不同的，重要的是您願意正視這些挑戰並積極尋求幫助。專業輔導師可以幫助您制定適合的改善計劃，提供系統性的支持和指導。建議您立即聯繫專業輔導師，制定個人化的改善計劃，並相信通過持續的努力和專業支持，您一定能夠逐步改善並重新融入社會。記住，尋求幫助是勇敢的表現，也是成功改善的第一步。`
       };
 
       return {
@@ -753,7 +936,7 @@ export default function SocialIntegration() {
           {t.title}
         </h1>
         
-        <div style={{ width: '100px' }}></div>
+        <LanguageSelector />
       </div>
 
       {/* 主要內容 */}
@@ -1186,8 +1369,36 @@ export default function SocialIntegration() {
         </div>
       )}
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer 5個按鈕 - 原封不動複製自 RestartWall */}
+      {window.innerWidth <= 768 ? (
+        // 手機版 Footer - 2行排列 + 白色卡片背景
+        <div style={{ 
+          width: '100%', 
+          margin: '0 auto', 
+          marginTop: 24,
+          background: 'rgba(255,255,255,0.95)',
+          borderRadius: 16,
+          padding: '16px',
+          boxShadow: '0 2px 12px #6B5BFF22'
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+              <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
+              <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
+              <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
+            </div>
+            {/* 第二行：我們是誰、意見箱 */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+              <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
+              <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // 桌面版 Footer
+        <Footer />
+      )}
     </div>
   );
 } 
