@@ -1237,48 +1237,49 @@ export default function RestartWall() {
               {loading ? t.sending : t.send}
             </button>
           {/* 語音錄製按鈕 */}
-          <button
-            onClick={handleRecordingClick}
-            style={{
-              background: isRecording 
-                ? 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)'
-                : 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
-              border: 'none',
-              borderRadius: '12px',
-              padding: window.innerWidth <= 768 ? '10px 16px' : '10px 10px',
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '16px',
-              fontWeight: '600',
-              boxShadow: isRecording 
-                ? '0 4px 16px rgba(244, 67, 54, 0.3)'
-                : '0 4px 16px rgba(33, 150, 243, 0.3)',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              animation: isRecording ? 'pulse 1.5s infinite' : 'none',
-              minWidth: window.innerWidth <= 768 ? '70px' : '56px',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-              marginRight: window.innerWidth <= 768 ? undefined : 8
-            }}
-            onMouseOver={(e) => {
-              if (!isRecording) {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.4)';
-              }
-            }}
-            onMouseOut={(e) => {
-              if (!isRecording) {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(33, 150, 243, 0.3)';
-              }
-            }}
-          >
-            <span style={{ fontSize: '18px' }}>🎤</span>
-            {isRecording ? `${t.recording} ${Math.floor(recordingDuration / 60)}:${(recordingDuration % 60).toString().padStart(2, '0')}` : t.voice}
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <button
+              onClick={handleRecordingClick}
+              style={{
+                background: isRecording 
+                  ? 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)'
+                  : 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+                border: 'none',
+                borderRadius: '12px',
+                padding: window.innerWidth <= 768 ? '10px 16px' : '10px 10px',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: '600',
+                boxShadow: isRecording 
+                  ? '0 4px 16px rgba(244, 67, 54, 0.3)'
+                  : '0 4px 16px rgba(33, 150, 243, 0.3)',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                animation: isRecording ? 'pulse 1.5s infinite' : 'none',
+                minWidth: window.innerWidth <= 768 ? '70px' : '56px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                marginRight: window.innerWidth <= 768 ? undefined : 8
+              }}
+              onMouseOver={(e) => {
+                if (!isRecording) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.4)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!isRecording) {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(33, 150, 243, 0.3)';
+                }
+              }}
+            >
+              <span style={{ fontSize: '18px' }}>🎤</span>
+              {isRecording ? `${t.recording} ${Math.floor(recordingDuration / 60)}:${(recordingDuration % 60).toString().padStart(2, '0')}` : t.voice}
+            </button>
             {isRecording && (
               <div style={{ 
                 fontSize: '12px', 
@@ -1637,7 +1638,7 @@ export default function RestartWall() {
         </div>
         {showUser && (
           <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div style={{ background: '#fff', borderRadius: 28, padding: 36, minWidth: 340, maxWidth: window.innerWidth <= 768 ? '90vw' : 500, width: window.innerWidth <= 768 ? '90vw' : '500px', boxShadow: '0 6px 32px #6B5BFF22', textAlign: 'center', position: 'relative', border: '2px solid #6B5BFF22', overflow: 'hidden' }}>
+            <div style={{ background: '#fff', borderRadius: 28, padding: 36, minWidth: 340, maxWidth: window.innerWidth <= 768 ? '90vw' : 600, width: window.innerWidth <= 768 ? '90vw' : '600px', boxShadow: '0 6px 32px #6B5BFF22', textAlign: 'center', position: 'relative', border: '2px solid #6B5BFF22', overflow: 'visible' }}>
               <button onClick={() => setShowUser(null)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', fontSize: 22, color: '#6B4F27', cursor: 'pointer' }}>×</button>
               <img src={showUser.user.avatar} alt="avatar" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', marginBottom: 14, border: '2.5px solid #6B5BFF' }} />
               <div style={{ fontWeight: 900, color: '#6B5BFF', fontSize: 22, marginBottom: 8 }}>{showUser.user.name}</div>
