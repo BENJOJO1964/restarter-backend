@@ -1128,18 +1128,22 @@ export default function SocialIntegration() {
               
               {/* 改善建議 */}
               <div style={{
-                border: '2px solid #f0f0f0',
+                border: '2px solid #FFE4E1',
                 borderRadius: '16px',
                 padding: '20px',
-                background: '#fafafa'
+                background: 'linear-gradient(135deg, #FFF5F5, #FFE4E1)',
+                boxShadow: '0 4px 12px rgba(255, 182, 193, 0.2)'
               }}>
                 <h4 style={{
                   fontSize: '18px',
                   fontWeight: '600',
-                  color: '#333',
-                  marginBottom: '12px'
+                  color: '#D63384',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
                 }}>
-                  {t.recommendationsLabel}
+                  💡 {t.recommendationsLabel}
                 </h4>
                 
                 <ul style={{
