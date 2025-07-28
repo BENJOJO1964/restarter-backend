@@ -52,8 +52,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   // 初始化時自動偵測瀏覽器語言
   useEffect(() => {
     try {
-    const savedLang = localStorage.getItem('lang') as LanguageCode;
-    if (savedLang && LANGS.some(l => l.code === savedLang)) {
+      const savedLang = localStorage.getItem('lang') as LanguageCode;
+      if (savedLang && LANGS.some(l => l.code === savedLang)) {
         return; // 已經有保存的語言設定
       }
       
@@ -85,13 +85,13 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       }
       
       if (detected !== lang) {
-      setLangState(detected);
-      localStorage.setItem('lang', detected);
-    }
+        setLangState(detected);
+        localStorage.setItem('lang', detected);
+      }
     } catch (error) {
       console.warn('Failed to detect browser language:', error);
     }
-  }, [lang]);
+  }, []); // 只在組件掛載時執行一次
 
   // 語言切換函數
   const setLang = (newLang: LanguageCode) => {
