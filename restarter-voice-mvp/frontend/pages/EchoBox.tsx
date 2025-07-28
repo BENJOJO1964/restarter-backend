@@ -1674,11 +1674,61 @@ export default function EchoBox() {
         boxShadow: '0 2px 12px #6B5BFF22'
       }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-          <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-          <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
-          <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
-          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
-          <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
+          <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+            {lang === 'zh-TW' ? '隱私權政策' : 
+             lang === 'zh-CN' ? '隐私政策' : 
+             lang === 'en' ? 'Privacy Policy' : 
+             lang === 'ja' ? 'プライバシーポリシー' : 
+             lang === 'ko' ? '개인정보 처리방침' : 
+             lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
+             lang === 'vi' ? 'Chính sách bảo mật' : 
+             lang === 'ms' ? 'Dasar Privasi' : 
+             'Consilium de Privata'}
+          </a>
+          <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+            {lang === 'zh-TW' ? '條款/聲明' : 
+             lang === 'zh-CN' ? '条款/声明' : 
+             lang === 'en' ? 'Terms/Statement' : 
+             lang === 'ja' ? '規約/声明' : 
+             lang === 'ko' ? '약관/성명' : 
+             lang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
+             lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
+             lang === 'ms' ? 'Terma/Pernyataan' : 
+             'Termini/Declaratio'}
+          </a>
+          <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+            {lang === 'zh-TW' ? '資料刪除說明' : 
+             lang === 'zh-CN' ? '数据删除说明' : 
+             lang === 'en' ? 'Data Deletion' : 
+             lang === 'ja' ? 'データ削除について' : 
+             lang === 'ko' ? '데이터 삭제 안내' : 
+             lang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
+             lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
+             lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
+             'Explicatio Deletionis Datae'}
+          </a>
+          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+            {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
+             lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
+             lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
+             lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
+             lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
+             lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
+             lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
+             lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
+             '🧬 Restarter™｜Quis sumus'}
+          </a>
+          <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+            {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
+             lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
+             lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
+             lang === 'ja' ? '💬 ご意見箱｜私たちはあなたの声を聞きたい' : 
+             lang === 'ko' ? '💬 피드백｜우리는 당신의 말을 듣고 싶습니다' : 
+             lang === 'th' ? '💬 กล่องความคิดเห็น｜เราอยากได้ยินจากคุณ' : 
+             lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
+             lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
+             '💬 Arca Consilii｜Volumus Audire a Te'}
+          </a>
         </div>
       </div>
     </>
