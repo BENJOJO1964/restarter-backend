@@ -17,24 +17,56 @@ const TEXTS = {
   'zh-TW': {
     title: '社會融入度評估',
     subtitle: '評估您的社會融入度，獲得專業建議',
+    subtitle2: '勇敢面對並定期檢測自身社會融入程度進步狀況，每一次評估都是成長的機會',
     backToHome: '返回首頁',
     startAssessment: '開始評估',
     submitAssessment: '提交評估',
     cancelAssessment: '取消',
+    closeAssessment: '關閉',
     assessmentComplete: '評估完成',
     viewReport: '查看報告',
     closeReport: '關閉報告',
     // 評估問題
     q1Title: '人際關係',
-    q1Desc: '您與他人的互動和社交能力如何？',
+    q1Desc: '最近6個月，您與他人的互動和社交能力如何？',
     q2Title: '就業狀況',
-    q2Desc: '您目前的工作穩定性和發展前景如何？',
+    q2Desc: '最近1年，您的工作穩定性和發展前景如何？',
     q3Title: '家庭關係',
-    q3Desc: '您與家人的相處和溝通狀況如何？',
+    q3Desc: '最近6個月，您與家人的相處和溝通狀況如何？',
     q4Title: '未來信心',
-    q4Desc: '您對未來的樂觀程度和規劃如何？',
+    q4Desc: '最近1年，您對未來的樂觀程度和規劃如何？',
     q5Title: '社會接納',
-    q5Desc: '您感覺被社會接受和認可的程度如何？',
+    q5Desc: '最近6個月，您感覺被社會接受和認可的程度如何？',
+    q6Title: '情緒管理',
+    q6Desc: '最近6個月，您處理壓力和負面情緒的能力如何？',
+    q7Title: '生活規律',
+    q7Desc: '最近1年，您的生活作息和規律性如何？',
+    q8Title: '學習成長',
+    q8Desc: '最近1年，您在技能學習和個人成長方面的投入如何？',
+    q9Title: '財務管理',
+    q9Desc: '最近1年，您的財務規劃和理財能力如何？',
+    q10Title: '健康狀況',
+    q10Desc: '最近6個月，您的身體和心理健康狀況如何？',
+    q11Title: '社交網絡',
+    q11Desc: '最近6個月，您建立和維護社交關係的能力如何？',
+    q12Title: '目標設定',
+    q12Desc: '最近1年，您設定和追求個人目標的能力如何？',
+    q13Title: '適應能力',
+    q13Desc: '最近6個月，您適應環境變化和挑戰的能力如何？',
+    q14Title: '責任感',
+    q14Desc: '最近1年，您對自己和他人負責的態度如何？',
+    q15Title: '自我認同',
+    q15Desc: '最近6個月，您對自我價值和身份的認同感如何？',
+    q16Title: '社區參與',
+    q16Desc: '最近1年，您參與社區活動和公益服務的情況如何？',
+    q17Title: '職業發展',
+    q17Desc: '最近1年，您在職業技能提升和職涯規劃方面的表現如何？',
+    q18Title: '人際衝突處理',
+    q18Desc: '最近6個月，您處理人際衝突和分歧的能力如何？',
+    q19Title: '時間管理',
+    q19Desc: '最近1年，您合理安排時間和優先級的能力如何？',
+    q20Title: '整體滿意度',
+    q20Desc: '最近6個月，您對整體生活狀況的滿意度如何？',
     // 選項
     excellent: '非常好',
     good: '良好',
@@ -50,24 +82,56 @@ const TEXTS = {
   'zh-CN': {
     title: '社会融入度评估',
     subtitle: '评估您的社会融入度，获得专业建议',
+    subtitle2: '勇敢面对并定期检测自身社会融入程度进步状况，每一次评估都是成长的机会',
     backToHome: '返回首页',
     startAssessment: '开始评估',
     submitAssessment: '提交评估',
     cancelAssessment: '取消',
+    closeAssessment: '关闭',
     assessmentComplete: '评估完成',
     viewReport: '查看报告',
     closeReport: '关闭报告',
     // 评估问题
     q1Title: '人际关系',
-    q1Desc: '您与他人的互动和社交能力如何？',
+    q1Desc: '最近6个月，您与他人的互动和社交能力如何？',
     q2Title: '就业状况',
-    q2Desc: '您目前的工作稳定性和发展前景如何？',
+    q2Desc: '最近1年，您的工作稳定性和发展前景如何？',
     q3Title: '家庭关系',
-    q3Desc: '您与家人的相处和沟通状况如何？',
+    q3Desc: '最近6个月，您与家人的相处和沟通状况如何？',
     q4Title: '未来信心',
-    q4Desc: '您对未来的乐观程度和规划如何？',
+    q4Desc: '最近1年，您对未来的乐观程度和规划如何？',
     q5Title: '社会接纳',
-    q5Desc: '您感觉被社会接受和认可的程度如何？',
+    q5Desc: '最近6个月，您感觉被社会接受和认可的程度如何？',
+    q6Title: '情绪管理',
+    q6Desc: '最近6个月，您处理压力和负面情绪的能力如何？',
+    q7Title: '生活规律',
+    q7Desc: '最近1年，您的生活作息和规律性如何？',
+    q8Title: '学习成长',
+    q8Desc: '最近1年，您在技能学习和个人成长方面的投入如何？',
+    q9Title: '财务管理',
+    q9Desc: '最近1年，您的财务规划和理财能力如何？',
+    q10Title: '健康状况',
+    q10Desc: '最近6个月，您的身体和心理健康状况如何？',
+    q11Title: '社交网络',
+    q11Desc: '最近6个月，您建立和维护社交关系的能力如何？',
+    q12Title: '目标设定',
+    q12Desc: '最近1年，您设定和追求个人目标的能力如何？',
+    q13Title: '适应能力',
+    q13Desc: '最近6个月，您适应环境变化和挑战的能力如何？',
+    q14Title: '责任感',
+    q14Desc: '最近1年，您对自己和他人负责的态度如何？',
+    q15Title: '自我认同',
+    q15Desc: '最近6个月，您对自我价值和身份的认同感如何？',
+    q16Title: '社区参与',
+    q16Desc: '最近1年，您参与社区活动和公益服务的情况如何？',
+    q17Title: '职业发展',
+    q17Desc: '最近1年，您在职业技能提升和职涯规划方面的表现如何？',
+    q18Title: '人际冲突处理',
+    q18Desc: '最近6个月，您处理人际冲突和分歧的能力如何？',
+    q19Title: '时间管理',
+    q19Desc: '最近1年，您合理安排时间和优先级的能力如何？',
+    q20Title: '整体满意度',
+    q20Desc: '最近6个月，您对整体生活状况的满意度如何？',
     // 选项
     excellent: '非常好',
     good: '良好',
@@ -83,24 +147,56 @@ const TEXTS = {
   'en': {
     title: 'Social Integration Assessment',
     subtitle: 'Assess your social integration and get professional advice',
+    subtitle2: 'Face challenges bravely and regularly monitor your social integration progress, every assessment is an opportunity for growth',
     backToHome: 'Back to Home',
     startAssessment: 'Start Assessment',
     submitAssessment: 'Submit Assessment',
     cancelAssessment: 'Cancel',
+    closeAssessment: 'Close',
     assessmentComplete: 'Assessment Complete',
     viewReport: 'View Report',
     closeReport: 'Close Report',
     // Assessment questions
     q1Title: 'Interpersonal Relationships',
-    q1Desc: 'How is your interaction and social ability with others?',
+    q1Desc: 'In the past 6 months, how is your interaction and social ability with others?',
     q2Title: 'Employment Status',
-    q2Desc: 'How is your current job stability and development prospects?',
+    q2Desc: 'In the past year, how is your job stability and development prospects?',
     q3Title: 'Family Relationships',
-    q3Desc: 'How is your relationship and communication with family?',
+    q3Desc: 'In the past 6 months, how is your relationship and communication with family?',
     q4Title: 'Future Confidence',
-    q4Desc: 'How optimistic are you about the future and your planning?',
+    q4Desc: 'In the past year, how optimistic are you about the future and your planning?',
     q5Title: 'Social Acceptance',
-    q5Desc: 'How accepted and recognized do you feel by society?',
+    q5Desc: 'In the past 6 months, how accepted and recognized do you feel by society?',
+    q6Title: 'Emotional Management',
+    q6Desc: 'In the past 6 months, how well do you handle stress and negative emotions?',
+    q7Title: 'Life Routine',
+    q7Desc: 'In the past year, how regular is your daily routine and lifestyle?',
+    q8Title: 'Learning & Growth',
+    q8Desc: 'In the past year, how much have you invested in skill learning and personal growth?',
+    q9Title: 'Financial Management',
+    q9Desc: 'In the past year, how is your financial planning and money management?',
+    q10Title: 'Health Status',
+    q10Desc: 'In the past 6 months, how is your physical and mental health?',
+    q11Title: 'Social Network',
+    q11Desc: 'In the past 6 months, how well do you build and maintain social relationships?',
+    q12Title: 'Goal Setting',
+    q12Desc: 'In the past year, how well do you set and pursue personal goals?',
+    q13Title: 'Adaptability',
+    q13Desc: 'In the past 6 months, how well do you adapt to environmental changes and challenges?',
+    q14Title: 'Responsibility',
+    q14Desc: 'In the past year, how responsible are you towards yourself and others?',
+    q15Title: 'Self-Identity',
+    q15Desc: 'In the past 6 months, how strong is your sense of self-worth and identity?',
+    q16Title: 'Community Participation',
+    q16Desc: 'In the past year, how involved are you in community activities and public service?',
+    q17Title: 'Career Development',
+    q17Desc: 'In the past year, how well have you performed in skill enhancement and career planning?',
+    q18Title: 'Conflict Resolution',
+    q18Desc: 'In the past 6 months, how well do you handle interpersonal conflicts and disagreements?',
+    q19Title: 'Time Management',
+    q19Desc: 'In the past year, how well do you manage time and prioritize tasks?',
+    q20Title: 'Overall Satisfaction',
+    q20Desc: 'In the past 6 months, how satisfied are you with your overall life situation?',
     // Options
     excellent: 'Excellent',
     good: 'Good',
@@ -124,11 +220,8 @@ export default function SocialIntegration() {
   const [showAssessmentDialog, setShowAssessmentDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [assessmentAnswers, setAssessmentAnswers] = useState({
-    q1: '',
-    q2: '',
-    q3: '',
-    q4: '',
-    q5: ''
+    q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '', q9: '', q10: '',
+    q11: '', q12: '', q13: '', q14: '', q15: '', q16: '', q17: '', q18: '', q19: '', q20: ''
   });
   const [assessmentReport, setAssessmentReport] = useState<any>(null);
 
@@ -147,11 +240,26 @@ export default function SocialIntegration() {
       answerMap[answers.q2 as keyof typeof answerMap] || 3,
       answerMap[answers.q3 as keyof typeof answerMap] || 3,
       answerMap[answers.q4 as keyof typeof answerMap] || 3,
-      answerMap[answers.q5 as keyof typeof answerMap] || 3
+      answerMap[answers.q5 as keyof typeof answerMap] || 3,
+      answerMap[answers.q6 as keyof typeof answerMap] || 3,
+      answerMap[answers.q7 as keyof typeof answerMap] || 3,
+      answerMap[answers.q8 as keyof typeof answerMap] || 3,
+      answerMap[answers.q9 as keyof typeof answerMap] || 3,
+      answerMap[answers.q10 as keyof typeof answerMap] || 3,
+      answerMap[answers.q11 as keyof typeof answerMap] || 3,
+      answerMap[answers.q12 as keyof typeof answerMap] || 3,
+      answerMap[answers.q13 as keyof typeof answerMap] || 3,
+      answerMap[answers.q14 as keyof typeof answerMap] || 3,
+      answerMap[answers.q15 as keyof typeof answerMap] || 3,
+      answerMap[answers.q16 as keyof typeof answerMap] || 3,
+      answerMap[answers.q17 as keyof typeof answerMap] || 3,
+      answerMap[answers.q18 as keyof typeof answerMap] || 3,
+      answerMap[answers.q19 as keyof typeof answerMap] || 3,
+      answerMap[answers.q20 as keyof typeof answerMap] || 3
     ];
     
     const totalScore = scores.reduce((sum, score) => sum + score, 0);
-    const averageScore = totalScore / 5;
+    const averageScore = totalScore / 20;
     
     // 根據分數範圍返回評估結果
     if (averageScore >= 4.5) {
@@ -232,7 +340,22 @@ export default function SocialIntegration() {
         employment: assessmentAnswers.q2,
         family: assessmentAnswers.q3,
         confidence: assessmentAnswers.q4,
-        acceptance: assessmentAnswers.q5
+        acceptance: assessmentAnswers.q5,
+        emotional: assessmentAnswers.q6,
+        routine: assessmentAnswers.q7,
+        learning: assessmentAnswers.q8,
+        financial: assessmentAnswers.q9,
+        health: assessmentAnswers.q10,
+        social: assessmentAnswers.q11,
+        goals: assessmentAnswers.q12,
+        adaptability: assessmentAnswers.q13,
+        responsibility: assessmentAnswers.q14,
+        identity: assessmentAnswers.q15,
+        community: assessmentAnswers.q16,
+        career: assessmentAnswers.q17,
+        conflict: assessmentAnswers.q18,
+        time: assessmentAnswers.q19,
+        satisfaction: assessmentAnswers.q20
       }
     };
     
@@ -246,7 +369,22 @@ export default function SocialIntegration() {
     { key: 'q2', title: t.q2Title, desc: t.q2Desc },
     { key: 'q3', title: t.q3Title, desc: t.q3Desc },
     { key: 'q4', title: t.q4Title, desc: t.q4Desc },
-    { key: 'q5', title: t.q5Title, desc: t.q5Desc }
+    { key: 'q5', title: t.q5Title, desc: t.q5Desc },
+    { key: 'q6', title: t.q6Title, desc: t.q6Desc },
+    { key: 'q7', title: t.q7Title, desc: t.q7Desc },
+    { key: 'q8', title: t.q8Title, desc: t.q8Desc },
+    { key: 'q9', title: t.q9Title, desc: t.q9Desc },
+    { key: 'q10', title: t.q10Title, desc: t.q10Desc },
+    { key: 'q11', title: t.q11Title, desc: t.q11Desc },
+    { key: 'q12', title: t.q12Title, desc: t.q12Desc },
+    { key: 'q13', title: t.q13Title, desc: t.q13Desc },
+    { key: 'q14', title: t.q14Title, desc: t.q14Desc },
+    { key: 'q15', title: t.q15Title, desc: t.q15Desc },
+    { key: 'q16', title: t.q16Title, desc: t.q16Desc },
+    { key: 'q17', title: t.q17Title, desc: t.q17Desc },
+    { key: 'q18', title: t.q18Title, desc: t.q18Desc },
+    { key: 'q19', title: t.q19Title, desc: t.q19Desc },
+    { key: 'q20', title: t.q20Title, desc: t.q20Desc }
   ];
 
   const options = [
@@ -342,9 +480,19 @@ export default function SocialIntegration() {
             fontSize: '16px',
             color: '#666',
             lineHeight: '1.6',
-            marginBottom: '30px'
+            marginBottom: '20px'
           }}>
             {t.subtitle}
+          </p>
+          
+          <p style={{
+            fontSize: '14px',
+            color: '#888',
+            lineHeight: '1.5',
+            marginBottom: '30px',
+            fontStyle: 'italic'
+          }}>
+            {t.subtitle2}
           </p>
           
           <button
@@ -397,14 +545,48 @@ export default function SocialIntegration() {
             maxWidth: '600px',
             width: '100%',
             maxHeight: '80vh',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            position: 'relative'
           }}>
+            {/* 關閉按鈕 */}
+            <button
+              onClick={() => setShowAssessmentDialog(false)}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '20px',
+                background: 'none',
+                border: 'none',
+                fontSize: '24px',
+                color: '#666',
+                cursor: 'pointer',
+                width: '30px',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#f0f0f0';
+                e.currentTarget.style.color = '#333';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'none';
+                e.currentTarget.style.color = '#666';
+              }}
+            >
+              ×
+            </button>
+            
             <h3 style={{
               fontSize: '24px',
               fontWeight: '700',
               color: '#333',
               marginBottom: '20px',
-              textAlign: 'center'
+              textAlign: 'center',
+              paddingRight: '40px'
             }}>
               {t.title}
             </h3>
