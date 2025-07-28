@@ -2,18 +2,18 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
-// OpenWeatherMap API 配置
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
-const OPENWEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5';
+// WeatherAPI.com 配置
+const WEATHERAPI_KEY = process.env.WEATHERAPI_KEY;
+const WEATHERAPI_BASE_URL = 'http://api.weatherapi.com/v1';
 
 // 獲取當前天氣
 router.get('/current', async (req, res) => {
   try {
     const { lat, lon, city } = req.query;
     
-    if (!OPENWEATHER_API_KEY) {
+    if (!WEATHERAPI_KEY) {
       return res.status(500).json({ 
-        error: 'OpenWeatherMap API key not configured',
+        error: 'WeatherAPI key not configured',
         weather: {
           temp: 25,
           description: '晴天',
@@ -25,41 +25,44 @@ router.get('/current', async (req, res) => {
       });
     }
 
-    let url;
+    let query;
     if (lat && lon) {
-      url = `${OPENWEATHER_BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric&lang=zh_tw`;
+      query = `${lat},${lon}`;
     } else if (city) {
-      url = `${OPENWEATHER_BASE_URL}/weather?q=${encodeURIComponent(city)}&appid=${OPENWEATHER_API_KEY}&units=metric&lang=zh_tw`;
+      query = encodeURIComponent(city);
     } else {
       return res.status(400).json({ error: '請提供城市名稱或經緯度' });
     }
 
+    const url = `${WEATHERAPI_BASE_URL}/current.json?key=${WEATHERAPI_KEY}&q=${query}&aqi=no&lang=zh`;
+    
     const response = await axios.get(url);
     const data = response.data;
 
     const weather = {
-      temp: Math.round(data.main.temp),
-      description: data.weather[0].description,
-      icon: data.weather[0].icon,
-      humidity: data.main.humidity,
-      windSpeed: Math.round(data.wind.speed),
-      city: data.name,
-      country: data.sys.country,
-      feelsLike: Math.round(data.main.feels_like),
-      pressure: data.main.pressure,
-      visibility: data.visibility / 1000, // 轉換為公里
-      sunrise: new Date(data.sys.sunrise * 1000),
-      sunset: new Date(data.sys.sunset * 1000)
+      temp: Math.round(data.current.temp_c),
+      description: data.current.condition.text,
+      icon: data.current.condition.icon,
+      humidity: data.current.humidity,
+      windSpeed: Math.round(data.current.wind_kph),
+      city: data.location.name,
+      country: data.location.country,
+      feelsLike: Math.round(data.current.feelslike_c),
+      pressure: data.current.pressure_mb,
+      visibility: data.current.vis_km,
+      sunrise: data.forecast?.forecastday[0]?.astro?.sunrise || '06:00',
+      sunset: data.forecast?.forecastday[0]?.astro?.sunset || '18:00',
+      uv: data.current.uv,
+      lastUpdated: data.current.last_updated
     };
 
     res.json({ weather });
   } catch (error) {
     console.error('Weather API error:', error.response?.data || error.message);
-    console.error('API Key exists:', !!OPENWEATHER_API_KEY);
-    console.error('Request URL:', url);
+    console.error('API Key exists:', !!WEATHERAPI_KEY);
     
     // 如果是API Key問題，返回預設數據
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 || error.response?.status === 403) {
       return res.status(200).json({ 
         weather: {
           temp: 25,
@@ -86,47 +89,46 @@ router.get('/current', async (req, res) => {
   }
 });
 
-// 獲取5天預報
+// 獲取3天預報
 router.get('/forecast', async (req, res) => {
   try {
     const { lat, lon, city } = req.query;
     
-    if (!OPENWEATHER_API_KEY) {
+    if (!WEATHERAPI_KEY) {
       return res.status(500).json({ 
-        error: 'OpenWeatherMap API key not configured',
+        error: 'WeatherAPI key not configured',
         forecast: []
       });
     }
 
-    let url;
+    let query;
     if (lat && lon) {
-      url = `${OPENWEATHER_BASE_URL}/forecast?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric&lang=zh_tw`;
+      query = `${lat},${lon}`;
     } else if (city) {
-      url = `${OPENWEATHER_BASE_URL}/forecast?q=${encodeURIComponent(city)}&appid=${OPENWEATHER_API_KEY}&units=metric&lang=zh_tw`;
+      query = encodeURIComponent(city);
     } else {
       return res.status(400).json({ error: '請提供城市名稱或經緯度' });
     }
 
+    const url = `${WEATHERAPI_BASE_URL}/forecast.json?key=${WEATHERAPI_KEY}&q=${query}&days=3&aqi=no&lang=zh`;
+    
     const response = await axios.get(url);
     const data = response.data;
 
-    // 處理預報數據，按天分組
-    const dailyForecast = {};
-    data.list.forEach(item => {
-      const date = new Date(item.dt * 1000).toDateString();
-      if (!dailyForecast[date]) {
-        dailyForecast[date] = {
-          date: new Date(item.dt * 1000),
-          temp: Math.round(item.main.temp),
-          description: item.weather[0].description,
-          icon: item.weather[0].icon,
-          humidity: item.main.humidity,
-          windSpeed: Math.round(item.wind.speed)
-        };
-      }
-    });
+    // 處理預報數據
+    const forecast = data.forecast.forecastday.map(day => ({
+      date: day.date,
+      temp: Math.round(day.day.avgtemp_c),
+      description: day.day.condition.text,
+      icon: day.day.condition.icon,
+      humidity: day.day.avghumidity,
+      windSpeed: Math.round(day.day.maxwind_kph),
+      maxTemp: Math.round(day.day.maxtemp_c),
+      minTemp: Math.round(day.day.mintemp_c),
+      sunrise: day.astro.sunrise,
+      sunset: day.astro.sunset
+    }));
 
-    const forecast = Object.values(dailyForecast).slice(0, 5); // 只取5天
     res.json({ forecast });
   } catch (error) {
     console.error('Weather forecast API error:', error);
@@ -140,17 +142,34 @@ router.get('/forecast', async (req, res) => {
 // 獲取用戶位置的天氣（基於IP）
 router.get('/location', async (req, res) => {
   try {
-    // 這裡可以整合IP地理位置服務
-    // 暫時返回預設位置
+    // 使用WeatherAPI.com的IP定位功能
+    if (!WEATHERAPI_KEY) {
+      return res.json({ 
+        city: '台北',
+        country: 'TW',
+        lat: 25.0330,
+        lon: 121.5654
+      });
+    }
+
+    const url = `${WEATHERAPI_BASE_URL}/ip.json?key=${WEATHERAPI_KEY}`;
+    const response = await axios.get(url);
+    const data = response.data;
+
+    res.json({ 
+      city: data.city,
+      country: data.country_code,
+      lat: data.lat,
+      lon: data.lon
+    });
+  } catch (error) {
+    console.error('Location API error:', error);
     res.json({ 
       city: '台北',
       country: 'TW',
       lat: 25.0330,
       lon: 121.5654
     });
-  } catch (error) {
-    console.error('Location API error:', error);
-    res.status(500).json({ error: '無法獲取位置資訊' });
   }
 });
 
