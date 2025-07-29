@@ -1273,9 +1273,9 @@ export default function RegisterPage() {
                   
 
                   <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : '1fr 1fr', 
-                    gap: window.innerWidth <= 768 ? '12px' : '12px 16px', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    gap: '12px', 
                     width: '100%', 
                     minWidth: 0 
                   }}>
