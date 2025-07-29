@@ -772,17 +772,18 @@ export default function RegisterPage() {
     setSlowNetwork(false);
     let slowTimer: any = setTimeout(() => setSlowNetwork(true), 1500);
     
-    if (!avatarFile) { setError(t.errorAvatar); return; }
-    if (!gender) { setError(t.errorGender); return; }
-    if (!validateEmail(email)) { setError(t.errorEmailFormat); return; }
-    if (!validatePassword(password)) { setError(t.errorPasswordFormat); return; }
-    if (!validateNickname(nickname)) { setError(t.errorNicknameFormat); return; }
-    if (!age) { setError(t.errorAgeFormat); return; }
-    if (!country) { setError(t.errorCountry); return; }
-    
-    // 發送確認郵件
-    setSendingEmail(true);
     try {
+      if (!avatarFile) { setError(t.errorAvatar); return; }
+      if (!gender) { setError(t.errorGender); return; }
+      if (!validateEmail(email)) { setError(t.errorEmailFormat); return; }
+      if (!validatePassword(password)) { setError(t.errorPasswordFormat); return; }
+      if (!validateNickname(nickname)) { setError(t.errorNicknameFormat); return; }
+      if (!age) { setError(t.errorAgeFormat); return; }
+      if (!country) { setError(t.errorCountry); return; }
+      
+      // 發送確認郵件
+      setSendingEmail(true);
+      
       const registrationData = {
         nickname,
         password,
@@ -824,6 +825,7 @@ export default function RegisterPage() {
         throw new Error(emailData.error || '生成驗證碼失敗');
       }
     } catch (err: any) {
+      console.error('註冊錯誤:', err);
       setError(err.message || '註冊失敗，請稍後再試');
       setSendingEmail(false);
       clearTimeout(slowTimer);
