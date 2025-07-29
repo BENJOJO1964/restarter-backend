@@ -37,6 +37,8 @@ router.post('/send-code', async (req, res) => {
   try {
     const { email, registrationData } = req.body;
     
+    console.log('發送驗證碼請求:', { email });
+    
     if (!email || !registrationData) {
       return res.status(400).json({ error: '請提供 email 和註冊資料' });
     }
@@ -46,11 +48,13 @@ router.post('/send-code', async (req, res) => {
       .find(([token, data]) => data.email === email);
     
     if (existingToken) {
+      console.log('刪除舊的驗證碼:', existingToken[0]);
       pendingRegistrations.delete(existingToken[0]);
     }
 
     // 生成 6 位數驗證碼
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log('生成新驗證碼:', verificationCode);
     
     // 設定過期時間（5分鐘）
     const expiresAt = Date.now() + (5 * 60 * 1000);
@@ -61,6 +65,8 @@ router.post('/send-code', async (req, res) => {
       registrationData,
       expiresAt
     });
+    
+    console.log('已儲存驗證碼，當前待確認數量:', pendingRegistrations.size);
 
     // 檢查 email 服務是否已設定
     const hasEmailConfig = (
@@ -137,6 +143,9 @@ router.post('/verify-code', async (req, res) => {
   try {
     const { email, code } = req.body;
     
+    console.log('驗證請求:', { email, code });
+    console.log('當前待確認註冊數量:', pendingRegistrations.size);
+    
     if (!email || !code) {
       return res.status(400).json({ error: '請提供 email 和驗證碼' });
     }
@@ -145,21 +154,26 @@ router.post('/verify-code', async (req, res) => {
     for (const [token, data] of pendingRegistrations.entries()) {
       if (Date.now() > data.expiresAt) {
         pendingRegistrations.delete(token);
+        console.log('清理過期驗證碼:', token);
       }
     }
 
     const pendingData = pendingRegistrations.get(code);
+    console.log('找到的待確認資料:', pendingData);
     
     if (!pendingData) {
+      console.log('驗證碼不存在，當前所有驗證碼:', Array.from(pendingRegistrations.keys()));
       return res.status(400).json({ error: '驗證碼無效' });
     }
 
     if (pendingData.email !== email) {
+      console.log('email 不匹配:', { expected: pendingData.email, received: email });
       return res.status(400).json({ error: 'email 與驗證碼不匹配' });
     }
 
     if (Date.now() > pendingData.expiresAt) {
       pendingRegistrations.delete(code);
+      console.log('驗證碼已過期');
       return res.status(400).json({ error: '驗證碼已過期' });
     }
 
@@ -168,6 +182,7 @@ router.post('/verify-code', async (req, res) => {
     
     // 刪除待確認資料
     pendingRegistrations.delete(code);
+    console.log('驗證成功，已清理驗證碼');
     
     res.json({ 
       success: true, 
