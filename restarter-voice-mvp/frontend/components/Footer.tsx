@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const FOOTER_TEXT = {
@@ -75,8 +75,77 @@ const FEEDBACK_TEXT = {
 const Footer: React.FC = () => {
   const { lang } = useLanguage();
   const t = FOOTER_TEXT[lang] || FOOTER_TEXT['zh-TW'];
+  const [footerPosition, setFooterPosition] = useState(20);
+
+  useEffect(() => {
+    const adjustFooterPosition = () => {
+      // 獲取所有功能按鈕
+      const featureButtons = document.querySelectorAll('.feature-btn');
+      const chatButton = document.querySelector('.home-chat-btn');
+      
+      if (featureButtons.length > 0 || chatButton) {
+        // 計算所有按鈕的底部位置
+        let maxBottom = 0;
+        
+        // 檢查功能按鈕
+        featureButtons.forEach(button => {
+          const rect = button.getBoundingClientRect();
+          maxBottom = Math.max(maxBottom, rect.bottom);
+        });
+        
+        // 檢查聊天按鈕
+        if (chatButton) {
+          const rect = chatButton.getBoundingClientRect();
+          maxBottom = Math.max(maxBottom, rect.bottom);
+        }
+        
+        // 計算視窗高度
+        const windowHeight = window.innerHeight;
+        
+        // 計算需要的額外空間（確保footer不被遮住）
+        const requiredSpace = 180; // footer高度 + 緩衝空間
+        const availableSpace = windowHeight - maxBottom;
+        
+        // 如果空間不足，調整footer位置
+        if (availableSpace < requiredSpace) {
+          const additionalSpace = requiredSpace - availableSpace;
+          setFooterPosition(20 + additionalSpace);
+        } else {
+          setFooterPosition(20);
+        }
+      }
+    };
+
+    // 初始調整
+    adjustFooterPosition();
+    
+    // 監聽視窗大小變化
+    window.addEventListener('resize', adjustFooterPosition);
+    
+    // 監聽語言變化
+    const handleLanguageChange = () => {
+      setTimeout(adjustFooterPosition, 200); // 延遲執行，確保DOM已更新
+    };
+    
+    // 監聽DOM變化
+    const observer = new MutationObserver(() => {
+      setTimeout(adjustFooterPosition, 100);
+    });
+    observer.observe(document.body, { 
+      childList: true, 
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+    
+    return () => {
+      window.removeEventListener('resize', adjustFooterPosition);
+      observer.disconnect();
+    };
+  }, [lang]);
+
   return (
-        <footer
+    <footer
       style={{
         width: '100%',
         textAlign: 'center',
@@ -87,6 +156,10 @@ const Footer: React.FC = () => {
         background: 'rgba(255,255,255,0.92)',
         borderTop: '1px solid #eee',
         boxShadow: '0 -2px 8px #0001',
+        position: 'relative',
+        top: `${footerPosition}px`,
+        zIndex: 10,
+        transition: 'top 0.3s ease',
       }}
     >
       <div
@@ -130,6 +203,7 @@ const Footer: React.FC = () => {
           footer {
             padding: 8px 16px 40px 16px !important;
             marginTop: 0 !important;
+            top: 0 !important;
           }
           footer > div {
             gap: 12px !important;
