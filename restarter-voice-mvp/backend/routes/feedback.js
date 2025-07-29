@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
 
     // 2. 發送 email 通知給管理員
     if (process.env.ADMIN_EMAIL) {
-      const transporter = nodemailer.createTransporter({
+      const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: process.env.SMTP_USER,

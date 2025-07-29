@@ -36,6 +36,7 @@ import MyLinks from './pages/MyLinks';
 import About from './pages/About';
 import Feedback from './pages/Feedback';
 import AdminFeedback from './pages/AdminFeedback';
+
 import CompleteProfile from './pages/CompleteProfile';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import DataDeletion from './pages/DataDeletion';
@@ -124,7 +125,7 @@ function App() {
                   <Route path="/splash" element={<SplashScreen />} />
                   <Route path="/terms" element={<TermsPage />} />
                   <Route path="/" element={<SplashScreen />} />
-                  <Route path="/home" element={<Home />} />
+                  {user && <Route path="/home" element={<Home />} />}
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/confirm-registration" element={<ConfirmRegistration />} />
                   {user && <Route path="/wall" element={<RestartWall />} />}
@@ -150,6 +151,7 @@ function App() {
                   <Route path="/about" element={<About />} />
                   <Route path="/feedback" element={<Feedback />} />
                   <Route path="/admin/feedback" element={<AdminFeedback />} />
+
                   <Route path="/CompleteProfile" element={<CompleteProfile />} />
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   <Route path="/data-deletion" element={<DataDeletion />} />

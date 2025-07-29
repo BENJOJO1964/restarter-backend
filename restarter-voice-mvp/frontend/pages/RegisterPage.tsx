@@ -713,6 +713,51 @@ export default function RegisterPage() {
   const [slowNetwork, setSlowNetwork] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [emailSent, setEmailSent] = useState(false);
+
+
+  const handleEmailVerification = async () => {
+    if (!verificationCode) {
+      setError('請輸入驗證碼');
+      return;
+    }
+    
+    try {
+      const registrationData = {
+        nickname,
+        password,
+        gender,
+        country,
+        region,
+        age,
+        interest,
+        eventType,
+        improvement
+      };
+
+      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/email-verification/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email, 
+          code: verificationCode 
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // 驗證碼正確，直接完成註冊
+        await completeRegistration();
+      } else {
+        setError(data.error || '驗證失敗');
+      }
+    } catch (err: any) {
+      setError(err.message || '驗證失敗，請稍後再試');
+    }
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -743,20 +788,27 @@ export default function RegisterPage() {
         improvement
       };
 
-      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/email-verification/send-confirmation', {
+      // 發送 email 驗證碼
+      console.log('正在發送 email 驗證碼到:', email);
+      const emailResponse = await fetch('https://restarter-backend-6e9s.onrender.com/api/email-verification/send-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, registrationData })
       });
       
-      const data = await response.json();
+      console.log('Email API 回應狀態:', emailResponse.status);
+      const emailData = await emailResponse.json();
+      console.log('Email API 回應資料:', emailData);
       
-              if (data.success) {
-          // 直接完成註冊
-          await completeRegistration();
-        } else {
-          throw new Error(data.error || '註冊失敗');
-        }
+      if (emailData.success) {
+        setEmailSent(true);
+        setShowEmailVerification(true);
+        setSendingEmail(false);
+        clearTimeout(slowTimer);
+        setSlowNetwork(false);
+      } else {
+        throw new Error(emailData.error || '生成驗證碼失敗');
+      }
     } catch (err: any) {
       setError(err.message || '註冊失敗，請稍後再試');
       setSendingEmail(false);
@@ -903,14 +955,7 @@ export default function RegisterPage() {
     }
   };
 
-  const handleEmailRegister = async () => {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert('Email 註冊成功！');
-    } catch (error) {
-      alert('Email 註冊失敗：' + (error as any).message);
-    }
-  };
+  // 移除舊的 handleEmailRegister 函數，現在使用 handleRegister 進行 email 驗證
 
   async function handleNicknameBlur() {
     const nickname = nicknameInputRef.current?.value?.trim();
@@ -1176,6 +1221,57 @@ export default function RegisterPage() {
                     fontWeight: 800 
                   }}>{t.title}</h2>
                   {error && <p style={{ color: 'red', textAlign: 'center', marginBottom: '1rem' }}>{error}</p>}
+                  {showEmailVerification && (
+                    <div style={{ 
+                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', 
+                      color: 'white', 
+                      padding: '16px', 
+                      borderRadius: '12px', 
+                      marginBottom: '1rem',
+                      textAlign: 'center',
+                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                    }}>
+                      <div style={{ fontSize: '20px', marginBottom: '8px' }}>📧</div>
+                      <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>請輸入驗證碼</div>
+                      <div style={{ fontSize: '14px', marginBottom: '12px' }}>
+                        驗證碼已發送到 {email}
+                      </div>
+                      <input
+                        type="text"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e.target.value)}
+                        placeholder="請輸入 6 位數驗證碼"
+                        style={{
+                          width: '150px',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          fontSize: '16px',
+                          textAlign: 'center',
+                          marginRight: '8px'
+                        }}
+                        maxLength={6}
+                      />
+                      <button
+                        onClick={handleEmailVerification}
+                        disabled={!verificationCode || verificationCode.length !== 6}
+                        style={{
+                          background: verificationCode && verificationCode.length === 6 ? '#10b981' : '#6b7280',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          cursor: verificationCode && verificationCode.length === 6 ? 'pointer' : 'not-allowed'
+                        }}
+                      >
+                        驗證並註冊
+                      </button>
+                    </div>
+                  )}
+                  
+
                   <div style={{ 
                     display: 'grid', 
                     gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : '1fr 1fr', 

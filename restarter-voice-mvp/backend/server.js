@@ -123,6 +123,7 @@ app.get('/', (req, res) => {
       '/api/tts',
       '/api/gpt', 
       '/api/whisper',
+      '/api/email-verification',
       '/api/quotes',
       '/api/coaching',
       '/api/scenarios',
@@ -134,7 +135,8 @@ app.get('/', (req, res) => {
       '/api/mood',
       '/api/feedback',
       '/api/subscription',
-      '/api/weather'
+      '/api/weather',
+      '/api/social-integration-assessment'
     ]
   });
 });
