@@ -1028,9 +1028,14 @@ export default function SocialIntegration() {
           fontSize: '24px',
           fontWeight: '700',
           margin: 0,
-          textAlign: 'center'
+          textAlign: 'center',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 1000
         }}>
-          {t.title}
+          📊 {t.title}
         </h1>
         
 

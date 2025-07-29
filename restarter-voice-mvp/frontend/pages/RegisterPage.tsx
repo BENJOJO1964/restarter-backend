@@ -1180,7 +1180,9 @@ export default function RegisterPage() {
                   fontWeight: 'bold',
                   color: '#667eea',
                   transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  minWidth: 'auto',
+                  width: 'auto'
                 }} />
               </div>
             </>
