@@ -1267,6 +1267,7 @@ export default function RegisterPage() {
                         maxLength={6}
                       />
                       <button
+                        type="button"
                         onClick={handleEmailVerification}
                         disabled={!verificationCode || verificationCode.length !== 6}
                         style={{
