@@ -1144,7 +1144,7 @@ export default function RegisterPage() {
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                ← {lang === 'zh-TW' ? '返回' : 
+                {lang === 'zh-TW' ? '返回' : 
                     lang === 'zh-CN' ? '返回' : 
                     lang === 'en' ? 'Back' : 
                     lang === 'ja' ? '戻る' : 
@@ -1170,8 +1170,18 @@ export default function RegisterPage() {
               </div>
               
               {/* 桌面版：語言選擇器在右上角 */}
-              <div style={{ position: 'fixed', top: 24, right: 36, zIndex: 100 }}>
-                <LanguageSelector />
+              <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 100 }}>
+                <LanguageSelector style={{ 
+                  background: 'rgba(255,255,255,0.9)',
+                  border: 'none',
+                  borderRadius: '25px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  color: '#667eea',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }} />
               </div>
             </>
           )}

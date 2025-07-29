@@ -1033,9 +1033,7 @@ export default function SocialIntegration() {
           {t.title}
         </h1>
         
-        <div style={{ zIndex: 10001 }}>
-          <LanguageSelector style={{ minWidth: 70, maxWidth: 90, height: 44 }} />
-        </div>
+
       </div>
 
       {/* 主要內容 */}
