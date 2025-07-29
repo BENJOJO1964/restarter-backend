@@ -744,8 +744,8 @@ export default function Home() {
             <h1 style={{ fontSize: 24, fontWeight: 900, color: '#fff', marginBottom: 12, textShadow: '0 2px 8px #232946' }}>
               <span style={{ color: '#6B5BFF' }}>Restarter™</span> Global Platform
             </h1>
-            <div style={{ marginBottom: 20 }}>
-              <span style={{ color: '#232946', fontWeight: 500, fontSize: 14, lineHeight: 1.6 }}>
+            <div style={{ marginBottom: 10 }}>
+              <span style={{ color: '#232946', fontWeight: 500, fontSize: 14, lineHeight: 1.4, whiteSpace: 'pre-line' }}>
                 {lang === 'zh-TW'
                   ? 'Restarter™ 一個重啟人生的平台，這裡沒有標籤，只有理解。\n從「社會融入評估」開始，AI 將陪你走進十個關卡：情緒解鎖、心聲釋放、挑戰任、交友連結……每一站都為了幫助你找回信任與方向。\n情緒來了，也不需要壓抑——專屬的情緒發洩遊戲區讓你用不傷人的方式盡情釋放壓力。\n你不是被定型的人，而是有勇氣重新選擇的人。\n在這裡，你可以放心說出自己的故事與情緒，找到解方，為自己活出下一章。'
                   : lang === 'zh-CN'
@@ -1000,8 +1000,8 @@ export default function Home() {
               <h1 className="main-title" style={{ position: 'relative', left: '0px', fontSize: 36, fontWeight: 900, color: '#fff', marginBottom: 18, textShadow: '0 2px 12px #232946, 0 4px 24px #0008' }}>
                 <span style={{ color: '#6B5BFF' }}>Restarter™</span> Global Platform
               </h1>
-              <div style={{ width: '100%', textAlign: 'center', margin: '0 auto', marginBottom: 24 }}>
-                <span style={{ color: '#232946', fontWeight: 500, fontSize: 16, lineHeight: 1.7, letterSpacing: 0.5 }}>
+              <div style={{ width: '100%', textAlign: 'center', margin: '0 auto', marginBottom: 16 }}>
+                <span style={{ color: '#232946', fontWeight: 500, fontSize: 16, lineHeight: 1.5, letterSpacing: 0.5, whiteSpace: 'pre-line' }}>
                   {lang === 'zh-TW'
                     ? 'Restarter™ 一個重啟人生的平台，這裡沒有標籤，只有理解。\n從「社會融入評估」開始，AI 將陪你走進十個關卡：情緒解鎖、心聲釋放、挑戰任、交友連結……每一站都為了幫助你找回信任與方向。\n情緒來了，也不需要壓抑——專屬的情緒發洩遊戲區讓你用不傷人的方式盡情釋放壓力。\n你不是被定型的人，而是有勇氣重新選擇的人。\n在這裡，你可以放心說出自己的故事與情緒，找到解方，為自己活出下一章。'
                     : lang === 'zh-CN'
