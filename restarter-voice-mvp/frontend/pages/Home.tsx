@@ -1306,7 +1306,7 @@ export default function Home() {
           alignItems: 'center',
           boxShadow: '0 -2px 8px #0001',
           position: 'relative',
-          top: '-40px',
+          top: '20px',
         }}>
           <div style={{ width: '100%', maxWidth: 700, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             {/* 左側：我們是誰 */}
