@@ -770,7 +770,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
     setSlowNetwork(false);
-    let slowTimer: any = setTimeout(() => setSlowNetwork(true), 10000);
+    let slowTimer: any = setTimeout(() => setSlowNetwork(true), 2500);
     
     if (!avatarFile) { setError(t.errorAvatar); return; }
     if (!gender) { setError(t.errorGender); return; }
@@ -833,7 +833,7 @@ export default function RegisterPage() {
 
   const completeRegistration = async () => {
     setLoading(true);
-    let slowTimer: any = setTimeout(() => setSlowNetwork(true), 10000);
+    let slowTimer: any = setTimeout(() => setSlowNetwork(true), 2500);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       // 先設 displayName
@@ -917,7 +917,7 @@ export default function RegisterPage() {
     try {
       setLoading(true);
       setSlowNetwork(false);
-      let slowTimer: any = setTimeout(() => setSlowNetwork(true), 10000);
+      let slowTimer: any = setTimeout(() => setSlowNetwork(true), 2500);
       const result = await signInWithPopup(auth, provider);
       clearTimeout(slowTimer);
       setSlowNetwork(false);
