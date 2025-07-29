@@ -859,7 +859,7 @@ export default function RegisterPage() {
           new Promise<void>((_, reject) => setTimeout(() => {
             uploadError = new Error('頭像上傳逾時，請檢查網路或稍後再試');
             reject(uploadError);
-          }, 5000))
+          }, 10000))
         ]).catch((err) => { throw uploadError || err; });
         // 新增：同步更新 Firebase Auth 的 photoURL
         await updateProfile(userCredential.user, { photoURL: avatarDownloadUrl });
