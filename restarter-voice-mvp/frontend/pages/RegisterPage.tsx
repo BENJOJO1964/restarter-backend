@@ -1306,7 +1306,34 @@ export default function RegisterPage() {
                               borderRadius: '6px',
                               fontSize: '14px',
                               fontWeight: 'bold',
-                              cursor: verificationCode && verificationCode.length === 6 ? 'pointer' : 'not-allowed'
+                              cursor: verificationCode && verificationCode.length === 6 ? 'pointer' : 'not-allowed',
+                              transition: 'all 0.2s ease',
+                              transform: verificationCode && verificationCode.length === 6 ? 'scale(1)' : 'scale(1)',
+                              boxShadow: verificationCode && verificationCode.length === 6 ? '0 2px 8px rgba(16, 185, 129, 0.3)' : 'none'
+                            }}
+                            onMouseEnter={(e) => {
+                              if (verificationCode && verificationCode.length === 6) {
+                                e.currentTarget.style.background = '#059669';
+                                e.currentTarget.style.transform = 'scale(1.05)';
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (verificationCode && verificationCode.length === 6) {
+                                e.currentTarget.style.background = '#10b981';
+                                e.currentTarget.style.transform = 'scale(1)';
+                                e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
+                              }
+                            }}
+                            onMouseDown={(e) => {
+                              if (verificationCode && verificationCode.length === 6) {
+                                e.currentTarget.style.transform = 'scale(0.95)';
+                              }
+                            }}
+                            onMouseUp={(e) => {
+                              if (verificationCode && verificationCode.length === 6) {
+                                e.currentTarget.style.transform = 'scale(1.05)';
+                              }
                             }}
                           >
                             驗證並註冊
@@ -1324,7 +1351,34 @@ export default function RegisterPage() {
                             borderRadius: '6px',
                             fontSize: '12px',
                             fontWeight: 'bold',
-                            cursor: resendingCode ? 'not-allowed' : 'pointer'
+                            cursor: resendingCode ? 'not-allowed' : 'pointer',
+                            transition: 'all 0.2s ease',
+                            transform: resendingCode ? 'scale(1)' : 'scale(1)',
+                            boxShadow: resendingCode ? 'none' : '0 2px 8px rgba(59, 130, 246, 0.3)'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!resendingCode) {
+                              e.currentTarget.style.background = '#2563eb';
+                              e.currentTarget.style.transform = 'scale(1.05)';
+                              e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!resendingCode) {
+                              e.currentTarget.style.background = '#3b82f6';
+                              e.currentTarget.style.transform = 'scale(1)';
+                              e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+                            }
+                          }}
+                          onMouseDown={(e) => {
+                            if (!resendingCode) {
+                              e.currentTarget.style.transform = 'scale(0.95)';
+                            }
+                          }}
+                          onMouseUp={(e) => {
+                            if (!resendingCode) {
+                              e.currentTarget.style.transform = 'scale(1.05)';
+                            }
                           }}
                         >
                           {resendingCode ? '重發中...' : '重發驗證碼'}
