@@ -807,8 +807,12 @@ export default function RegisterPage() {
         setSendingEmail(false);
         clearTimeout(slowTimer);
         setSlowNetwork(false);
-        // 顯示提示訊息
-        setError('請輸入最新收到的驗證碼（舊的驗證碼已失效）');
+        // 第一次發送時顯示簡單提示，重新發送時顯示詳細提示
+        if (showEmailVerification) {
+          setError('請輸入最新收到的驗證碼（舊的驗證碼已失效）');
+        } else {
+          setError('請輸入收到的驗證碼');
+        }
       } else {
         throw new Error(emailData.error || '生成驗證碼失敗');
       }
