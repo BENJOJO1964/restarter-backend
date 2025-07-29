@@ -121,7 +121,11 @@ router.post('/send-code', async (req, res) => {
       `
     };
 
+    console.log('正在發送 email 到:', email);
+    console.log('驗證碼:', verificationCode);
+    
     await transporter.sendMail(mailOptions);
+    console.log('Email 發送成功');
 
     res.json({ 
       success: true, 
