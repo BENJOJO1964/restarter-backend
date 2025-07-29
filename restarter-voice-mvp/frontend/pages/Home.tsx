@@ -746,19 +746,7 @@ export default function Home() {
             </h1>
             <div style={{ marginBottom: 10 }}>
               <span style={{ color: '#232946', fontWeight: 500, fontSize: 14, lineHeight: 1.4, whiteSpace: 'pre-line' }}>
-                {lang === 'zh-TW'
-                  ? 'Restarter™ 一個重啟人生的平台，這裡沒有標籤，只有理解。\n從「社會融入評估」開始，AI 將陪你走進十個關卡：情緒解鎖、心聲釋放、挑戰任務、交友連結……每一站都為了幫助你找回信任與方向。\n情緒來了不需要壓抑——專屬的情緒發洩遊戲區讓你不傷人更能盡情釋放壓力。\n你不是被定型的人，而是有勇氣重新選擇的人。\n在這裡，你可以放心說出自己的故事與情緒，找到解方，為自己活出下一章。'
-                  : lang === 'zh-CN'
-                  ? 'Restarter™ 重启人生的平台，在这里你绝不会被标签，只被理解与支持。让AI陪你对话、练习挑战、交朋友，找到信任与改变的力量，你可以放心说出自己的故事与心情，释放不满有解方，天下没有解决不了的难题。'
-                  : lang === 'en'
-                  ? 'Restarter™ is a platform for restarting your life. Here, you will never be labeled, only understood and supported.'
-                  : lang === 'ja'
-                  ? 'Restarter™ は人生を再起動するためのプラットフォームです。ここでは決してレッテルを貼られることはなく、理解とサポートだけが得られます。'
-                  : lang === 'ko'
-                  ? 'Restarter™는 인생을 재시작하는 플랫폼입니다. 이곳에서는 결코 낙인찍히지 않고, 오직 이해와 지지를 받습니다.'
-                  : lang === 'th'
-                  ? 'Restarter™ คือแพลตฟอร์มสำหรับเริ่มต้นชีวิตใหม่ ที่นี่คุณจะไม่ถูกตัดสิน มีแต่ความเข้าใจและการสนับสนุน'
-                  : 'Restarter™ suggestum ad vitam iterum incipiendam est. Hic numquam notaberis, sed tantum intelligetur et sustineberis.'}
+                {TEXT[lang].desc}
               </span>
             </div>
           </div>
@@ -1002,19 +990,7 @@ export default function Home() {
               </h1>
               <div style={{ width: '100%', textAlign: 'center', margin: '0 auto', marginBottom: 16 }}>
                 <span style={{ color: '#232946', fontWeight: 500, fontSize: 16, lineHeight: 1.5, letterSpacing: 0.5, whiteSpace: 'pre-line' }}>
-                                      {lang === 'zh-TW'
-                      ? 'Restarter™ 一個重啟人生的平台，這裡沒有標籤，只有理解。\n從「社會融入評估」開始，AI 將陪你走進十個關卡：情緒解鎖、心聲釋放、挑戰任務、交友連結……每一站都為了幫助你找回信任與方向。\n情緒來了不需要壓抑——專屬的情緒發洩遊戲區讓你不傷人更能盡情釋放壓力。\n你不是被定型的人，而是有勇氣重新選擇的人。\n在這裡，你可以放心說出自己的故事與情緒，找到解方，為自己活出下一章。'
-                    : lang === 'zh-CN'
-                    ? 'Restarter™ 重启人生的平台，在这里你绝不会被标签，只被理解与支持。让AI陪你对话、练习挑战、交朋友，找到信任与改变的力量，你可以放心说出自己的故事与心情，释放不满有解方，天下没有解决不了的难题。'
-                    : lang === 'en'
-                    ? 'Restarter™ is a platform for restarting your life. Here, you will never be labeled, only understood and supported. Let AI accompany you in conversations, practice challenges, make friends, and find the power of trust and change. You can safely share your stories and feelings—here, you are understood and never alone.'
-                    : lang === 'ja'
-                    ? 'Restarter™ は人生を再起動するためのプラットフォームです。ここでは決してレッテルを貼られることはなく、理解とサポートだけが得られます。AIと一緒に会話したり、チャレンジを練習したり、友達を作ったりして、信頼と変化の力を見つけましょう。自分のストーリーや気持ちを安心して話せる場所、それがここです。'
-                    : lang === 'ko'
-                    ? 'Restarter™는 인생을 재시작하는 플랫폼입니다. 이곳에서는 결코 낙인찍히지 않고, 오직 이해와 지지를 받습니다. AI와 대화하고, 도전을 연습하고, 친구를 사귀며 신뢰와 변화의 힘을 찾아보세요. 자신의 이야기와 감정을 안심하고 말할 수 있는 곳, 바로 여기입니다.'
-                    : lang === 'th'
-                    ? 'Restarter™ คือแพลตฟอร์มสำหรับเริ่มต้นชีวิตใหม่ ที่นี่คุณจะไม่ถูกตัดสิน มีแต่ความเข้าใจและการสนับสนุน ให้ AI อยู่เป็นเพื่อนคุย ฝึกฝนความท้าทาย หาเพื่อนใหม่ และค้นพบพลังแห่งความไว้วางใจและการเปลี่ยนแปลง คุณสามารถพูดเรื่องราวและความรู้สึกของตัวเองได้อย่างสบายใจ ที่นี่มีแต่ความเข้าใจและเพื่อนร่วมทาง'
-                    : 'Restarter™ suggestum ad vitam iterum incipiendam est. Hic numquam notaberis, sed tantum intelligetur et sustineberis. Sine AI tecum colloquere, provocationes exerce, amicos invenias, fidem et mutationis vim reperias. Historias et sensus tuos tuto narrare potes, hic est intelligentia et comitatus.'}
+                                                          {TEXT[lang].desc}
                 </span>
               </div>
               
