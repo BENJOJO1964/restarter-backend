@@ -16,7 +16,7 @@ import type { LanguageCode } from '../contexts/LanguageContext';
 const TEXT: Record<string, { slogan: string[]; desc: string; wall: string; friend: string; voice: string; ai: string; tts: string; chat: string; emotion: string; welcomeRegister: string; }> = {
   'zh-TW': {
     slogan: ['找回信任的起點，重新出發不孤單！'],
-    desc: 'Restarter™ 一個重啟人生的平台，這裡沒有標籤，只有理解。\n從「社會融入評估」開始，AI 將陪你走進十個關卡：情緒解鎖、心聲釋放、挑戰任、交友連結……每一站都為了幫助你找回信任與方向。\n情緒來了，也不需要壓抑——專屬的情緒發洩遊戲區讓你用不傷人的方式盡情釋放壓力。\n你不是被定型的人，而是有勇氣重新選擇的人。\n在這裡，你可以放心說出自己的故事與情緒，找到解方，為自己活出下一章。',
+    desc: 'Restarter™ 一個重啟人生的平台，這裡沒有標籤，只有理解。\n從「社會融入評估」開始，AI 將陪你走進十個關卡：情緒解鎖、心聲釋放、挑戰任務、交友連結……每一站都為了幫助你找回信任與方向。\n情緒來了不需要壓抑——專屬的情緒發洩遊戲區讓你不傷人更能盡情釋放壓力。\n你不是被定型的人，而是有勇氣重新選擇的人。\n在這裡，你可以放心說出自己的故事與情緒，找到解方，為自己活出下一章。',
     wall: '你可以放心說出自己的故事與心情，這裡有理解與同行。',
     friend: '交友區',
     voice: '即時語音輸入',
