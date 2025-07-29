@@ -28,7 +28,7 @@ const TEXT: Record<string, { slogan: string[]; desc: string; wall: string; frien
   },
   'zh-CN': {
     slogan: ['找回信任的起点，重新出发不孤单！'],
-    desc: 'Restarter™ 重启人生的平台，在这里你绝不会被标签，只被理解与支持。让AI陪你对话、练习挑战、交朋友，找到信任与改变的力量，你可以放心说出自己的故事与心情，这里有理解与同行。',
+    desc: 'Restarter™ 一个重启人生的平台，这里没有标签，只有理解。\n从「社会融入评估」开始，AI 将陪你走进十个关卡：情绪解锁、心声释放、挑战任务、交友连结……每一站都为了帮助你找回信任与方向。\n情绪来了不需要压抑——专属的情绪发泄游戏区让你不伤人更能尽情释放压力。\n你不是被定型的人，而是有勇气重新选择的人。\n在这里，你可以放心说出自己的故事与情绪，找到解方，为自己活出下一章。',
     wall: '你可以放心说出自己的故事与心情，这里有理解与同行。',
     friend: '交友区',
     voice: '即时语音输入',
@@ -40,7 +40,7 @@ const TEXT: Record<string, { slogan: string[]; desc: string; wall: string; frien
   },
   'en': {
     slogan: ['Regain trust and start anew, you are never alone!'],
-    desc: 'Restarter™ is a platform for restarting your life. Here, you will never be labeled, only understood and supported. Let AI accompany you in conversations, practice challenges, make friends, and find the power of trust and change. You can safely share your stories and feelings—here, you are understood and never alone.',
+    desc: 'Restarter™ is a platform for restarting your life. Here, there are no labels, only understanding.\nStarting with "Social Integration Assessment", AI will accompany you through ten levels: emotional unlocking, voice release, challenging tasks, friend connections... every stop is to help you find trust and direction.\nWhen emotions come, there is no need to suppress them—a dedicated emotional release game zone allows you to fully release stress without harming others.\nYou are not a fixed person, but someone with the courage to choose again.\nHere, you can confidently tell your stories and emotions, find solutions, and live out your next chapter.',
     wall: 'You can safely share your story and feelings here, where you will find understanding and companionship.',
     friend: 'Friend Match',
     voice: 'Voice Input',
@@ -52,7 +52,7 @@ const TEXT: Record<string, { slogan: string[]; desc: string; wall: string; frien
   },
   'ja': {
     slogan: ['信頼を取り戻し、新たな一歩を踏み出そう！'],
-    desc: 'Restarter™は人生を再出発するためのプラットフォームです。ここでは決してラベルを貼られることはなく、理解とサポートだけがあります。AIと一緒に対話し、挑戦を練習し、友達を作り、信頼と変化の力を見つけましょう。自分のストーリーや気持ちを安心して話せる場所、それがここです。',
+    desc: 'Restarter™は人生を再出発するためのプラットフォームです。ここにはラベルはなく、理解だけがあります。\n「社会的統合評価」から始まり、AIがあなたと一緒に10のレベルを進みます：感情の解放、心の声の解放、挑戦的なタスク、友達とのつながり... 各ステップはあなたが信頼と方向性を見つけるのを助けるためです。\n感情が湧いてきた時、それを抑える必要はありません——専用の感情解放ゲームゾーンで、他の人を傷つけることなくストレスを完全に解放できます。\nあなたは固定された人ではなく、再び選択する勇気を持つ人です。\nここでは、自分の物語と感情を安心して話し、解決策を見つけ、次の章を生きることができます。',
     wall: 'ここでは安心して自分のストーリーや気持ちを話せます。理解と共感がここにあります。',
     friend: '友達マッチ',
     voice: '音声入力',
@@ -64,7 +64,7 @@ const TEXT: Record<string, { slogan: string[]; desc: string; wall: string; frien
   },
   'ko': {
     slogan: ['신뢰를 되찾고, 새롭게 시작하세요. 당신은 결코 혼자가 아닙니다!'],
-    desc: 'Restarter™는 인생을 재시작하는 플랫폼입니다. 이곳에서는 결코 낙인찍히지 않고, 오직 이해와 지지만이 있습니다. AI와 함께 대화하고, 도전을 연습하며, 친구를 사귀고, 신뢰와 변화의 힘을 찾아보세요. 자신의 이야기와 감정을 안심하고 말할 수 있는 곳, 바로 여기입니다.',
+    desc: 'Restarter™는 인생을 재시작하는 플랫폼입니다. 이곳에는 낙인이 없고, 오직 이해만이 있습니다.\n「사회적 통합 평가」부터 시작하여 AI가 당신과 함께 10개의 레벨을 진행합니다: 감정 해방, 마음의 소리 해방, 도전적인 임무, 친구 연결... 각 정류장은 당신이 신뢰와 방향을 찾는 것을 돕기 위한 것입니다.\n감정이 올 때 그것을 억누를 필요가 없습니다——전용 감정 해방 게임 존에서 다른 사람을 다치게 하지 않고 스트레스를 완전히 해방할 수 있습니다.\n당신은 고정된 사람이 아니라 다시 선택할 용기를 가진 사람입니다.\n여기서는 자신의 이야기와 감정을 안심하고 말하고, 해결책을 찾아 다음 장을 살아갈 수 있습니다.',
     wall: '여기서는 자신의 이야기와 감정을 안심하고 말할 수 있습니다. 이곳에는 이해와 동행이 있습니다.',
     friend: '친구 매칭',
     voice: '음성 입력',
@@ -76,7 +76,7 @@ const TEXT: Record<string, { slogan: string[]; desc: string; wall: string; frien
   },
   'th': {
     slogan: ['เริ่มต้นใหม่ด้วยความไว้วางใจ คุณไม่ได้อยู่คนเดียว!'],
-    desc: 'Restarter™ คือแพลตฟอร์มสำหรับเริ่มต้นชีวิตใหม่ ที่นี่คุณจะไม่ถูกตัดสิน มีแต่ความเข้าใจและการสนับสนุน ให้ AI อยู่เป็นเพื่อนคุย ฝึกฝนความท้าทาย หาเพื่อนใหม่ และค้นพบพลังแห่งความไว้วางใจและการเปลี่ยนแปลง คุณสามารถพูดเรื่องราวและความรู้สึกของตัวเองได้อย่างสบายใจ ที่นี่มีแต่ความเข้าใจและเพื่อนร่วมทาง',
+    desc: 'Restarter™ คือแพลตฟอร์มสำหรับเริ่มต้นชีวิตใหม่ ที่นี่ไม่มีป้ายกำกับ มีแต่ความเข้าใจ\nเริ่มต้นจาก「การประเมินการผสมผสานทางสังคม」AI จะอยู่เคียงข้างคุณผ่าน 10 ระดับ: การปลดล็อคอารมณ์ การปลดปล่อยเสียงในใจ งานท้าทาย การเชื่อมต่อเพื่อน... ทุกจุดหยุดเพื่อช่วยให้คุณค้นพบความไว้วางใจและทิศทาง\nเมื่ออารมณ์มา ไม่จำเป็นต้องกดดัน——โซนเกมปลดปล่อยอารมณ์เฉพาะช่วยให้คุณปลดปล่อยความเครียดได้อย่างเต็มที่โดยไม่ทำร้ายผู้อื่น\nคุณไม่ใช่คนที่ถูกกำหนดไว้ แต่เป็นคนที่มีความกล้าหาญที่จะเลือกใหม่\nที่นี่ คุณสามารถบอกเล่าเรื่องราวและอารมณ์ของตัวเองได้อย่างสบายใจ หาแนวทางแก้ไข และใช้ชีวิตบทถัดไป',
     wall: 'คุณสามารถพูดเรื่องราวและความรู้สึกของคุณได้อย่างสบายใจ ที่นี่มีความเข้าใจและเพื่อนร่วมทาง',
     friend: 'จับคู่เพื่อน',
     voice: 'ป้อนข้อมูลด้วยเสียง',
@@ -88,7 +88,7 @@ const TEXT: Record<string, { slogan: string[]; desc: string; wall: string; frien
   },
   'vi': {
     slogan: ['Tìm lại niềm tin, bắt đầu lại, bạn không bao giờ đơn độc!'],
-    desc: 'Restarter™ là nền tảng để làm lại cuộc đời. Ở đây bạn sẽ không bao giờ bị gán nhãn, chỉ có sự thấu hiểu và hỗ trợ. Hãy để AI đồng hành cùng bạn trò chuyện, luyện tập, kết bạn và tìm thấy sức mạnh của niềm tin và sự thay đổi. Bạn có thể yên tâm chia sẻ câu chuyện và cảm xúc của mình, ở đây luôn có sự thấu hiểu và đồng hành.',
+    desc: 'Restarter™ là nền tảng để làm lại cuộc đời. Ở đây không có nhãn mác, chỉ có sự thấu hiểu.\nBắt đầu từ「Đánh giá Hòa nhập Xã hội」, AI sẽ đồng hành cùng bạn qua 10 cấp độ: mở khóa cảm xúc, giải phóng tiếng nói nội tâm, nhiệm vụ thách thức, kết nối bạn bè... mỗi điểm dừng để giúp bạn tìm lại niềm tin và định hướng.\nKhi cảm xúc đến, không cần phải kìm nén——khu vực trò chơi giải phóng cảm xúc chuyên biệt cho phép bạn giải phóng căng thẳng hoàn toàn mà không làm tổn thương người khác.\nBạn không phải là người bị định hình, mà là người có dũng khí để lựa chọn lại.\nỞ đây, bạn có thể yên tâm chia sẻ câu chuyện và cảm xúc của mình, tìm ra giải pháp, và sống chương tiếp theo của cuộc đời.',
     wall: 'Bạn có thể yên tâm chia sẻ câu chuyện và cảm xúc của mình tại đây, nơi có sự thấu hiểu và đồng hành.',
     friend: 'Ghép bạn bè',
     voice: 'Nhập liệu bằng giọng nói',
@@ -100,7 +100,7 @@ const TEXT: Record<string, { slogan: string[]; desc: string; wall: string; frien
   },
   'ms': {
     slogan: ['Temui semula kepercayaan, mulakan semula, anda tidak pernah keseorangan!'],
-    desc: 'Restarter™ ialah platform untuk memulakan semula kehidupan. Di sini anda tidak akan pernah dilabel, hanya difahami dan disokong. Biarkan AI menemani anda berbual, berlatih, berkawan dan temui kekuatan kepercayaan dan perubahan. Anda boleh berkongsi kisah dan perasaan anda dengan tenang, di sini ada pemahaman dan teman seperjalanan.',
+    desc: 'Restarter™ ialah platform untuk memulakan semula kehidupan. Di sini tiada label, hanya pemahaman.\nBermula dari「Penilaian Integrasi Sosial」, AI akan menemani anda melalui 10 peringkat: membuka kunci emosi, melepaskan suara hati, tugas mencabar, sambungan rakan... setiap perhentian untuk membantu anda mencari kepercayaan dan arah tuju.\nApabila emosi datang, tidak perlu menekan——zon permainan pelepasan emosi khusus membolehkan anda melepaskan tekanan sepenuhnya tanpa mencederakan orang lain.\nAnda bukan orang yang ditetapkan, tetapi seseorang yang mempunyai keberanian untuk memilih semula.\nDi sini, anda boleh berkongsi kisah dan emosi anda dengan tenang, mencari penyelesaian, dan hidup bab seterusnya.',
     wall: 'Anda boleh berkongsi kisah dan perasaan anda dengan tenang di sini, di mana ada pemahaman dan teman seperjalanan.',
     friend: 'Padanan Rakan',
     voice: 'Input Suara',
@@ -112,7 +112,7 @@ const TEXT: Record<string, { slogan: string[]; desc: string; wall: string; frien
   },
   'la': {
     slogan: ['Fidem recupera et iterum incipe, numquam solus es!'],
-    desc: 'Restarter™ est suggestum ad vitam iterum incipiendam. Hic numquam notaberis, sed tantum intelligetur et sustineberis. Sinite AI tecum colloqui, exercere, amicos facere, vim fiduciae et mutationis invenire.',
+    desc: 'Restarter™ est suggestum ad vitam iterum incipiendam. Hic nullae notae sunt, tantum intellectus.\nIncipiendo ab「Aestimatio Integrationis Socialis」, AI tecum per decem gradus ambulabit: solutio affectuum, emissio vocis cordis, negotia provocantia, nexus amicorum... omnis statio ad te adiuvandum fidem et directionem inveniendam.\nCum affectus veniunt, non necesse est eos supprimere——zona ludi emissionis affectuum dedicata te sinit tensionem plene emittere sine aliis laedendis.\nTu non es homo fixus, sed qui audaciam habet iterum eligendi.\nHic, tuto fabulas tuas et affectus narrare potes, solutiones invenire, et proximum caput vivere.',
     wall: 'Hic tuto fabulas tuas et sensus tuos narrare potes: hic intellectus et comitatus invenies.',
     friend: 'Par Amicus',
     voice: 'Vox Input',
