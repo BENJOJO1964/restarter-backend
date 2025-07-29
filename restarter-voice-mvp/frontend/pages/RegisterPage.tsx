@@ -719,6 +719,8 @@ export default function RegisterPage() {
 
 
   const handleEmailVerification = async () => {
+    console.log('按鈕被點擊！驗證碼:', verificationCode);
+    
     if (!verificationCode) {
       setError('請輸入驗證碼');
       return;
