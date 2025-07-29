@@ -770,7 +770,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
     setSlowNetwork(false);
-    let slowTimer: any = setTimeout(() => setSlowNetwork(true), 2500);
+    let slowTimer: any = setTimeout(() => setSlowNetwork(true), 1500);
     
     if (!avatarFile) { setError(t.errorAvatar); return; }
     if (!gender) { setError(t.errorGender); return; }
@@ -833,7 +833,7 @@ export default function RegisterPage() {
 
   const completeRegistration = async () => {
     setLoading(true);
-    let slowTimer: any = setTimeout(() => setSlowNetwork(true), 2500);
+    let slowTimer: any = setTimeout(() => setSlowNetwork(true), 1500);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       // 先設 displayName
@@ -857,7 +857,7 @@ export default function RegisterPage() {
           new Promise<void>((_, reject) => setTimeout(() => {
             uploadError = new Error('頭像上傳逾時，請檢查網路或稍後再試');
             reject(uploadError);
-          }, 5000))
+          }, 2500))
         ]).catch((err) => { throw uploadError || err; });
         // 新增：同步更新 Firebase Auth 的 photoURL
         await updateProfile(userCredential.user, { photoURL: avatarDownloadUrl });
@@ -917,7 +917,7 @@ export default function RegisterPage() {
     try {
       setLoading(true);
       setSlowNetwork(false);
-      let slowTimer: any = setTimeout(() => setSlowNetwork(true), 2500);
+      let slowTimer: any = setTimeout(() => setSlowNetwork(true), 1500);
       const result = await signInWithPopup(auth, provider);
       clearTimeout(slowTimer);
       setSlowNetwork(false);
