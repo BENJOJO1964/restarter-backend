@@ -22,7 +22,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     background: '#fff',
     cursor: 'pointer',
     transition: 'background 0.18s, color 0.18s, border 0.18s',
-    minWidth: 50,
+    minWidth: style.minWidth !== undefined ? style.minWidth : 50,
     ...style
   };
 
