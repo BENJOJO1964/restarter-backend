@@ -803,9 +803,12 @@ export default function RegisterPage() {
       if (emailData.success) {
         setEmailSent(true);
         setShowEmailVerification(true);
+        setVerificationCode(''); // 清空驗證碼輸入框
         setSendingEmail(false);
         clearTimeout(slowTimer);
         setSlowNetwork(false);
+        // 顯示提示訊息
+        setError('請輸入最新收到的驗證碼（舊的驗證碼已失效）');
       } else {
         throw new Error(emailData.error || '生成驗證碼失敗');
       }
