@@ -86,7 +86,7 @@ const scenariosRouter = require('./routes/scenarios');
 const mindGardenRouter = require('./routes/mind-garden');
 const missionAiRouter = require('./routes/mission-ai');
 const storyRouter = require('./routes/story');
-const checkUsernameRouter = require('./routes/check-username');
+
 const sendMessageRouter = require('./routes/send-message');
 const moodRouter = require('./routes/mood');
 const feedbackRouter = require('./routes/feedback');
@@ -106,7 +106,7 @@ app.use('/api/scenarios', scenariosRouter);
 app.use('/api/mind-garden', mindGardenRouter);
 app.use('/api/mission-ai', missionAiRouter);
 app.use('/api/story', storyRouter);
-app.use('/api/check-username', checkUsernameRouter);
+
 app.use('/api/send-message', sendMessageRouter);
 app.use('/api/mood', moodRouter);
 app.use('/api/feedback', feedbackRouter);
@@ -130,7 +130,7 @@ app.get('/', (req, res) => {
       '/api/mind-garden',
       '/api/mission-ai',
       '/api/story',
-      '/api/check-username',
+
       '/api/send-message',
       '/api/mood',
       '/api/feedback',

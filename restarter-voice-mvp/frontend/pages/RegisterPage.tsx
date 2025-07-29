@@ -979,25 +979,9 @@ export default function RegisterPage() {
       setTimeout(() => { nicknameInputRef.current?.focus(); }, 100);
       return;
     }
-    setNicknameCheck('checking');
-    setNicknameCheckMsg('檢查中...');
-    try {
-      const res = await fetch(`https://restarter-backend-6e9s.onrender.com/api/check-username?name=${encodeURIComponent(nickname)}`);
-      const data = await res.json();
-      if (data.exists) {
-        setNicknameCheck('exists');
-        setNicknameCheckMsg('❌你輸入名稱已有人使用，請重新輸入');
-        setTimeout(() => { nicknameInputRef.current?.focus(); }, 100);
-      } else {
-        setNicknameCheck('ok');
-        setNicknameCheckMsg('你的名稱非常好👍');
-        setTimeout(() => { ageInputRef.current?.focus(); }, 200);
-      }
-    } catch {
-      setNicknameCheck('ok');
-      setNicknameCheckMsg('無法即時檢查名稱是否重複，請直接送出註冊，若重複會有明確錯誤提示');
-      setTimeout(() => { nicknameInputRef.current?.focus(); }, 100);
-    }
+    setNicknameCheck('ok');
+    setNicknameCheckMsg('你的名稱非常好👍');
+    setTimeout(() => { ageInputRef.current?.focus(); }, 200);
   }
 
   const isRegisterPage = location.pathname === '/register';
