@@ -724,6 +724,9 @@ export default function RegisterPage() {
       return;
     }
     
+    console.log('前端發送驗證碼:', verificationCode);
+    console.log('前端發送 email:', email);
+    
     try {
       const registrationData = {
         nickname,
@@ -746,7 +749,9 @@ export default function RegisterPage() {
         })
       });
       
+      console.log('驗證 API 回應狀態:', response.status);
       const data = await response.json();
+      console.log('驗證 API 回應資料:', data);
       
       if (data.success) {
         // 驗證碼正確，直接完成註冊
