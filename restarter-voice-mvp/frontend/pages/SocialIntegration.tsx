@@ -1020,7 +1020,7 @@ export default function SocialIntegration() {
             boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
           }}
         >
-          ← {t.backToHome}
+          {t.backToHome}
         </button>
         
         <h1 style={{
@@ -1034,7 +1034,7 @@ export default function SocialIntegration() {
         </h1>
         
         <div style={{ zIndex: 10001 }}>
-          <LanguageSelector />
+          <LanguageSelector style={{ minWidth: 70, maxWidth: 90, height: 44 }} />
         </div>
       </div>
 

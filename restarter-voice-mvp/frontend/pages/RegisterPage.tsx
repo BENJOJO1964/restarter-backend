@@ -716,6 +716,7 @@ export default function RegisterPage() {
   const [showEmailVerification, setShowEmailVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [emailSent, setEmailSent] = useState(false);
+  const [resendingCode, setResendingCode] = useState(false);
 
 
   const handleEmailVerification = async () => {
@@ -763,6 +764,46 @@ export default function RegisterPage() {
       }
     } catch (err: any) {
       setError(err.message || '驗證失敗，請稍後再試');
+    }
+  };
+
+  const handleResendCode = async () => {
+    setResendingCode(true);
+    setError('');
+    
+    try {
+      const registrationData = {
+        nickname,
+        password,
+        gender,
+        country,
+        region,
+        age,
+        interest,
+        eventType,
+        improvement
+      };
+
+      console.log('重發驗證碼到:', email);
+      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/email-verification/send-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, registrationData })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setVerificationCode(''); // 清空舊驗證碼
+        setError('已重新發送驗證碼，請輸入新的驗證碼');
+      } else {
+        setError(data.error || '重發驗證碼失敗');
+      }
+    } catch (err: any) {
+      console.error('重發驗證碼錯誤:', err);
+      setError('重發驗證碼失敗，請稍後再試');
+    } finally {
+      setResendingCode(false);
     }
   };
 
@@ -1236,39 +1277,59 @@ export default function RegisterPage() {
                       <div style={{ fontSize: '14px', marginBottom: '12px' }}>
                         驗證碼已發送到 {email}
                       </div>
-                      <input
-                        type="text"
-                        value={verificationCode}
-                        onChange={(e) => setVerificationCode(e.target.value)}
-                        placeholder="請輸入 6 位數驗證碼"
-                        style={{
-                          width: '150px',
-                          padding: '8px 12px',
-                          borderRadius: '6px',
-                          border: 'none',
-                          fontSize: '16px',
-                          textAlign: 'center',
-                          marginRight: '8px'
-                        }}
-                        maxLength={6}
-                      />
-                      <button
-                        type="button"
-                        onClick={handleEmailVerification}
-                        disabled={!verificationCode || verificationCode.length !== 6}
-                        style={{
-                          background: verificationCode && verificationCode.length === 6 ? '#10b981' : '#6b7280',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: 'bold',
-                          cursor: verificationCode && verificationCode.length === 6 ? 'pointer' : 'not-allowed'
-                        }}
-                      >
-                        驗證並註冊
-                      </button>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <input
+                            type="text"
+                            value={verificationCode}
+                            onChange={(e) => setVerificationCode(e.target.value)}
+                            placeholder="請輸入 6 位數驗證碼"
+                            style={{
+                              width: '150px',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              border: 'none',
+                              fontSize: '16px',
+                              textAlign: 'center'
+                            }}
+                            maxLength={6}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleEmailVerification}
+                            disabled={!verificationCode || verificationCode.length !== 6}
+                            style={{
+                              background: verificationCode && verificationCode.length === 6 ? '#10b981' : '#6b7280',
+                              color: 'white',
+                              border: 'none',
+                              padding: '8px 16px',
+                              borderRadius: '6px',
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                              cursor: verificationCode && verificationCode.length === 6 ? 'pointer' : 'not-allowed'
+                            }}
+                          >
+                            驗證並註冊
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleResendCode}
+                          disabled={resendingCode}
+                          style={{
+                            background: resendingCode ? '#6b7280' : '#3b82f6',
+                            color: 'white',
+                            border: 'none',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            cursor: resendingCode ? 'not-allowed' : 'pointer'
+                          }}
+                        >
+                          {resendingCode ? '重發中...' : '重發驗證碼'}
+                        </button>
+                      </div>
                     </div>
                   )}
                   
