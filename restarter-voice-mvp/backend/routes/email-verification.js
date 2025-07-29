@@ -141,6 +141,13 @@ router.post('/verify-code', async (req, res) => {
       return res.status(400).json({ error: '請提供 email 和驗證碼' });
     }
 
+    // 清理過期的驗證碼
+    for (const [token, data] of pendingRegistrations.entries()) {
+      if (Date.now() > data.expiresAt) {
+        pendingRegistrations.delete(token);
+      }
+    }
+
     const pendingData = pendingRegistrations.get(code);
     
     if (!pendingData) {
@@ -173,6 +180,24 @@ router.post('/verify-code', async (req, res) => {
     console.error('驗證碼確認錯誤:', error);
     res.status(500).json({ 
       error: '驗證失敗，請稍後再試' 
+    });
+  }
+});
+
+// 清理所有待確認的註冊（用於測試）
+router.post('/clear-pending', async (req, res) => {
+  try {
+    const clearedCount = pendingRegistrations.size;
+    pendingRegistrations.clear();
+    res.json({ 
+      success: true, 
+      message: `已清理 ${clearedCount} 個待確認的註冊`,
+      clearedCount
+    });
+  } catch (error) {
+    console.error('清理待確認註冊錯誤:', error);
+    res.status(500).json({ 
+      error: '清理失敗，請稍後再試' 
     });
   }
 });
