@@ -24,8 +24,8 @@ const TEXT = {
     heroRightYellow: '從灰燼中重生！',
     title: 'Restarter™ 註冊',
     email: '電子郵件 *必填',
-    password: '密碼 (至少8位，含英文及數字) *必填',
-    nickname: '暱稱 (6-16字) *必填',
+    password: '密碼(至少6位，含英文及數字)*必填',
+    nickname: '暱稱*必填',
     age: '年齡*選填',
     selectAge: '請選擇年齡區間*必選',
     country: '國家(地區)*必選',
@@ -544,10 +544,10 @@ const IMPROVEMENT_OPTIONS: Record<string, string[]> = {
 const ageRanges = ["18-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70+"];
 
 function validateEmail(email: string) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email); }
-function validatePassword(pw: string) { return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(pw); }
+function validatePassword(pw: string) { return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(pw); }
 function validateNickname(nick: string) {
-  // 6-16位，允許任何字符
-  if (!nick || nick.length < 6 || nick.length > 16) return false;
+  // 暱稱必填，不限制長度
+  if (!nick || nick.trim() === '') return false;
   return true;
 }
 function validateAge(age: string) { return ageRanges.includes(age); }
