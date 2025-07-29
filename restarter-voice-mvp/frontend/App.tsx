@@ -1,6 +1,6 @@
 // App.tsx - Restart Voice MVP 入口
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import SplashScreen from './pages/SplashScreen';
 import Home from './pages/Home';
 import RestartWall from './pages/RestartWall';
@@ -125,7 +125,7 @@ function App() {
                   <Route path="/splash" element={<SplashScreen />} />
                   <Route path="/terms" element={<TermsPage />} />
                   <Route path="/" element={<SplashScreen />} />
-                  {user && <Route path="/home" element={<Home />} />}
+                  <Route path="/home" element={user ? <Home /> : <Navigate to="/register" />} />
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/confirm-registration" element={<ConfirmRegistration />} />
                   {user && <Route path="/wall" element={<RestartWall />} />}
