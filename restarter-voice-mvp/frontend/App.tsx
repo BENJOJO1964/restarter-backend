@@ -124,8 +124,8 @@ function App() {
                 <Routes>
                   <Route path="/splash" element={<SplashScreen />} />
                   <Route path="/terms" element={<TermsPage />} />
-                  <Route path="/" element={<SplashScreen />} />
-                  <Route path="/home" element={user ? <Home /> : <Navigate to="/register" />} />
+                  <Route path="/" element={<Home />} />
+                  <Route path="/home" element={<Home />} />
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/confirm-registration" element={<ConfirmRegistration />} />
                   {user && <Route path="/wall" element={<RestartWall />} />}
