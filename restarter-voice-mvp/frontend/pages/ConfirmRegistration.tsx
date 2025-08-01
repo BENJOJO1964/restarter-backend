@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { getApiUrl } from '../src/config/api';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -61,7 +62,7 @@ export default function ConfirmRegistration() {
     const confirmRegistration = async () => {
       try {
         // 調用後端 API 確認註冊
-        const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/email-verification/confirm-registration', {
+        const response = await fetch(getApiUrl('/email-verification/confirm-registration'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token })

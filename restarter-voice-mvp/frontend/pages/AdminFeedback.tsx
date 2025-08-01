@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 interface Feedback {
   id: string;
@@ -7,388 +7,184 @@ interface Feedback {
   userEmail: string;
   userNickname: string;
   userLang: string;
-  timestamp: number;
-  status: 'new' | 'reviewed' | 'resolved';
+  timestamp: string;
+  status: string;
   adminNotes: string;
+  source: string;
 }
 
-export default function AdminFeedback() {
+const AdminFeedback: React.FC = () => {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [adminKey, setAdminKey] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
-  const [adminNotes, setAdminNotes] = useState('');
-  const [status, setStatus] = useState<'new' | 'reviewed' | 'resolved'>('new');
-  const navigate = useNavigate();
 
   const fetchFeedbacks = async () => {
-    if (!adminKey) return;
-    
     try {
-      const response = await fetch(`/api/feedback?adminKey=${adminKey}`);
-      if (response.ok) {
-        const data = await response.json();
-        setFeedbacks(data.feedbacks);
-        setIsAuthenticated(true);
-      } else {
-        alert('管理員金鑰錯誤');
-      }
+      const response = await axios.get(`/api/admin-feedback?adminKey=${adminKey}`);
+      setFeedbacks(response.data.feedbacks);
+      setLoading(false);
     } catch (error) {
-      alert('取得意見列表失敗');
-    } finally {
+      setError('取得意見列表失敗');
       setLoading(false);
     }
   };
 
-  const updateFeedbackStatus = async (feedbackId: string) => {
+  const handleLogin = () => {
+    if (adminKey === 'restarter_admin_2024') {
+      setIsAuthenticated(true);
+      fetchFeedbacks();
+    } else {
+      setError('管理員密碼錯誤');
+    }
+  };
+
+  const exportFeedbacks = async () => {
     try {
-      const response = await fetch(`/api/feedback/${feedbackId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          adminKey,
-          status,
-          adminNotes
-        })
-      });
-
-      if (response.ok) {
-        setFeedbacks(feedbacks.map(f => 
-          f.id === feedbackId 
-            ? { ...f, status, adminNotes, updatedAt: Date.now() }
-            : f
-        ));
-        setSelectedFeedback(null);
-        setAdminNotes('');
-        alert('意見狀態已更新');
-      } else {
-        alert('更新失敗');
-      }
+      const response = await axios.post('/api/admin-feedback/export', { adminKey });
+      alert(`意見已匯出，共 ${response.data.totalExported} 條`);
     } catch (error) {
-      alert('更新意見狀態失敗');
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'new': return '#ff4d4f';
-      case 'reviewed': return '#faad14';
-      case 'resolved': return '#52c41a';
-      default: return '#666';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'new': return '新意見';
-      case 'reviewed': return '已檢視';
-      case 'resolved': return '已處理';
-      default: return '未知';
+      alert('匯出失敗');
     }
   };
 
   if (!isAuthenticated) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        background: 'linear-gradient(135deg, #e0e7ff 0%, #b7cfff 100%)', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        padding: '20px'
-      }}>
-        <div style={{ 
-          background: '#fff', 
-          borderRadius: 18, 
-          padding: 40, 
-          boxShadow: '0 2px 16px #6B5BFF22',
-          maxWidth: 400,
-          width: '100%'
-        }}>
-          <h1 style={{ fontSize: 24, fontWeight: 900, color: '#6B5BFF', marginBottom: 20, textAlign: 'center' }}>
-            🔐 管理員登入
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+          <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
+            管理員登入
           </h1>
-          <input
-            type="password"
-            placeholder="請輸入管理員金鑰"
-            value={adminKey}
-            onChange={(e) => setAdminKey(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px 16px',
-              border: '2px solid #e0e7ff',
-              borderRadius: 8,
-              fontSize: 16,
-              marginBottom: 20
-            }}
-            onKeyPress={(e) => e.key === 'Enter' && fetchFeedbacks()}
-          />
-          <button
-            onClick={fetchFeedbacks}
-            style={{
-              width: '100%',
-              background: '#6B5BFF',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 8,
-              padding: '12px',
-              fontSize: 16,
-              fontWeight: 700,
-              cursor: 'pointer'
-            }}
-          >
-            登入
-          </button>
-          <button
-            onClick={() => navigate('/')}
-            style={{
-              width: '100%',
-              background: 'transparent',
-              color: '#6B5BFF',
-              border: '2px solid #6B5BFF',
-              borderRadius: 8,
-              padding: '12px',
-              fontSize: 16,
-              fontWeight: 700,
-              cursor: 'pointer',
-              marginTop: 12
-            }}
-          >
-            返回首頁
-          </button>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                管理員密碼
+              </label>
+              <input
+                type="password"
+                value={adminKey}
+                onChange={(e) => setAdminKey(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="輸入管理員密碼"
+              />
+            </div>
+            <button
+              onClick={handleLogin}
+              className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors"
+            >
+              登入
+            </button>
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #e0e7ff 0%, #b7cfff 100%)', 
-      padding: '20px'
-    }}>
-      <div style={{ 
-        maxWidth: 1200, 
-        margin: '0 auto',
-        background: '#fff',
-        borderRadius: 18,
-        padding: 30,
-        boxShadow: '0 2px 16px #6B5BFF22'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
-          <h1 style={{ fontSize: 28, fontWeight: 900, color: '#6B5BFF' }}>
-            📝 意見箱管理
-          </h1>
-          <button
-            onClick={() => navigate('/')}
-            style={{
-              background: 'transparent',
-              color: '#6B5BFF',
-              border: '2px solid #6B5BFF',
-              borderRadius: 8,
-              padding: '8px 16px',
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: 'pointer'
-            }}
-          >
-            返回首頁
-          </button>
-        </div>
-
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px' }}>
-            載入中...
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gap: '20px' }}>
-            {feedbacks.map((feedback) => (
-              <div
-                key={feedback.id}
-                style={{
-                  border: '2px solid #e0e7ff',
-                  borderRadius: 12,
-                  padding: '20px',
-                  background: feedback.status === 'new' ? '#fff7e6' : '#fff'
-                }}
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-800">
+              意見管理系統
+            </h1>
+            <div className="space-x-4">
+              <button
+                onClick={fetchFeedbacks}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px' }}>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: 16, marginBottom: '8px' }}>
-                      {feedback.userNickname} ({feedback.userLang})
-                    </div>
-                    <div style={{ color: '#666', fontSize: 14 }}>
-                      {new Date(feedback.timestamp).toLocaleString('zh-TW')}
-                    </div>
-                  </div>
-                  <div style={{
-                    background: getStatusColor(feedback.status),
-                    color: '#fff',
-                    padding: '4px 12px',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    fontWeight: 700
-                  }}>
-                    {getStatusText(feedback.status)}
-                  </div>
-                </div>
-                
-                <div style={{
-                  background: '#f7f8fa',
-                  padding: '15px',
-                  borderRadius: '8px',
-                  marginBottom: '15px',
-                  whiteSpace: 'pre-wrap',
-                  lineHeight: '1.6'
-                }}>
-                  {feedback.content}
-                </div>
+                重新整理
+              </button>
+              <button
+                onClick={exportFeedbacks}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+              >
+                匯出意見
+              </button>
+            </div>
+          </div>
 
-                {feedback.adminNotes && (
-                  <div style={{
-                    background: '#e8f5e8',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    marginBottom: '15px',
-                    fontSize: '14px'
-                  }}>
-                    <strong>管理員備註：</strong> {feedback.adminNotes}
-                  </div>
-                )}
-
-                <button
-                  onClick={() => setSelectedFeedback(feedback)}
-                  style={{
-                    background: '#6B5BFF',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">載入中...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8">
+              <p className="text-red-500">{error}</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="text-sm text-gray-600 mb-4">
+                共 {feedbacks.length} 條意見
+              </div>
+              
+              {feedbacks.map((feedback) => (
+                <div
+                  key={feedback.id}
+                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                 >
-                  更新狀態
-                </button>
-              </div>
-            ))}
-
-            {feedbacks.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                目前沒有意見回饋
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* 更新狀態彈窗 */}
-      {selectedFeedback && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: '#fff',
-            borderRadius: '12px',
-            padding: '30px',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto'
-          }}>
-            <h3 style={{ marginBottom: '20px', color: '#6B5BFF' }}>
-              更新意見狀態
-            </h3>
-            
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 700 }}>
-                狀態：
-              </label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as any)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '2px solid #e0e7ff',
-                  borderRadius: '6px',
-                  fontSize: '14px'
-                }}
-              >
-                <option value="new">新意見</option>
-                <option value="reviewed">已檢視</option>
-                <option value="resolved">已處理</option>
-              </select>
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="font-semibold text-gray-800">
+                        {feedback.userNickname || '匿名用戶'}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {feedback.userEmail || '未提供 Email'}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs text-gray-500">
+                        {feedback.timestamp}
+                      </span>
+                      <div className="mt-1">
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          feedback.source === 'local' 
+                            ? 'bg-yellow-100 text-yellow-800' 
+                            : 'bg-green-100 text-green-800'
+                        }`}>
+                          {feedback.source === 'local' ? '本地儲存' : 'Firebase'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-md p-3 mb-3">
+                    <p className="text-gray-700 whitespace-pre-wrap">
+                      {feedback.content}
+                    </p>
+                  </div>
+                  
+                  <div className="flex justify-between items-center text-sm text-gray-500">
+                    <span>語言: {feedback.userLang}</span>
+                    <span>狀態: {feedback.status}</span>
+                  </div>
+                  
+                  {feedback.adminNotes && (
+                    <div className="mt-3 p-3 bg-blue-50 rounded-md">
+                      <p className="text-sm text-blue-800">
+                        <strong>管理員備註:</strong> {feedback.adminNotes}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+              
+              {feedbacks.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  目前沒有意見
+                </div>
+              )}
             </div>
-
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 700 }}>
-                管理員備註：
-              </label>
-              <textarea
-                value={adminNotes}
-                onChange={(e) => setAdminNotes(e.target.value)}
-                placeholder="輸入備註..."
-                style={{
-                  width: '100%',
-                  minHeight: '100px',
-                  padding: '12px',
-                  border: '2px solid #e0e7ff',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button
-                onClick={() => setSelectedFeedback(null)}
-                style={{
-                  background: 'transparent',
-                  color: '#666',
-                  border: '2px solid #ddd',
-                  borderRadius: '6px',
-                  padding: '8px 16px',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                取消
-              </button>
-              <button
-                onClick={() => updateFeedbackStatus(selectedFeedback.id)}
-                style={{
-                  background: '#6B5BFF',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '6px',
-                  padding: '8px 16px',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                更新
-              </button>
-            </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
-} 
+};
+
+export default AdminFeedback; 

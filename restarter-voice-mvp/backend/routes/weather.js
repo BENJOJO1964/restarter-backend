@@ -12,17 +12,7 @@ router.get('/current', async (req, res) => {
     const { lat, lon, city } = req.query;
     
     if (!WEATHERAPI_KEY) {
-      return res.status(500).json({ 
-        error: 'WeatherAPI key not configured',
-        weather: {
-          temp: 25,
-          description: '晴天',
-          icon: '01d',
-          humidity: 60,
-          windSpeed: 5,
-          city: city || '台北'
-        }
-      });
+      return res.status(500).json({ error: 'WeatherAPI key not configured' });
     }
 
     let query;
@@ -58,42 +48,8 @@ router.get('/current', async (req, res) => {
 
     res.json({ weather });
   } catch (error) {
-    console.error('Weather API error:', error.response?.data || error.message);
-    console.error('API Key exists:', !!WEATHERAPI_KEY);
-    
-    // 如果是API Key問題，返回預設數據
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      return res.status(200).json({ 
-        weather: {
-          temp: 25,
-          description: '晴天',
-          icon: '01d',
-          humidity: 60,
-          windSpeed: 5,
-          city: city || '台北'
-        }
-      });
-    }
-    
-    // 任何錯誤都返回預設數據，而不是 500 錯誤
-    return res.status(200).json({ 
-      weather: {
-        temp: 25,
-        description: '晴天',
-        icon: '01d',
-        humidity: 60,
-        windSpeed: 5,
-        city: city || '台北',
-        country: 'TW',
-        feelsLike: 25,
-        pressure: 1013,
-        visibility: 10,
-        sunrise: '06:00',
-        sunset: '18:00',
-        uv: 5,
-        lastUpdated: new Date().toISOString()
-      }
-    });
+    console.error('Weather API error:', error.message);
+    res.status(500).json({ error: '無法獲取天氣數據' });
   }
 });
 
@@ -103,10 +59,7 @@ router.get('/forecast', async (req, res) => {
     const { lat, lon, city } = req.query;
     
     if (!WEATHERAPI_KEY) {
-      return res.status(500).json({ 
-        error: 'WeatherAPI key not configured',
-        forecast: []
-      });
+      return res.status(500).json({ error: 'WeatherAPI key not configured' });
     }
 
     let query;
@@ -140,23 +93,7 @@ router.get('/forecast', async (req, res) => {
     res.json({ forecast });
   } catch (error) {
     console.error('Weather forecast API error:', error);
-    // 返回預設預報數據
-    return res.status(200).json({ 
-      forecast: [
-        {
-          date: new Date().toISOString().split('T')[0],
-          temp: 25,
-          description: '晴天',
-          icon: '01d',
-          humidity: 60,
-          windSpeed: 5,
-          maxTemp: 28,
-          minTemp: 22,
-          sunrise: '06:00',
-          sunset: '18:00'
-        }
-      ]
-    });
+    res.status(500).json({ error: '無法獲取預報數據' });
   }
 });
 

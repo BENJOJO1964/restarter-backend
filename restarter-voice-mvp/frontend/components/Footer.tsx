@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useLocation } from 'react-router-dom';
 
 const FOOTER_TEXT = {
   'zh-TW': {
@@ -74,92 +75,52 @@ const FEEDBACK_TEXT = {
 
 const Footer: React.FC = () => {
   const { lang } = useLanguage();
+  const location = useLocation();
   const t = FOOTER_TEXT[lang] || FOOTER_TEXT['zh-TW'];
   const [footerPosition, setFooterPosition] = useState(20);
 
-  useEffect(() => {
-    const adjustFooterPosition = () => {
-      // 獲取所有功能按鈕
-      const featureButtons = document.querySelectorAll('.feature-btn');
-      const chatButton = document.querySelector('.home-chat-btn');
-      
-      if (featureButtons.length > 0 || chatButton) {
-        // 計算所有按鈕的底部位置
-        let maxBottom = 0;
-        
-        // 檢查功能按鈕
-        featureButtons.forEach(button => {
-          const rect = button.getBoundingClientRect();
-          maxBottom = Math.max(maxBottom, rect.bottom);
-        });
-        
-        // 檢查聊天按鈕
-        if (chatButton) {
-          const rect = chatButton.getBoundingClientRect();
-          maxBottom = Math.max(maxBottom, rect.bottom);
-        }
-        
-        // 計算視窗高度
-        const windowHeight = window.innerHeight;
-        
-        // 計算需要的額外空間（確保footer不被遮住）
-        const requiredSpace = 180; // footer高度 + 緩衝空間
-        const availableSpace = windowHeight - maxBottom;
-        
-        // 如果空間不足，調整footer位置
-        if (availableSpace < requiredSpace) {
-          const additionalSpace = requiredSpace - availableSpace;
-          setFooterPosition(20 + additionalSpace);
-        } else {
-          setFooterPosition(20);
-        }
-      }
-    };
+  // 檢查是否在特定頁面
+  const isFeedbackPage = location.pathname === '/feedback';
+  const isHomePage = location.pathname === '/' || location.pathname === '/home';
 
-    // 初始調整
-    adjustFooterPosition();
-    
-    // 監聽視窗大小變化
-    window.addEventListener('resize', adjustFooterPosition);
-    
-    // 監聽語言變化
-    const handleLanguageChange = () => {
-      setTimeout(adjustFooterPosition, 200); // 延遲執行，確保DOM已更新
-    };
-    
-    // 監聽DOM變化
-    const observer = new MutationObserver(() => {
-      setTimeout(adjustFooterPosition, 100);
-    });
-    observer.observe(document.body, { 
-      childList: true, 
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['style', 'class']
-    });
-    
-    return () => {
-      window.removeEventListener('resize', adjustFooterPosition);
-      observer.disconnect();
-    };
-  }, [lang]);
+  useEffect(() => {
+    // 如果在 Feedback 頁面，使用固定位置
+    if (isFeedbackPage) {
+      setFooterPosition(20);
+      return;
+    }
+
+    // 首頁使用固定的較小間距，與挑戰任務頁面保持一致
+    if (isHomePage) {
+      setFooterPosition(24); // 使用與挑戰任務頁面相同的間距
+      return;
+    }
+
+    // 其他頁面使用預設位置
+    setFooterPosition(20);
+  }, [lang, isFeedbackPage, isHomePage]);
+
+  // 如果是首頁桌面版，不顯示Footer（因為按鈕已經直接放在頁面中）
+  if (isHomePage && typeof window !== 'undefined' && window.innerWidth > 768) {
+    return null;
+  }
 
   return (
     <footer
       style={{
         width: '100%',
-        textAlign: 'center',
-        fontSize: 14,
-        color: '#888',
-        marginTop: 0,
-        padding: '16px 0',
-        background: 'rgba(255,255,255,0.92)',
-        borderTop: '1px solid #eee',
-        boxShadow: '0 -2px 8px #0001',
-        position: 'relative',
-        top: `${footerPosition}px`,
+        margin: '0 auto',
+        marginTop: isHomePage ? 0 : 0,
+        background: isHomePage ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.92)',
+        borderRadius: isHomePage ? 16 : 0,
+        padding: isHomePage ? '16px' : '8px 0',
+        boxShadow: isHomePage ? '0 2px 12px #6B5BFF22' : '0 -2px 8px #0001',
+        borderTop: isHomePage ? 'none' : '1px solid #eee',
+        position: isFeedbackPage ? 'fixed' : (isHomePage ? 'relative' : 'static'),
+        bottom: isFeedbackPage ? 0 : 'auto',
+        top: isFeedbackPage ? 'auto' : (isHomePage ? `${footerPosition}px` : 'auto'),
         zIndex: 10,
-        transition: 'top 0.3s ease',
+        transition: isFeedbackPage ? 'none' : (isHomePage ? 'top 0.3s ease' : 'none'),
       }}
     >
       <div
@@ -168,54 +129,36 @@ const Footer: React.FC = () => {
           maxWidth: 800,
           margin: '0 auto',
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'row',
+          justifyContent: 'center',
           alignItems: 'center',
-          gap: 20,
-          padding: '0 20px'
+          gap: isHomePage ? 20 : 40,
+          flexWrap: 'wrap',
+          padding: isHomePage ? '0' : '0 20px'
         }}
       >
-        {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 40,
-          flexWrap: 'wrap'
-        }}>
-          <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>{t.privacy}</a>
-          <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>{t.terms}</a>
-          <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px' }}>{t.deletion}</a>
-        </div>
-        {/* 第二行：我們是誰、意見箱 */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 40,
-          flexWrap: 'wrap'
-        }}>
-          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px' }}>{ABOUT_TEXT[lang] || ABOUT_TEXT['zh-TW']}</a>
-          <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px' }}>{FEEDBACK_TEXT[lang] || FEEDBACK_TEXT['zh-TW']}</a>
-        </div>
+        {/* 所有按鈕一行排列 */}
+        <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{t.privacy}</a>
+        <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{t.terms}</a>
+        <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{t.deletion}</a>
+        <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{ABOUT_TEXT[lang] || ABOUT_TEXT['zh-TW']}</a>
+        <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{FEEDBACK_TEXT[lang] || FEEDBACK_TEXT['zh-TW']}</a>
       </div>
       <style>{`
         @media (max-width: 768px) {
           footer {
-            padding: 8px 16px 40px 16px !important;
+            padding: 4px 16px 24px 16px !important;
             marginTop: 0 !important;
-            top: 0 !important;
+            position: relative !important;
+            bottom: auto !important;
+            top: auto !important;
           }
           footer > div {
             gap: 12px !important;
-            flex-direction: column !important;
-            justify-content: center !important;
-          }
-          footer > div > div {
-            display: flex !important;
             flex-direction: row !important;
-            justify-content: center !important;
-            gap: 20px !important;
+            justify-content: flex-start !important;
             flex-wrap: wrap !important;
+            padding-left: 20px !important;
           }
           footer > div > a {
             padding: 4px 6px !important;
@@ -224,12 +167,13 @@ const Footer: React.FC = () => {
         }
         @media (min-width: 700px) {
           footer {
-            padding: 16px !important;
+            padding: 8px !important;
           }
           footer > div {
             flex-direction: row !important;
             gap: 40px !important;
-            justify-content: space-between !important;
+            justify-content: center !important;
+            flex-wrap: wrap !important;
           }
           footer > div > a {
             padding: 4px 8px !important;

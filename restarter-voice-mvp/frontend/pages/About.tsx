@@ -381,15 +381,15 @@ const LANGS = [
 ];
 
 const BACK_TEXT = {
-  'zh-TW': '← 返回首頁',
-  'zh-CN': '← 返回首页',
-  'en': '← Back to Home',
-  'ja': '← ホームへ戻る',
-  'ko': '← 홈으로 돌아가기',
-  'th': '← กลับหน้าหลัก',
-  'vi': '← Quay lại trang chủ',
-  'ms': '← Kembali ke Laman Utama',
-  'la': '← Redi ad domum',
+  'zh-TW': '返回',
+  'zh-CN': '返回',
+  'en': 'Back',
+  'ja': '戻る',
+  'ko': '돌아가기',
+  'th': 'กลับ',
+  'vi': 'Quay lại',
+  'ms': 'Kembali',
+  'la': 'Redi',
 };
 
 export default function About() {

@@ -19,7 +19,7 @@ const LANGS: { code: LanguageCode; label: string }[] = [
 ];
 
 const UI_TEXT = {
-  backToHome: { 'zh-TW': '← 返回', 'zh-CN': '← 返回', 'ja': '← 戻る', 'en': '← Back', 'ko': '← 뒤로', 'th': '← กลับ', 'vi': '← Quay lại', 'ms': '← Kembali', 'la': '← Redire' },
+      backToHome: { 'zh-TW': '返回', 'zh-CN': '返回', 'ja': '戻る', 'en': 'Back', 'ko': '뒤로', 'th': 'กลับ', 'vi': 'Quay lại', 'ms': 'Kembali', 'la': 'Redire' },
   logout: { 'zh-TW': '登出', 'zh-CN': '登出', 'ja': 'ログアウト', 'en': 'Logout', 'ko': '로그아웃', 'th': 'ออกจากระบบ', 'vi': 'Đăng xuất', 'ms': 'Log keluar', 'la': 'Exire' },
   pageTitle: { 'zh-TW': '心情解鎖盒', 'zh-CN': '心情解锁盒', 'ja': '気持ちアンロックボックス', 'en': 'Mood Unlock Box', 'ko': '감정 언락 박스', 'th': 'กล่องปลดล็อกอารมณ์', 'vi': 'Hộp Mở Khóa Cảm Xúc', 'ms': 'Kotak Buka Kunci Emosi', 'la': 'Arca Unlock Affectus' },
   subtitle: { 'zh-TW': '每天自我反思，抒發心情，追蹤情緒，照顧自己', 'zh-CN': '每天自我反思，抒發心情，追蹤情緒，照顧自己', 'ja': '毎日自分を見つめ、気持ちを表現し、感情を追いかけ、自分を大切に', 'en': 'Daily self-reflection, express your feelings, track emotions, take care of yourself', 'ko': '매일 자기 성찰, 감정 표현, 감정 추적, 자신을 돌보기', 'th': 'สะท้อนตนเองทุกวัน ระบายความรู้สึก ติดตามอารมณ์ ดูแลตัวเอง', 'vi': 'Tự phản ánh mỗi ngày, bày tỏ cảm xúc, theo dõi cảm xúc, chăm sóc bản thân', 'ms': 'Refleksi diri setiap hari, luahkan perasaan, jejak emosi, jaga diri', 'la': 'Cotidie te ipsum considera, affectus exprime, motus tuos persequere, te ipsum cura' },
@@ -205,20 +205,37 @@ export default function Journal() {
             setTimeout(() => setShowToast(false), 2000);
             return;
         }
-        // 直接用 garden 判斷今天是否已解鎖
+        // 檢查今天是否已解鎖 - 多重檢查確保準確性
         let unlockedToday = false;
-        if (Array.isArray(garden)) {
-          for (const g of garden) {
-            if (g && Array.isArray(g.petals)) {
-              if (g.petals.some((p: {date:string}) => typeof p.date === 'string' && p.date.slice(0,10) === today)) {
-                unlockedToday = true;
-                break;
-              }
-            }
-          }
+        
+        // 檢查1: 檢查 stage.lastDate 是否等於今天
+        if (stage.lastDate === today) {
+            unlockedToday = true;
         }
+        
+        // 檢查2: 檢查 garden 數據中是否有今天的記錄
+        if (!unlockedToday && Array.isArray(garden)) {
+            for (const g of garden) {
+                if (g && Array.isArray(g.petals)) {
+                    if (g.petals.some((p: {date:string}) => typeof p.date === 'string' && p.date.slice(0,10) === today)) {
+                        unlockedToday = true;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // 檢查3: 檢查是否有今天的本地存儲記錄
+        if (!unlockedToday) {
+            const todayKey = `mood_${userId}_${today}`;
+            const todayRecord = localStorage.getItem(todayKey);
+            if (todayRecord) {
+                unlockedToday = true;
+            }
+        }
+        
         if (unlockedToday) {
-            setToastMsg('一天解鎖一片拼圖夠啦，明天再來😊');
+            setToastMsg('今天已經記錄過心情了，明天再來解鎖新的拼圖吧！✨');
             setShowToast(true);
             setTimeout(() => setShowToast(false), 2000);
             return;
@@ -265,25 +282,41 @@ export default function Journal() {
             return;
         }
         setIsLoading(true);
-        await fetch('/api/mood', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, mood: prompt, date: new Date().toISOString().slice(0, 10) + '-' + Math.random() })
-        });
-        setPrompt('');
-        fetch(`/api/mood?userId=${userId}`)
-            .then(res => res.json())
-            .then(data => setGarden(data));
-        setIsLoading(false);
-        setStage((s: any) => ({ ...s, unlocked: s.unlocked + 1, lastDate: new Date().toISOString().slice(0, 10) }));
-        // 新增：彈出今日提示
-        const now = new Date();
-        const tipIdx = now.getDay(); // 0~6
-        setShowInfo({
-          date: now.toISOString().slice(0, 10),
-          mood: PUZZLE_TIPS[tipIdx],
-          isTodayNewPiece: true
-        });
+        try {
+            await fetch('/api/mood', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, mood: prompt, date: new Date().toISOString().slice(0, 10) + '-' + Math.random() })
+            });
+            setPrompt('');
+            fetch(`/api/mood?userId=${userId}`)
+                .then(res => res.json())
+                .then(data => setGarden(data));
+            setIsLoading(false);
+            setStage((s: any) => ({ ...s, unlocked: s.unlocked + 1, lastDate: new Date().toISOString().slice(0, 10) }));
+            
+            // 記錄今天已解鎖，防止重複解鎖
+            const todayKey = `mood_${userId}_${today}`;
+            localStorage.setItem(todayKey, JSON.stringify({
+                date: today,
+                mood: prompt,
+                timestamp: Date.now()
+            }));
+            
+            // 新增：彈出今日提示
+            const now = new Date();
+            const tipIdx = now.getDay(); // 0~6
+            setShowInfo({
+              date: now.toISOString().slice(0, 10),
+              mood: PUZZLE_TIPS[tipIdx],
+              isTodayNewPiece: true
+            });
+        } catch (error) {
+            setIsLoading(false);
+            setToastMsg('解鎖失敗，請稍後再試');
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 2000);
+        }
     };
 
     const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -314,13 +347,56 @@ export default function Journal() {
         window.location.reload();
     }
 
+    // 新增一個清理當前關卡拼圖的測試按鈕
+    function clearCurrentStagePuzzles() {
+        const currentStage = { ...stage, unlocked: 0, lastDate: '' };
+        localStorage.setItem('puzzleStage', JSON.stringify(currentStage));
+        window.location.reload();
+    }
+
     // 新增一個直接跳到22x22完成狀態的測試按鈕
     function completeFinalStage() {
         const finalSize = 22;
         const total = finalSize * finalSize;
         const finalStage = { size: finalSize, unlocked: total, completed: true, lastDate: new Date().toISOString().slice(0, 10) };
         localStorage.setItem('puzzleStage', JSON.stringify(finalStage));
-        window.location.reload();
+        
+        // 只創建3個測試心情記錄，對應當前階段的拼圖數量
+        const testMoods = [
+            '今天心情很好！😊',
+            '有點小煩惱，但還好',
+            '充滿活力的一天！💪'
+        ];
+        
+        // 創建測試心情記錄
+        const createPromises = testMoods.map((mood, index) => {
+            const date = new Date();
+            date.setDate(date.getDate() - index); // 從今天往前推，每天一個
+            const dateStr = date.toISOString().slice(0, 10);
+            const testData = {
+                userId: userId,
+                mood: mood,
+                date: dateStr + '-' + Math.random()
+            };
+            
+            // 發送到後端
+            return fetch('/api/mood', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(testData)
+            }).catch(err => {
+                console.log('創建測試心情記錄失敗:', err);
+                return null;
+            });
+        });
+        
+        // 等待所有心情記錄創建完成後再重新載入
+        Promise.all(createPromises).then(() => {
+            console.log('所有測試心情記錄創建完成');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000); // 等待1秒確保後端處理完成
+        });
     }
 
     // 測試用：清空所有心情紀錄
@@ -332,18 +408,62 @@ export default function Journal() {
     // 取每天最新一筆心情內容，依日期排序，防呆處理 garden 結構
     const moodByDate: {[date:string]: {mood:string, date:string}} = {};
     if (Array.isArray(garden)) {
-      garden.forEach(g => {
+      console.log('處理 garden 數據，項目數量:', garden.length);
+      garden.forEach((g, index) => {
+        console.log(`garden[${index}]:`, g);
+        
+        // 嘗試多種可能的數據結構
+        let petals = null;
         if (g && Array.isArray(g.petals)) {
-          g.petals.forEach((p: {mood:string, date:string}) => {
+          petals = g.petals;
+        } else if (g && Array.isArray(g)) {
+          petals = g;
+        } else if (g && typeof g === 'object' && g.mood && g.date) {
+          // 如果 g 本身就是一個心情記錄
+          petals = [g];
+        }
+        
+        if (petals) {
+          console.log(`找到 petals 數據:`, petals);
+          petals.forEach((p: any, pIndex: number) => {
+            console.log(`petal[${pIndex}]:`, p);
             if (p && typeof p.mood === 'string' && typeof p.date === 'string') {
               const d = p.date.slice(0,10);
+              // 只保留每天最新的一筆心情記錄
               moodByDate[d] = { mood: p.mood, date: d };
+              console.log('成功解析心情數據:', { date: d, mood: p.mood });
+            } else if (p && typeof p === 'object') {
+              console.log('petal 結構不符合預期:', p);
             }
           });
+        } else {
+          console.log('未找到有效的 petals 數據結構');
         }
       });
     }
+    
+    // 如果 garden 是空陣列，嘗試從本地存儲獲取數據
+    if (Object.keys(moodByDate).length === 0) {
+      console.log('嘗試從本地存儲獲取心情數據...');
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('mood_')) {
+          try {
+            const storedData = JSON.parse(localStorage.getItem(key) || '{}');
+            if (storedData.date && storedData.mood) {
+              const d = storedData.date.slice(0, 10);
+              // 只保留每天最新的一筆心情記錄
+              moodByDate[d] = { mood: storedData.mood, date: d };
+            }
+          } catch (e) {
+            console.log('解析本地存儲數據失敗:', key);
+          }
+        }
+      }
+    }
     const allPetals = Object.values(moodByDate).sort((a, b) => a.date.localeCompare(b.date));
+    console.log('DEBUG garden:', garden);
+    console.log('DEBUG moodByDate:', moodByDate);
     console.log('DEBUG allPetals:', allPetals);
 
     // 1. 新增 7 天輪動的溫馨提示語
@@ -463,9 +583,19 @@ export default function Journal() {
                     >
                         {UI_TEXT.logout[lang]}
                     </button>
-                    <div style={{ width: 80 }}>
-                        <LanguageSelector style={{ width: '100%' }} />
-              </div>
+                    <LanguageSelector style={{ 
+                        width: 80,
+                        height: 'auto',
+                        padding: '8px 16px',
+                        fontSize: 16,
+                        fontWeight: 700,
+                        borderRadius: 8,
+                        border: '1.5px solid #6B5BFF',
+                        background: '#fff',
+                        color: '#6B5BFF',
+                        cursor: 'pointer',
+                        minWidth: 80,
+                    }} />
               </div>
             </div>
             
@@ -539,11 +669,17 @@ export default function Journal() {
                                 const date = petal?.date || '';
                                 const row = Math.floor(idx / PUZZLE_SIZE);
                                 const col = idx % PUZZLE_SIZE;
-                                // 只要有內容就能點擊
-                                const canClick = !!petal;
+                                // 只要已解鎖就能點擊，不依賴 allPetals 的數量
+                                const canClick = unlocked && !!petal;
                                 return (
                                     <div key={idx} style={{ width: '100%', height: '100%', aspectRatio: '1/1', overflow: 'hidden', position: 'relative', border: 'none', boxSizing: 'border-box', cursor: canClick ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                        onClick={() => { if (canClick) setShowInfo({date, mood}); }}>
+                                        onClick={() => { 
+                                            console.log('點擊拼圖:', { idx, canClick, petal, date, mood });
+                                            if (canClick) {
+                                                console.log('設置 showInfo:', { date, mood });
+                                                setShowInfo({date, mood});
+                                            }
+                                        }}>
                                         <img
                                             src={PUZZLE_IMG}
                                             alt="puzzle"
@@ -560,8 +696,6 @@ export default function Journal() {
                                             }}
                                         />
                                         {!unlocked && <div style={{position:'absolute',inset:0,background:'rgba(255,255,255,0.7)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:32}}>?</div>}
-                                        {/* 若無內容顯示提示 */}
-                                        {(!petal && unlocked) && <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,color:'#bbb'}}>尚未記錄</div>}
                                     </div>
                                 );
                             })}
@@ -672,6 +806,46 @@ export default function Journal() {
                 </div>
             </div>
             {/* 刪除清空所有心情紀錄按鈕區塊 */}
+      {/* 測試按鈕區域 */}
+      <div style={{ 
+        width: '100%', 
+        maxWidth: 700,
+        margin: '20px auto 0 auto',
+        background: 'rgba(255,255,255,0.95)',
+        borderRadius: 16,
+        padding: '16px',
+        boxShadow: '0 2px 12px #6B5BFF22'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <button onClick={clearCurrentStagePuzzles} style={{ 
+            padding: '8px 16px', 
+            background: 'linear-gradient(135deg,#ff6b6b 60%,#ff8e8e 100%)', 
+            color: '#fff', 
+            border: 'none', 
+            borderRadius: 8, 
+            fontWeight: 700, 
+            fontSize: 14, 
+            cursor: 'pointer',
+            letterSpacing: 1
+          }}>
+            清理當前拼圖
+          </button>
+          <button onClick={resetToFirstStage} style={{ 
+            padding: '8px 16px', 
+            background: 'linear-gradient(135deg,#4ecdc4 60%,#6bcfc4 100%)', 
+            color: '#fff', 
+            border: 'none', 
+            borderRadius: 8, 
+            fontWeight: 700, 
+            fontSize: 14, 
+            cursor: 'pointer',
+            letterSpacing: 1
+          }}>
+            重置到第一關
+          </button>
+        </div>
+      </div>
+
       {/* Footer 5個按鈕 - 一行排列 */}
       <div style={{ 
         width: '100%', 
@@ -683,6 +857,17 @@ export default function Journal() {
         boxShadow: '0 2px 12px #6B5BFF22'
       }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+            {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
+             lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
+             lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
+             lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
+             lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
+             lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
+             lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
+             lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
+             '🧬 Restarter™｜Quis sumus'}
+          </a>
           <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
             {lang === 'zh-TW' ? '隱私權政策' : 
              lang === 'zh-CN' ? '隐私政策' : 
@@ -715,17 +900,6 @@ export default function Journal() {
              lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
              lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
              'Explicatio Deletionis Datae'}
-          </a>
-          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
-            {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
-             lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
-             lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
-             lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
-             lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
-             lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
-             lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
-             lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
-             '🧬 Restarter™｜Quis sumus'}
           </a>
           <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
             {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 

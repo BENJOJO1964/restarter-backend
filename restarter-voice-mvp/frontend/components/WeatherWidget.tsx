@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getApiUrl } from '../src/config/api';
 
 interface WeatherData {
   temp: number;
@@ -32,14 +33,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
     fetchWeather();
   }, [lang]);
 
-  // 強制顯示預設天氣，不管API是否成功
-  const defaultWeather = {
-    temp: 25,
-    description: 'clear sky',
-    icon: '01d',
-    city: 'Taipei',
-    weekday: '星期四'
-  };
+
 
   const fetchWeather = async () => {
     try {
@@ -49,7 +43,12 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
       // 使用預設城市，不根據瀏覽器位置
       const defaultCity = 'Taipei';
       console.log('Fetching weather for:', defaultCity);
-      const response = await fetch(`https://restarter-backend-6e9s.onrender.com/api/weather/current?city=${defaultCity}`);
+      const response = await fetch(getApiUrl(`/weather/current?city=${defaultCity}`));
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       console.log('Weather API response:', data);
       
@@ -888,9 +887,48 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
     return `星期${weekdays[date.getDay()]}`;
   };
 
-  // 簡化邏輯，強制顯示白色卡片樣式
-  const displayWeather = weather || defaultWeather;
-  const localizedWeather = getLocalizedWeather(displayWeather, lang);
+  // 顯示loading狀態
+  if (loading) {
+    return (
+      <div className={`weather-widget ${className}`} style={{
+        background: '#ffffff',
+        borderRadius: '8px',
+        padding: '8px 12px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        marginTop: '8px'
+      }}>
+        <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
+          載入中...
+        </div>
+      </div>
+    );
+  }
+
+  // 顯示錯誤狀態
+  if (error) {
+    return (
+      <div className={`weather-widget ${className}`} style={{
+        background: '#ffffff',
+        borderRadius: '8px',
+        padding: '8px 12px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        marginTop: '8px'
+      }}>
+        <div style={{ fontSize: '12px', color: '#ff6b6b', textAlign: 'center' }}>
+          {error}
+        </div>
+      </div>
+    );
+  }
+
+  // 只在有真實天氣數據時顯示，否則不顯示組件
+  if (!weather) {
+    return null; // 不顯示預設數據
+  }
+  
+  const localizedWeather = getLocalizedWeather(weather, lang);
 
   return (
     <div className={`weather-widget ${className}`} style={{

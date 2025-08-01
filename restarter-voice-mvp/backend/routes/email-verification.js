@@ -1,222 +1,154 @@
 const express = require('express');
-const nodemailer = require('nodemailer');
 const router = express.Router();
+const { Resend } = require('resend');
 
-// 待確認的註冊資料存儲（實際應用中應使用 Redis 或數據庫）
+// 儲存待驗證的註冊
 const pendingRegistrations = new Map();
 
-// 創建郵件傳輸器 - 專業設定
-const createTransporter = () => {
-  // 如果設定了自定義 SMTP 設定，使用自定義設定
-  if (process.env.SMTP_HOST && process.env.SMTP_PORT) {
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
-    });
-  }
-  
-  // 預設使用 Gmail 專業設定
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER || 'noreply.restarter@gmail.com',
-      pass: process.env.EMAIL_PASS
-    }
-  });
-};
+// 創建 Resend 實例
+const resend = new Resend(process.env.RESEND_API_KEY || 're_dLgquqs9_PhX32DutRnPrtSgJP35kNCiy');
 
-const transporter = createTransporter();
+// 生成驗證碼
+function generateVerificationCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 // 發送驗證碼
 router.post('/send-code', async (req, res) => {
   try {
-    const { email, registrationData } = req.body;
-    
-    console.log('發送驗證碼請求:', { email });
-    
-    if (!email || !registrationData) {
-      return res.status(400).json({ error: '請提供 email 和註冊資料' });
-    }
+    const { email, nickname, password, registrationData } = req.body;
 
-    // 檢查是否已有待確認的註冊
-    const existingToken = Array.from(pendingRegistrations.entries())
-      .find(([token, data]) => data.email === email);
-    
-    if (existingToken) {
-      console.log('刪除舊的驗證碼:', existingToken[0]);
-      pendingRegistrations.delete(existingToken[0]);
-    }
+    // 支援兩種數據格式：直接傳遞或包含在 registrationData 中
+    const finalNickname = nickname || (registrationData && registrationData.nickname);
+    const finalPassword = password || (registrationData && registrationData.password);
 
-    // 生成 6 位數驗證碼
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log('生成新驗證碼:', verificationCode);
-    
-    // 設定過期時間（5分鐘）
-    const expiresAt = Date.now() + (5 * 60 * 1000);
-    
-    // 儲存待確認的註冊資料
-    pendingRegistrations.set(verificationCode, {
-      email,
-      registrationData,
-      expiresAt
-    });
-    
-    console.log('已儲存驗證碼，當前待確認數量:', pendingRegistrations.size);
-
-    // 檢查 email 服務是否已設定
-    const hasEmailConfig = (
-      (process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.SMTP_USER && process.env.SMTP_PASS) ||
-      (process.env.EMAIL_USER && process.env.EMAIL_PASS)
-    );
-    
-    if (!hasEmailConfig) {
-      return res.status(500).json({ 
-        error: 'Email 服務未設定，請聯繫管理員',
-        success: false 
+    if (!email || !finalNickname || !finalPassword) {
+      return res.status(400).json({ 
+        success: false, 
+        message: '請提供完整的註冊資訊' 
       });
     }
 
-    // 發送驗證碼郵件
-    const fromEmail = process.env.SMTP_USER || process.env.EMAIL_USER || 'noreply.restarter@gmail.com';
-    const mailOptions = {
-      from: `Restarter <${fromEmail}>`,
-      to: email,
-      subject: '🔐 Restarter 驗證碼 - 請輸入 6 位數驗證碼',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; text-align: center;">
-            <h1 style="margin: 0; font-size: 28px;">🎯 Restarter</h1>
-            <p style="margin: 10px 0 0 0; font-size: 16px;">您的個人成長夥伴</p>
-          </div>
-          
-          <div style="background: #f8f9fa; padding: 30px; border-radius: 10px; margin-top: 20px;">
-            <h2 style="color: #333; margin-top: 0;">📧 您的驗證碼</h2>
-            <p style="color: #666; line-height: 1.6;">
-              感謝您註冊 Restarter！為了確保您的帳戶安全，請輸入以下 6 位數驗證碼：
-            </p>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <div style="background: #fff; border: 2px solid #667eea; border-radius: 10px; padding: 20px; display: inline-block;">
-                <span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 8px;">${verificationCode}</span>
-              </div>
-            </div>
-            
-            <p style="color: #999; font-size: 14px; margin-top: 30px;">
-              ⏰ 此驗證碼將在 5 分鐘後過期<br/>
-              🔒 如果您沒有註冊 Restarter，請忽略此郵件<br/>
-              📱 請在註冊頁面輸入此驗證碼完成註冊
-            </p>
-          </div>
-          
-          <div style="text-align: center; margin-top: 20px; color: #999; font-size: 12px;">
-            <p>© 2024 Restarter. 讓每個人都能重新開始。</p>
-            <p>此郵件由 noreply.restarter@gmail.com 發送</p>
-          </div>
-        </div>
-      `
-    };
-
-    console.log('正在發送 email 到:', email);
-    console.log('驗證碼:', verificationCode);
+    // 生成驗證碼
+    const verificationCode = generateVerificationCode();
     
-    await transporter.sendMail(mailOptions);
-    console.log('Email 發送成功');
-
-    res.json({ 
-      success: true, 
-      message: '驗證碼已發送到您的 email，請檢查收件匣',
-      email
+    // 儲存待驗證的註冊資訊（10分鐘過期）
+    pendingRegistrations.set(email, {
+      nickname: finalNickname,
+      password: finalPassword,
+      verificationCode,
+      timestamp: Date.now()
     });
 
+    // 發送驗證碼郵件
+    try {
+      const result = await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: email,
+        subject: 'Restarter - 電子郵件驗證',
+        html: `
+          <div style="font-size:16px;line-height:1.7;max-width:600px;margin:0 auto;">
+            <h2 style="color:#6B5BFF;margin-bottom:20px;">🔐 電子郵件驗證</h2>
+            <div style="background:#f7f8fa;padding:20px;border-radius:8px;margin-bottom:20px;">
+              <p style="margin:0 0 15px 0;">您的驗證碼是：</p>
+              <div style="background:#6B5BFF;color:white;padding:15px;border-radius:8px;text-align:center;font-size:24px;font-weight:bold;margin:15px 0;">
+                ${verificationCode}
+              </div>
+              <p style="margin:15px 0 0 0;color:#666;font-size:14px;">
+                此驗證碼將在 10 分鐘後過期。如果這不是您的操作，請忽略此郵件。
+              </p>
+            </div>
+            <div style="text-align:center;color:#666;font-size:14px;">
+              此郵件由 Restarter 驗證系統自動發送
+            </div>
+          </div>
+        `
+      });
+
+      console.log('✅ 驗證碼郵件發送成功 (Resend)');
+      console.log('郵件ID:', result.data?.id);
+
+      res.json({ 
+        success: true, 
+        message: '驗證碼已發送到您的電子郵件' 
+      });
+
+    } catch (emailError) {
+      console.error('❌ 驗證碼郵件發送失敗:', emailError.message);
+      res.status(500).json({ 
+        success: false, 
+        message: '郵件發送失敗，請稍後再試' 
+      });
+    }
+
   } catch (error) {
-    console.error('發送驗證碼錯誤:', error);
+    console.error('註冊驗證錯誤:', error);
     res.status(500).json({ 
-      error: '發送驗證碼失敗，請稍後再試',
-      success: false
+      success: false, 
+      message: '伺服器錯誤，請稍後再試' 
     });
   }
 });
 
-// 驗證碼確認
+// 驗證碼驗證
 router.post('/verify-code', async (req, res) => {
   try {
     const { email, code } = req.body;
-    
-    console.log('驗證請求:', { email, code });
-    console.log('當前待確認註冊數量:', pendingRegistrations.size);
-    
+
     if (!email || !code) {
-      return res.status(400).json({ error: '請提供 email 和驗證碼' });
+      return res.status(400).json({ 
+        success: false, 
+        message: '請提供電子郵件和驗證碼' 
+      });
     }
 
-    // 清理過期的驗證碼
-    for (const [token, data] of pendingRegistrations.entries()) {
-      if (Date.now() > data.expiresAt) {
-        pendingRegistrations.delete(token);
-        console.log('清理過期驗證碼:', token);
+    const registration = pendingRegistrations.get(email);
+
+    if (!registration) {
+      return res.status(400).json({ 
+        success: false, 
+        message: '未找到待驗證的註冊，請重新發送驗證碼' 
+      });
+    }
+
+    // 檢查驗證碼是否過期（10分鐘）
+    const now = Date.now();
+    const timeDiff = now - registration.timestamp;
+    const tenMinutes = 10 * 60 * 1000;
+
+    if (timeDiff > tenMinutes) {
+      pendingRegistrations.delete(email);
+      return res.status(400).json({ 
+        success: false, 
+        message: '驗證碼已過期，請重新發送' 
+      });
+    }
+
+    // 驗證碼檢查
+    if (registration.verificationCode !== code) {
+      return res.status(400).json({ 
+        success: false, 
+        message: '驗證碼錯誤，請重新輸入' 
+      });
+    }
+
+    // 驗證成功，清除待驗證資料
+    pendingRegistrations.delete(email);
+
+    res.json({ 
+      success: true, 
+      message: '電子郵件驗證成功！',
+      userData: {
+        email: email,
+        nickname: registration.nickname
       }
-    }
-
-    const pendingData = pendingRegistrations.get(code);
-    console.log('找到的待確認資料:', pendingData);
-    
-    if (!pendingData) {
-      console.log('驗證碼不存在，當前所有驗證碼:', Array.from(pendingRegistrations.keys()));
-      return res.status(400).json({ error: '驗證碼無效' });
-    }
-
-    if (pendingData.email !== email) {
-      console.log('email 不匹配:', { expected: pendingData.email, received: email });
-      return res.status(400).json({ error: 'email 與驗證碼不匹配' });
-    }
-
-    if (Date.now() > pendingData.expiresAt) {
-      pendingRegistrations.delete(code);
-      console.log('驗證碼已過期');
-      return res.status(400).json({ error: '驗證碼已過期' });
-    }
-
-    // 返回註冊資料，讓前端完成註冊
-    const { registrationData } = pendingData;
-    
-    // 刪除待確認資料
-    pendingRegistrations.delete(code);
-    console.log('驗證成功，已清理驗證碼');
-    
-    res.json({ 
-      success: true, 
-      message: '驗證碼正確，註冊成功！',
-      email,
-      registrationData
     });
 
   } catch (error) {
-    console.error('驗證碼確認錯誤:', error);
+    console.error('驗證碼驗證錯誤:', error);
     res.status(500).json({ 
-      error: '驗證失敗，請稍後再試' 
-    });
-  }
-});
-
-// 清理所有待確認的註冊（用於測試）
-router.post('/clear-pending', async (req, res) => {
-  try {
-    const clearedCount = pendingRegistrations.size;
-    pendingRegistrations.clear();
-    res.json({ 
-      success: true, 
-      message: `已清理 ${clearedCount} 個待確認的註冊`,
-      clearedCount
-    });
-  } catch (error) {
-    console.error('清理待確認註冊錯誤:', error);
-    res.status(500).json({ 
-      error: '清理失敗，請稍後再試' 
+      success: false, 
+      message: '伺服器錯誤，請稍後再試' 
     });
   }
 });

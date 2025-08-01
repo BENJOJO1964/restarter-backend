@@ -56,13 +56,173 @@ const TEXTS: { [key: string]: { back: string; title: string; send: string; place
   'la': { back: '← Redire', title: 'Cella Colloquii', send: 'Mitte', placeholder: 'Nuntium insere...' },
 };
 
-function VideoChatModal({ open, onClose, roomId }: { open: boolean; onClose: () => void; roomId: string }) {
+function VideoChatModal({ open, onClose, roomId, friendName }: { open: boolean; onClose: () => void; roomId: string; friendName: string }) {
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatMessages, setChatMessages] = useState<Array<{id: string, text: string, sender: string, time: string}>>([]);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+
+  // 初始化視訊
+  useEffect(() => {
+    if (open) {
+      startVideo();
+    }
+  }, [open]);
+
+  const startVideo = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: true, 
+        audio: true 
+      });
+      setLocalStream(stream);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
+      // 初始化時關閉語音
+      const audioTrack = stream.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = false;
+      }
+    } catch (error) {
+      console.error('無法取得視訊權限:', error);
+      alert('無法取得視訊權限，請檢查瀏覽器設定');
+    }
+  };
+
+  const toggleAudio = () => {
+    if (localStream) {
+      const audioTrack = localStream.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = !audioTrack.enabled;
+        setIsAudioEnabled(audioTrack.enabled);
+      }
+    }
+  };
+
+  const toggleVideo = () => {
+    if (localStream) {
+      const videoTrack = localStream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.enabled = !videoTrack.enabled;
+        setIsVideoEnabled(videoTrack.enabled);
+      }
+    }
+  };
+
+  const sendChatMessage = () => {
+    if (chatMessage.trim()) {
+      const newMessage = {
+        id: Date.now().toString(),
+        text: chatMessage,
+        sender: '我',
+        time: new Date().toLocaleTimeString()
+      };
+      setChatMessages(prev => [...prev, newMessage]);
+      setChatMessage('');
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      sendChatMessage();
+    }
+  };
+
   if (!open) return null;
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#0007', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ background: '#fff', borderRadius: 16, padding: 24, boxShadow: '0 2px 16px #0003', minWidth: 540, minHeight: 420, position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: 12, right: 12, background: '#eee', border: 'none', borderRadius: 8, padding: '6px 14px', fontWeight: 700, cursor: 'pointer' }}>關閉</button>
-        <VideoChat roomId={roomId} />
+      <div style={{ background: '#fff', borderRadius: 16, padding: 24, boxShadow: '0 2px 16px #0003', width: '80%', maxWidth: 800, height: '80%', maxHeight: 600, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <h2 style={{ color: '#6B5BFF', fontWeight: 700, fontSize: 20, margin: 0 }}>免費一對一視訊聊天</h2>
+          <button onClick={onClose} style={{ background: '#eee', border: 'none', borderRadius: 8, padding: '6px 14px', fontWeight: 700, cursor: 'pointer' }}>關閉</button>
+        </div>
+        
+        <div style={{ display: 'flex', flex: 1, gap: 16 }}>
+          {/* 視訊區域 */}
+          <div style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', gap: 12, flex: 1 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 14 }}>我</div>
+                <video ref={localVideoRef} autoPlay playsInline muted style={{ width: '100%', height: 120, background: '#000', borderRadius: 8, objectFit: 'cover', transform: 'scaleX(-1)' }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 14 }}>{friendName}</div>
+                <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '100%', height: 120, background: '#000', borderRadius: 8, objectFit: 'cover' }} />
+              </div>
+            </div>
+            
+            {/* 控制按鈕 */}
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+              <button 
+                onClick={toggleAudio}
+                style={{ 
+                  background: '#6B5BFF', 
+                  color: '#fff', 
+                  border: 'none', 
+                  borderRadius: 6, 
+                  padding: '8px 16px', 
+                  fontWeight: 700, 
+                  fontSize: 14, 
+                  cursor: 'pointer' 
+                }}
+              >
+                {isAudioEnabled ? '關閉語音' : '開啟語音'}
+              </button>
+              <button 
+                onClick={toggleVideo}
+                style={{ 
+                  background: '#6B5BFF', 
+                  color: '#fff', 
+                  border: 'none', 
+                  borderRadius: 6, 
+                  padding: '8px 16px', 
+                  fontWeight: 700, 
+                  fontSize: 14, 
+                  cursor: 'pointer' 
+                }}
+              >
+                {isVideoEnabled ? '關閉視訊' : '開啟視訊'}
+              </button>
+            </div>
+          </div>
+          
+          {/* 聊天區域 */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', border: '1px solid #eee', borderRadius: 8, padding: 12 }}>
+            <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 14 }}>即時聊天</div>
+            <div style={{ flex: 1, background: '#f7f7f7', borderRadius: 6, padding: 8, marginBottom: 8, overflowY: 'auto', minHeight: 100 }}>
+              {chatMessages.length === 0 ? (
+                <div style={{ fontSize: 12, color: '#666', textAlign: 'center', marginTop: 20 }}>視訊聊天中，可以同時打字聊天</div>
+              ) : (
+                chatMessages.map(msg => (
+                  <div key={msg.id} style={{ marginBottom: 8, fontSize: 12 }}>
+                    <div style={{ fontWeight: 600, color: '#6B5BFF' }}>{msg.sender}</div>
+                    <div style={{ color: '#333', marginTop: 2 }}>{msg.text}</div>
+                    <div style={{ fontSize: 10, color: '#999', marginTop: 2 }}>{msg.time}</div>
+                  </div>
+                ))
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input 
+                value={chatMessage}
+                onChange={(e) => setChatMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="輸入訊息..." 
+                style={{ flex: 1, borderRadius: 6, border: '1px solid #ccc', padding: '6px 8px', fontSize: 12 }}
+              />
+              <button 
+                onClick={sendChatMessage}
+                style={{ background: '#6B5BFF', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
+              >
+                發送
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -326,7 +486,7 @@ export default function ChatRoom() {
             {friends.length > 0 && (
               <div style={{ maxHeight: 200, overflowY: 'auto' }}>
                 {friends.map(f => (
-                  <div key={f.id} onClick={() => setSelectedFriend(f)} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, cursor: 'pointer', padding: '8px', borderRadius: 8, background: selectedFriend?.id === f.id ? 'rgba(107,91,255,0.1)' : 'transparent', border: selectedFriend?.id === f.id ? '1px solid #6B5BFF' : '1px solid transparent' }}>
+                  <div key={f.id} onClick={() => f.online && setSelectedFriend(f)} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, cursor: f.online ? 'pointer' : 'not-allowed', padding: '8px', borderRadius: 8, background: selectedFriend?.id === f.id ? 'rgba(107,91,255,0.1)' : 'transparent', border: selectedFriend?.id === f.id ? '1px solid #6B5BFF' : '1px solid transparent', opacity: f.online ? 1 : 0.5 }}>
                     <img src={f.avatar} alt={f.name} style={{ width: 36, height: 36, borderRadius: '50%', filter: f.online ? 'none' : 'grayscale(1)', border: selectedFriend?.id === f.id ? '2px solid #6B5BFF' : '2px solid #eee' }} />
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 600, color: f.online ? '#222' : '#aaa', fontSize: 14 }}>
@@ -398,16 +558,16 @@ export default function ChatRoom() {
               <button
                 onClick={selectedFriend ? sendMessage : undefined}
                 disabled={friends.length === 0 || !selectedFriend}
-                style={{ background: '#8ec6f7', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 12px', fontWeight: 700, fontSize: 14, cursor: friends.length === 0 || !selectedFriend ? 'not-allowed' : 'pointer', opacity: friends.length === 0 || !selectedFriend ? 0.5 : 1 }}
+                style={{ background: '#6B5BFF', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 12px', fontWeight: 700, fontSize: 14, cursor: friends.length === 0 || !selectedFriend ? 'not-allowed' : 'pointer', opacity: friends.length === 0 || !selectedFriend ? 0.5 : 1 }}
               >
-                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '測試發送' : TEXTS[lang].send}
+                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '發送' : TEXTS[lang].send}
               </button>
               <button
                 onClick={selectedFriend ? () => setVideoOpen(true) : undefined}
                 disabled={friends.length === 0 || !selectedFriend}
                 style={{ background: '#6B5BFF', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 12px', fontWeight: 700, fontSize: 14, cursor: friends.length === 0 || !selectedFriend ? 'not-allowed' : 'pointer', opacity: friends.length === 0 || !selectedFriend ? 0.5 : 1 }}
               >
-                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '測試視訊' : '視訊聊天'}
+                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '視訊' : '視訊聊天'}
               </button>
             </div>
           </div>
@@ -433,7 +593,7 @@ export default function ChatRoom() {
               </div>
             ) : (
               friends.map(f => (
-                <div key={f.id} onClick={() => setSelectedFriend(f)} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16, cursor: 'pointer', opacity: selectedFriend?.id === f.id ? 1 : 0.7 }}>
+                <div key={f.id} onClick={() => f.online && setSelectedFriend(f)} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16, cursor: f.online ? 'pointer' : 'not-allowed', opacity: f.online ? (selectedFriend?.id === f.id ? 1 : 0.7) : 0.3 }}>
                   <img src={f.avatar} alt={f.name} style={{ width: 44, height: 44, borderRadius: '50%', filter: f.online ? 'none' : 'grayscale(1)', border: selectedFriend?.id === f.id ? '2px solid #6B5BFF' : '2px solid #eee' }} />
                   <div>
                     <div style={{ fontWeight: 600, color: f.online ? '#222' : '#aaa' }}>
@@ -508,19 +668,19 @@ export default function ChatRoom() {
               <button
                 onClick={selectedFriend ? sendMessage : undefined}
                 disabled={friends.length === 0 || !selectedFriend}
-                style={{ background: '#8ec6f7', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 20px', fontWeight: 700, fontSize: 16, cursor: friends.length === 0 || !selectedFriend ? 'not-allowed' : 'pointer', opacity: friends.length === 0 || !selectedFriend ? 0.5 : 1 }}
+                style={{ background: '#6B5BFF', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 20px', fontWeight: 700, fontSize: 16, cursor: friends.length === 0 || !selectedFriend ? 'not-allowed' : 'pointer', opacity: friends.length === 0 || !selectedFriend ? 0.5 : 1 }}
               >
-                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '測試發送' : TEXTS[lang].send}
+                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '發送' : TEXTS[lang].send}
               </button>
               <button
                 onClick={selectedFriend ? () => setVideoOpen(true) : undefined}
                 disabled={friends.length === 0 || !selectedFriend}
                 style={{ background: '#6B5BFF', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 20px', fontWeight: 700, fontSize: 16, cursor: friends.length === 0 || !selectedFriend ? 'not-allowed' : 'pointer', opacity: friends.length === 0 || !selectedFriend ? 0.5 : 1 }}
               >
-                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '測試視訊' : '視訊聊天'}
+                {isTestMode && selectedFriend?.id.startsWith('test-friend-') ? '視訊' : '視訊聊天'}
               </button>
             </div>
-            <VideoChatModal open={videoOpen} onClose={() => setVideoOpen(false)} roomId={user && selectedFriend ? `${user.uid}_${selectedFriend.id}` : ''} />
+            <VideoChatModal open={videoOpen} onClose={() => setVideoOpen(false)} roomId={user && selectedFriend ? `${user.uid}_${selectedFriend.id}` : ''} friendName={selectedFriend?.name || '對方'} />
           </div>
         </>
       )}

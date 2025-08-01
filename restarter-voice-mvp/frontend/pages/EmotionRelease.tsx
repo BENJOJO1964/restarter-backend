@@ -345,12 +345,15 @@ export default function EmotionRelease() {
       {/* 返回按鈕 - 只在主頁面顯示 */}
       {!currentGame && (
         <button 
-          onClick={() => window.history.back()}
+          onClick={() => {
+            console.log('返回按鈕被點擊');
+            window.history.back();
+          }}
           style={{
             position: 'absolute',
             top: 'clamp(20px, 4vw, 40px)',
             left: 'clamp(20px, 4vw, 40px)',
-            zIndex: 1000,
+            zIndex: 9999,
             background: 'rgba(255,255,255,0.9)',
             border: 'none',
             borderRadius: '25px',
@@ -363,7 +366,8 @@ export default function EmotionRelease() {
             justifyContent: 'center',
             color: '#667eea',
             transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            pointerEvents: 'auto'
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = '#667eea';
@@ -382,31 +386,6 @@ export default function EmotionRelease() {
       
       {currentGame ? (
         <div style={{ position: 'relative', height: '100vh' }}>
-          <button 
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setCurrentGame(null);
-            }}
-            style={{
-              position: 'absolute',
-              top: 'clamp(20px, 4vw, 40px)',
-              left: 'clamp(20px, 4vw, 40px)',
-              zIndex: 1000,
-              background: 'rgba(255,255,255,0.9)',
-              border: 'none',
-              borderRadius: '50%',
-              width: 'clamp(40px, 8vw, 50px)',
-              height: 'clamp(40px, 8vw, 50px)',
-              fontSize: 'clamp(16px, 3vw, 24px)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            ←
-          </button>
           {renderGame()}
         </div>
       ) : (
@@ -521,15 +500,15 @@ export default function EmotionRelease() {
               boxShadow: '0 2px 12px #6B5BFF22'
             }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {/* 第一行：隱私權政策、條款/聲明、資料刪除說明 */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                  <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-                  <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
-                  <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
-                </div>
-                {/* 第二行：我們是誰、意見箱 */}
+                {/* 第一行：我們是誰、隱私權政策、條款/聲明 */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
                   <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
+                  <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
+                  <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
+                </div>
+                {/* 第二行：資料刪除說明、意見箱 */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+                  <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
                   <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
                 </div>
               </div>
@@ -546,6 +525,17 @@ export default function EmotionRelease() {
               boxShadow: '0 2px 12px #6B5BFF22'
             }}>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+                <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+                  {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
+                   lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
+                   lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
+                   lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
+                   lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
+                   lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
+                   lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
+                   lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
+                   '🧬 Restarter™｜Quis sumus'}
+                </a>
                 <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
                   {lang === 'zh-TW' ? '隱私權政策' : 
                    lang === 'zh-CN' ? '隐私政策' : 
@@ -578,17 +568,6 @@ export default function EmotionRelease() {
                    lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
                    lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
                    'Explicatio Deletionis Datae'}
-                </a>
-                <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
-                  {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
-                   lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
-                   lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
-                   lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
-                   lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
-                   lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
-                   lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
-                   lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
-                   '🧬 Restarter™｜Quis sumus'}
                 </a>
                 <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
                   {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
@@ -2707,7 +2686,7 @@ function FruitPickingGame({ onClose }: { onClose: () => void }) {
         style={{
           position: 'absolute',
           top: 'clamp(20px, 4vw, 40px)',
-          left: 'clamp(20px, 4vw, 40px)',
+          left: window.innerWidth >= 768 ? 'clamp(10px, 2vw, 15px)' : 'clamp(20px, 4vw, 40px)',
           background: '#fff',
           border: '2px solid #6B5BFF',
           borderRadius: '50%',

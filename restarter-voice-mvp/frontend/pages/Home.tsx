@@ -150,15 +150,39 @@ const SLOGAN2: Record<string, string> = {
 };
 
 const FOOTER_TEXT = {
-  'zh-TW': { privacy: '隱私權政策', deletion: '資料刪除說明' },
-  'zh-CN': { privacy: '隐私政策', deletion: '资料删除说明' },
-  'en': { privacy: 'Privacy Policy', deletion: 'Data Deletion' },
-  'ja': { privacy: 'プライバシーポリシー', deletion: 'データ削除について' },
-  'ko': { privacy: '개인정보처리방침', deletion: '데이터 삭제 안내' },
-  'th': { privacy: 'นโยบายความเป็นส่วนตัว', deletion: 'นโยบายการลบข้อมูล' },
-  'vi': { privacy: 'Chính sách bảo mật', deletion: 'Chính sách xóa dữ liệu' },
-  'ms': { privacy: 'Dasar Privasi', deletion: 'Dasar Pemadaman Data' },
-  'la': { privacy: 'Consilium Privacy', deletion: 'Norma Deletionis Datae' },
+  'zh-TW': { privacy: '隱私權政策', terms: '條款/聲明', deletion: '資料刪除說明' },
+  'zh-CN': { privacy: '隐私政策', terms: '条款/声明', deletion: '资料删除说明' },
+  'en': { privacy: 'Privacy Policy', terms: 'Terms/Statement', deletion: 'Data Deletion' },
+  'ja': { privacy: 'プライバシーポリシー', terms: '規約/声明', deletion: 'データ削除について' },
+  'ko': { privacy: '개인정보처리방침', terms: '약관/성명', deletion: '데이터 삭제 안내' },
+  'th': { privacy: 'นโยบายความเป็นส่วนตัว', terms: 'ข้อกำหนด/แถลงการณ์', deletion: 'คำอธิบายการลบข้อมูล' },
+  'vi': { privacy: 'Chính sách bảo mật', terms: 'Điều khoản/Tuyên bố', deletion: 'Giải thích xóa dữ liệu' },
+  'ms': { privacy: 'Dasar Privasi', terms: 'Terma/Pernyataan', deletion: 'Penjelasan Penghapusan Data' },
+  'la': { privacy: 'Consilium Privacy', terms: 'Termini/Declaratio', deletion: 'Norma Deletionis Datae' },
+};
+
+const ABOUT_TEXT = {
+  'zh-TW': '🧬 Restarter™｜我們是誰',
+  'zh-CN': '🧬 Restarter™｜我们是谁',
+  'en': '🧬 Restarter™｜Who We Are',
+  'ja': '🧬 Restarter™｜私たちについて',
+  'ko': '🧬 Restarter™｜우리는 누구인가',
+  'th': '🧬 Restarter™｜เราเป็นใคร',
+  'vi': '🧬 Restarter™｜Chúng tôi là ai',
+  'ms': '🧬 Restarter™｜Siapa Kami',
+  'la': '🧬 Restarter™｜Quis sumus',
+};
+
+const FEEDBACK_TEXT = {
+  'zh-TW': '💬 意見箱｜我們想聽你說',
+  'zh-CN': '💬 意见箱｜我们想听你说',
+  'en': '💬 Feedback｜We Want to Hear You',
+  'ja': '💬 ご意見箱｜あなたの声を聞かせて',
+  'ko': '💬 피드백｜여러분의 의견을 듣고 싶어요',
+  'th': '💬 กล่องความคิดเห็น｜เราอยากฟังคุณ',
+  'vi': '💬 Hộp góp ý｜Chúng tôi muốn lắng nghe bạn',
+  'ms': '💬 Kotak Maklum Balas｜Kami ingin mendengar anda',
+  'la': '💬 Arca Consilii｜Te audire volumus',
 };
 
 const PROFILE_MANAGEMENT_TEXT = {
@@ -227,7 +251,22 @@ export default function Home() {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    
+    // 強制重新計算Footer位置
+    const timer = setTimeout(() => {
+      const footer = document.querySelector('footer');
+      if (footer) {
+        footer.style.transition = 'none';
+        setTimeout(() => {
+          footer.style.transition = 'top 0.3s ease';
+        }, 50);
+      }
+    }, 500);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      clearTimeout(timer);
+    };
   }, []);
 
   // MODULES 陣列（還原）
@@ -641,12 +680,12 @@ export default function Home() {
         </div>
       ) : (
         // 桌面版頂部導航
-        <div style={{ position: 'fixed', top: 24, right: 36, zIndex: 9999, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18, pointerEvents: 'auto', width: '100%', justifyContent: 'flex-end' }}>
+        <div style={{ position: 'fixed', top: 8, right: 36, zIndex: 9999, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18, pointerEvents: 'auto', width: '100%', justifyContent: 'flex-end' }}>
           <div style={{ display: 'flex', flexDirection: 'row', gap: 18, marginRight: 24 }}>
             <button 
               className="topbar-btn" 
               onClick={() => navigate('/about')} 
-              style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 14px', minWidth: 120 }}
+              style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 80 }}
               aria-label={lang==='zh-TW'?'了解 Restarter 平台':'zh-CN'===lang?'了解 Restarter 平台':'en'===lang?'Learn about Restarter platform':'ja'===lang?'Restarter プラットフォームについて':'ko'===lang?'Restarter 플랫폼에 대해 알아보기':'th'===lang?'เรียนรู้เกี่ยวกับแพลตฟอร์ม Restarter':'vi'===lang?'Tìm hiểu về nền tảng Restarter':'ms'===lang?'Ketahui tentang platform Restarter':'Cognosce de suggestum Restarter'}
               role="button"
             >
@@ -655,21 +694,24 @@ export default function Home() {
             <button 
               className="topbar-btn" 
               onClick={() => navigate('/feedback')} 
-              style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 14px', minWidth: 140 }}
-              aria-label={lang==='zh-TW'?'提供意見和建議':'zh-CN'===lang?'提供意见和建议':'en'===lang?'Provide feedback and suggestions':'ja'===lang?'ご意見やご提案を提供':'ko'===lang?'의견과 제안 제공':'th'===lang?'ให้ข้อเสนอแนะและคำแนะนำ':'vi'===lang?'Cung cấp phản hồi và đề xuất':'ms'===lang?'Berikan maklum balas dan cadangan':'Praebe consilia et suggestiones'}
+              style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 100 }}
+              aria-label={lang==='zh-TW'?'提供意見和建議':'zh-CN'===lang?'提供意见和建议':'en'===lang?'Provide feedback and suggestions':'ja'===lang?'ご意見やご提案を提供':'ko'===lang?'의견과 제안 제공':'th'===lang?'ให้ข้อเสนอแนะและคำแนะนำ':'vi'===lang?'Cung cấp phản hồiและ đề xuất':'ms'===lang?'Berikan maklum balas dan cadangan':'Praebe consilia et suggestiones'}
               role="button"
             >
               {lang==='zh-TW'?'💬 意見箱｜我們想聽你說':'zh-CN'===lang?'💬 意见箱｜我们想听你说':'en'===lang?'💬 Feedback｜We Want to Hear You':'ja'===lang?'💬 ご意見箱｜あなたの声を聞かせて':'ko'===lang?'💬 피드백｜여러분의 의견을 듣고 싶어요':'th'===lang?'💬 กล่องความคิดเห็น｜เราอยากฟังคุณ':'vi'===lang?'💬 Hộp góp ý｜Chúng tôi muốn lắng nghe bạn':'ms'===lang?'💬 Kotak Maklum Balas｜Kami ingin mendengar anda':'💬 Arca Consilii｜Te audire volumus'}
             </button>
-            <button 
-              className="topbar-btn" 
-              onClick={() => navigate('/token-test')} 
-              style={{ background: '#fff', color: '#ff6b6b', border: '2px solid #ff6b6b', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 14px', minWidth: 120 }}
-              aria-label="Token 消耗測試"
-              role="button"
-            >
-              🧪 Token 測試
-            </button>
+            {/* Token 測試按鈕 - 僅在開發環境顯示 */}
+            {(import.meta as any).env?.DEV && (
+              <button 
+                className="topbar-btn" 
+                onClick={() => navigate('/token-test')} 
+                style={{ background: '#fff', color: '#ff6b6b', border: '2px solid #ff6b6b', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 14px', minWidth: 120 }}
+                aria-label="Token 消耗測試"
+                role="button"
+              >
+                🧪 Token 測試
+              </button>
+            )}
             {user ? (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -710,7 +752,7 @@ export default function Home() {
               <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', border: '1.5px solid #6B5BFF', borderRadius: 8, boxShadow: '0 4px 16px #0002', zIndex: 9999, minWidth: 120 }}>
                 {['zh-TW', 'zh-CN', 'en', 'ja', 'ko', 'th', 'vi', 'ms', 'la'].map(l => (
                   <div key={l} style={{ padding: '10px 18px', cursor: 'pointer', color: l === lang ? '#6B5BFF' : '#232946', fontWeight: l === lang ? 700 : 500, background: l === lang ? '#f3f0ff' : '#fff' }} onClick={() => { setLang(l as LanguageCode); setShowLangBox(false); }}>
-                    {l === 'zh-TW' ? '繁中' : l === 'zh-CN' ? '简中' : l === 'en' ? 'English' : l === 'ja' ? '日本語' : l === 'ko' ? '한국어' : l === 'th' ? 'ไทย' : l === 'vi' ? 'Tiếng Việt' : 'Latin'}
+                    {l === 'zh-TW' ? '繁中' : l === 'zh-CN' ? '简中' : l === 'en' ? 'English' : l === 'ja' ? '日本語' : l === 'ko' ? '한국어' : l === 'th' ? 'ไทย' : l === 'vi' ? 'Tiếng Việt' : l === 'ms' ? 'Bahasa Melayu' : 'Latin'}
                   </div>
                 ))}
               </div>
@@ -720,7 +762,7 @@ export default function Home() {
       )}
       {isMobile ? (
         // 手機版主內容
-        <div style={{ width: '100vw', minHeight: '100vh', background: `url('/plains.png') center center/cover no-repeat`, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 120 }}>
+        <div style={{ width: '100vw', minHeight: '100vh', background: `url('/plains.png') center center/cover no-repeat`, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 100 }}>
           
           {/* 手機版天氣組件 */}
           <div style={{ width: '100%', padding: '0 16px', marginBottom: 16 }}>
@@ -943,24 +985,28 @@ export default function Home() {
         </div>
       ) : (
         // 桌面版主內容
-        <div style={{ width: '100vw', minHeight: '100vh', background: `url('/plains.png') center center/cover no-repeat`, display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center' }}>
+        <div style={{ width: '100vw', minHeight: '160vh', background: `url('/plains.png') center center/cover no-repeat`, display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center' }}>
           {/* 左側內容：主標題、說明、功能按鈕 */}
-          <div className="home-left-col left-relative" style={{ flex: 1, minWidth: 320, maxWidth: 600, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', padding: '48px 0 0 0', zIndex: 2 }}>
+          <div className="home-left-col left-relative" style={{ flex: 1, minWidth: 320, maxWidth: 600, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', padding: '120px 0 0 0', zIndex: 2 }}>
             {/* LOGO、標語、主標題、說明、功能按鈕等原本內容 */}
             <div className="fixed-logo-box" style={{ position: 'fixed', top: 16, left: 42, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 10000, paddingTop: 0, marginTop: 0 }}>
               <img src="/ctx-logo.png" className="fixed-logo-img" style={{ marginBottom: 0, width: 182, height: 182, cursor: 'pointer', marginTop: '-40px' }} onClick={() => navigate('/')} />
             </div>
-            <div className="column-content" style={{ justifyContent: 'center', alignItems: 'center', height: '100%', paddingTop: 120 }}>
+            <div className="column-content" style={{ justifyContent: 'center', alignItems: 'center', height: '100%', paddingTop: lang === 'vi' ? '200px' : 
+                        lang === 'ms' ? '220px' : 
+                        lang === 'la' ? '240px' : 
+                        lang === 'en' ? '180px' : '80px' }}>
               
               {/* 恢復主標語、主標題、說明等重要文字內容 */}
               <div
                 style={{
                   width: '100%',
                   maxWidth: 900,
-                  margin: '0 auto 12px auto',
+                  margin: '0 auto 16px auto',
                   textAlign: 'center',
                   wordBreak: 'break-word',
                   whiteSpace: 'normal',
+                  marginLeft: '0px',
                 }}
               >
                 <span
@@ -989,7 +1035,7 @@ export default function Home() {
               <h1 className="main-title" style={{ position: 'relative', left: '0px', fontSize: 36, fontWeight: 900, color: '#fff', marginBottom: 18, textShadow: '0 2px 12px #232946, 0 4px 24px #0008' }}>
                 <span style={{ color: '#6B5BFF' }}>Restarter™</span> Global Platform
               </h1>
-              <div style={{ width: '100%', textAlign: 'center', margin: '0 auto', marginBottom: 16 }}>
+              <div style={{ width: '100%', textAlign: 'center', margin: '0 auto', marginBottom: 16, marginTop: '0px' }}>
                 <span style={{ color: '#232946', fontWeight: 500, fontSize: 16, lineHeight: 1.5, letterSpacing: 0.5, whiteSpace: 'pre-line' }}>
                                                           {TEXT[lang].desc}
                 </span>
@@ -1069,11 +1115,11 @@ export default function Home() {
                 </div>
               </div>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginBottom: 18, justifyContent: 'center', width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginBottom: 60, justifyContent: 'center', width: '100%' }}>
                 <div style={{ display: 'flex', flexDirection: 'row', gap: 18, justifyContent: 'center' }}>
                   <button 
                     className="feature-btn" 
-                    style={{ fontSize: 18, padding: '24px 24px', minWidth: 160, minHeight: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center' }} 
+                    style={{ fontSize: 18, padding: '16px 16px', minWidth: 160, minHeight: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center', background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF' }} 
                     onClick={() => handleFeatureWithAuth(() => navigate('/friend'), 'userInteraction')}
                     aria-label={lang === 'zh-TW' ? '進入交友區，尋找新朋友，建立支持圈' : lang === 'zh-CN' ? '进入交友区，寻找新朋友，建立支持圈' : lang === 'en' ? 'Enter friend matching area to find new friends and build support circle' : lang === 'ja' ? '友達マッチングエリアに入って新しい友達を見つけ、サポートサークルを築く' : lang === 'ko' ? '친구 매칭 영역으로 이동하여 새로운 친구를 찾고 지원 서클을 구축' : lang === 'th' ? 'เข้าสู่พื้นที่จับคู่เพื่อนเพื่อหาเพื่อนใหม่และสร้างวงกลมสนับสนุน' : lang === 'vi' ? 'Vào khu vực ghép bạn bè để tìm bạn mới và xây dựng vòng tròn hỗ trợ' : lang === 'ms' ? 'Masuk ke kawasan padanan rakan untuk mencari rakan baru dan membina bulatan sokongan' : 'Intra in area par amicus ad inveniendos novos amicos et construendam circulum auxilii'}
                     role="button"
@@ -1085,7 +1131,7 @@ export default function Home() {
                     <button 
                       key={m.key} 
                       className="feature-btn" 
-                      style={{ fontSize: 18, padding: '24px 24px', minWidth: 160, minHeight: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center' }} 
+                      style={{ fontSize: 18, padding: '16px 16px', minWidth: 160, minHeight: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center', background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF' }} 
                       onClick={() => handleFeatureWithAuth(() => navigate(m.path))}
                       aria-label={m.desc[lang]}
                       role="button"
@@ -1103,7 +1149,7 @@ export default function Home() {
                     <button 
                       key={m.key} 
                       className="feature-btn" 
-                      style={{ fontSize: 18, padding: '24px 24px', minWidth: 160, minHeight: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center' }} 
+                      style={{ fontSize: 18, padding: '16px 16px', minWidth: 160, minHeight: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center', background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF' }} 
                       onClick={() => handleFeatureWithAuth(() => navigate(m.path))}
                       aria-label={m.desc[lang]}
                       role="button"
@@ -1117,7 +1163,7 @@ export default function Home() {
                   {/* 我是誰故事鏈按鈕 */}
                   <button 
                     className="feature-btn" 
-                    style={{ fontSize: 18, padding: '24px 24px', minWidth: 160, minHeight: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center' }} 
+                    style={{ fontSize: 18, padding: '16px 16px', minWidth: 160, minHeight: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center', background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF' }} 
                     onClick={() => handleFeatureWithAuth(() => navigate('/storywall'))}
                     aria-label={lang === 'zh-TW' ? '分享故事，建立連結' : lang === 'zh-CN' ? '分享故事，建立连接' : lang === 'en' ? 'Share Stories, Build Connections' : lang === 'ja' ? 'ストーリーを共有し、つながりを築く' : lang === 'ko' ? '이야기를 공유하고 연결을 구축' : lang === 'th' ? 'แบ่งปันเรื่องราว สร้างการเชื่อมต่อ' : lang === 'vi' ? 'Chia sẻ câu chuyện, xây dựng kết nối' : lang === 'ms' ? 'Kongsi cerita, bina hubungan' : 'Fabulas partiri, nexus construere'}
                     role="button"
@@ -1130,10 +1176,10 @@ export default function Home() {
                     className="feature-btn mutual-help-btn"
                     style={{
                       fontSize: 18,
-                      padding: '24px 24px',
+                      padding: '16px 16px',
                       minWidth: 180,
                       maxWidth: 240,
-                      minHeight: 120,
+                      minHeight: 80,
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -1155,7 +1201,7 @@ export default function Home() {
                   {/* 情緒發洩區按鈕 */}
                   <button 
                     className="feature-btn" 
-                    style={{ fontSize: 18, padding: '24px 24px', minWidth: 160, minHeight: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center' }} 
+                    style={{ fontSize: 18, padding: '16px 16px', minWidth: 160, minHeight: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, justifyContent: 'center', background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF' }} 
                     onClick={() => handleFeatureWithAuth(() => navigate('/emotion-release'))}
                     aria-label={lang === 'zh-TW' ? '透過遊戲釋放壓力，找回平靜' : lang === 'zh-CN' ? '通过游戏释放压力，找回平静' : lang === 'en' ? 'Release stress through games, find peace' : lang === 'ja' ? 'ゲームでストレスを発散し、平静を取り戻す' : lang === 'ko' ? '게임으로 스트레스를 해소하고 평온을 찾으세요' : lang === 'th' ? 'ปลดปล่อยความเครียดผ่านเกม หาความสงบ' : lang === 'vi' ? 'Giải tỏa căng thẳng qua trò chơi, tìm lại bình yên' : lang === 'ms' ? 'Lepaskan tekanan melalui permainan, temui ketenangan' : 'Libera tensionem per ludos, inveni pacem'}
                     role="button"
@@ -1181,7 +1227,7 @@ export default function Home() {
             <button
               ref={chatBtnRef}
               className="feature-btn home-chat-btn"
-              style={{ height: 120, marginTop: 0, marginBottom: 0, position: 'relative', top: '-60px', gap: 8, padding: '24px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
+              style={{ height: 80, marginTop: 0, marginBottom: 0, position: 'relative', top: '-40px', gap: 8, padding: '16px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF' }}
               onClick={() => handleFeatureWithAuth(() => handleFeature('chat'), 'aiChat')}
               aria-label={lang === 'zh-TW' ? '開始與 AI 聊天對話' : lang === 'zh-CN' ? '开始与 AI 聊天对话' : lang === 'en' ? 'Start chatting with AI' : lang === 'ja' ? 'AIとのチャットを開始' : lang === 'ko' ? 'AI와 채팅 시작' : lang === 'th' ? 'เริ่มแชทกับ AI' : lang === 'vi' ? 'Bắt đầu trò chuyệnกับ AI' : lang === 'ms' ? 'Mula berbual dengan AI' : 'Incipe colloquium cum AI'}
               role="button"
@@ -1192,6 +1238,105 @@ export default function Home() {
           </div>
         </div>
       )}
+      
+      {/* 桌面版Footer按鈕 - 直接放在頁面內容中，不是footer */}
+      {!isMobile && (
+        <div style={{ 
+          width: '100%', 
+          margin: '0 auto', 
+          marginTop: 20,
+          padding: '16px'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+            <a href="/about" style={{ 
+              color: '#6B5BFF', 
+              textDecoration: 'none', 
+              padding: '4px 12px', 
+              fontSize: 11,
+              background: '#fff',
+              borderRadius: '8px',
+              border: '2px solid #6B5BFF',
+              fontWeight: 700,
+              transition: 'all 0.3s ease',
+              display: 'inline-block',
+              minHeight: '24px',
+              lineHeight: '14px',
+              textAlign: 'center'
+            }}>
+              {ABOUT_TEXT[lang] || ABOUT_TEXT['zh-TW']}
+            </a>
+            <a href="/privacy-policy" style={{ 
+              color: '#6B5BFF', 
+              textDecoration: 'none', 
+              padding: '4px 12px', 
+              fontSize: 11,
+              background: '#fff',
+              borderRadius: '8px',
+              border: '2px solid #6B5BFF',
+              fontWeight: 600,
+              transition: 'all 0.3s ease',
+              display: 'inline-block',
+              minHeight: '24px',
+              lineHeight: '14px',
+              textAlign: 'center'
+            }}>
+              {FOOTER_TEXT[lang]?.privacy || FOOTER_TEXT['zh-TW'].privacy}
+            </a>
+            <a href="/terms" style={{ 
+              color: '#6B5BFF', 
+              textDecoration: 'none', 
+              padding: '4px 12px', 
+              fontSize: 11,
+              background: '#fff',
+              borderRadius: '8px',
+              border: '2px solid #6B5BFF',
+              fontWeight: 600,
+              transition: 'all 0.3s ease',
+              display: 'inline-block',
+              minHeight: '24px',
+              lineHeight: '14px',
+              textAlign: 'center'
+            }}>
+              {FOOTER_TEXT[lang]?.terms || FOOTER_TEXT['zh-TW'].terms}
+            </a>
+            <a href="/data-deletion" style={{ 
+              color: '#6B5BFF', 
+              textDecoration: 'none', 
+              padding: '4px 12px', 
+              fontSize: 11,
+              background: '#fff',
+              borderRadius: '8px',
+              border: '2px solid #6B5BFF',
+              fontWeight: 600,
+              transition: 'all 0.3s ease',
+              display: 'inline-block',
+              minHeight: '24px',
+              lineHeight: '14px',
+              textAlign: 'center'
+            }}>
+              {FOOTER_TEXT[lang]?.deletion || FOOTER_TEXT['zh-TW'].deletion}
+            </a>
+            <a href="/feedback" style={{ 
+              color: '#6B5BFF', 
+              textDecoration: 'none', 
+              padding: '4px 12px', 
+              fontSize: 11,
+              background: '#fff',
+              borderRadius: '8px',
+              border: '2px solid #6B5BFF',
+              fontWeight: 700,
+              transition: 'all 0.3s ease',
+              display: 'inline-block',
+              minHeight: '24px',
+              lineHeight: '14px',
+              textAlign: 'center'
+            }}>
+              {FEEDBACK_TEXT[lang] || FEEDBACK_TEXT['zh-TW']}
+            </a>
+          </div>
+        </div>
+      )}
+      
       <Footer />
       {/* 登入提示視窗 */}
       {showLoginTip && (
@@ -1239,6 +1384,7 @@ export default function Home() {
           font-weight: 700;
           font-size: 16px;
           padding: 8px 16px;
+          backdrop-filter: blur(10px);
         }
         .home-chat-btn-text {
           font-size: 18px;

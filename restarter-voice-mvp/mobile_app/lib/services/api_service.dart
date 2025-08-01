@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:3001'; // 後端服務器地址
+  static const String baseUrl = 'http://172.20.10.6:3001'; // 後端服務器地址
   
   // 語音轉文字 API
   static Future<String> speechToText(String audioPath) async {

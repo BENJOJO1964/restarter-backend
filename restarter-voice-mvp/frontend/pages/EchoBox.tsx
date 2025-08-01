@@ -1466,8 +1466,7 @@ export default function EchoBox() {
             }}>
               <div style={{ 
                 fontSize: '48px', 
-                marginBottom: '20px',
-                animation: 'bounce 0.6s infinite'
+                marginBottom: '20px'
               }}>
                 🎤
               </div>
@@ -1674,6 +1673,17 @@ export default function EchoBox() {
         boxShadow: '0 2px 12px #6B5BFF22'
       }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+            {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
+             lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
+             lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
+             lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
+             lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
+             lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
+             lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
+             lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
+             '🧬 Restarter™｜Quis sumus'}
+          </a>
           <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
             {lang === 'zh-TW' ? '隱私權政策' : 
              lang === 'zh-CN' ? '隐私政策' : 
@@ -1706,17 +1716,6 @@ export default function EchoBox() {
              lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
              lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
              'Explicatio Deletionis Datae'}
-          </a>
-          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
-            {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
-             lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
-             lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
-             lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
-             lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
-             lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
-             lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
-             lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
-             '🧬 Restarter™｜Quis sumus'}
           </a>
           <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
             {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 

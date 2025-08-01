@@ -165,7 +165,10 @@ function App() {
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/payment-info" element={<PaymentInfo />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/token-test" element={<TokenTest />} />
+                  {/* Token 測試路由 - 僅在開發環境顯示 */}
+                  {(import.meta as any).env?.DEV && (
+                    <Route path="/token-test" element={<TokenTest />} />
+                  )}
                 </Routes>
               </UserStatusProvider>
               </TestModeContext.Provider>

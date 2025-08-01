@@ -139,31 +139,30 @@ const LANGS = [
 ];
 
 export default function Feedback() {
-  const [lang, setLang] = useState(localStorage.getItem('lang') || 'zh-TW');
-  const [value, setValue] = useState('');
-  const [sent, setSent] = useState(false);
-  const [phIdx, setPhIdx] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
   const auth = getAuth();
+  const [value, setValue] = useState('');
+  const [sent, setSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [lang, setLang] = useState('zh-TW');
+  const [phIdx, setPhIdx] = useState(0);
+
+  const t = TEXTS[lang] || TEXTS['zh-TW'];
+
   useEffect(() => {
     const onStorage = () => setLang(localStorage.getItem('lang') || 'zh-TW');
+    onStorage();
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, []);
+
   useEffect(() => {
-    const id = setInterval(() => {
-      const l = localStorage.getItem('lang') || 'zh-TW';
-      if (l !== lang) setLang(l);
-    }, 300);
-    return () => clearInterval(id);
+    const interval = setInterval(() => {
+      setPhIdx(prev => (prev + 1) % PLACEHOLDERS[lang].length);
+    }, 3000);
+    return () => clearInterval(interval);
   }, [lang]);
-  React.useEffect(() => {
-    const timer = setInterval(() => setPhIdx(i => (i + 1) % PLACEHOLDERS[lang].length), 3500);
-    return () => clearInterval(timer);
-  }, [lang]);
-  const t = TEXTS[lang];
 
   const handleSubmit = async () => {
     if (!value.trim()) return;
@@ -202,9 +201,9 @@ export default function Feedback() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #e0e7ff 0%, #b7cfff 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '48px 0 0 0' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #e0e7ff 0%, #b7cfff 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '48px 0 120px 0' }}>
       <button onClick={() => navigate('/')} style={{ position: 'absolute', top: 24, left: 24, zIndex: 10, background: '#fff', border: '1.5px solid #6B5BFF', color: '#6B5BFF', borderRadius: 8, padding: '6px 18px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #0001' }}>
-        {lang==='zh-TW'?'← 返回首頁':lang==='zh-CN'?'← 返回首页':lang==='en'?'← Back to Home':lang==='ja'?'← ホームへ戻る':lang==='ko'?'← 홈으로 돌아가기':lang==='th'?'← กลับหน้าหลัก':lang==='vi'?'← Quay lại trang chủ':lang==='ms'?'← Kembali ke Laman Utama':'← Redi ad domum'}
+        返回
       </button>
       <div style={{ maxWidth: 520, background: '#fff', borderRadius: 18, boxShadow: '0 2px 16px #6B5BFF22', padding: 40, marginTop: 64, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <h1 style={{ fontSize: 32, fontWeight: 900, color: '#6B5BFF', marginBottom: 8 }}>{t.title}</h1>
@@ -246,24 +245,7 @@ export default function Feedback() {
         )}
       </div>
       
-      {/* Footer 5個按鈕 - 一行排列 */}
-      <div style={{ 
-        width: '100%', 
-        margin: '0 auto', 
-        marginTop: 24,
-        background: 'rgba(255,255,255,0.95)',
-        borderRadius: 16,
-        padding: '16px',
-        boxShadow: '0 2px 12px #6B5BFF22'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-          <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-          <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
-          <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
-          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
-          <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 } 

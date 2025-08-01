@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getAuth, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, OAuthProvider, sendPasswordResetEmail } from 'firebase/auth';
+import { getApiUrl } from '../src/config/api';
+import { getAuth, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, OAuthProvider, sendPasswordResetEmail } from 'firebase/auth';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import app from '../src/firebaseConfig';
@@ -679,6 +680,43 @@ export default function RegisterPage() {
     });
   }, [navigate]);
 
+  // 處理 redirect 登入結果
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const { getRedirectResult } = await import('firebase/auth');
+        const result = await getRedirectResult(auth);
+        if (result) {
+          console.log('Redirect 登入成功，user.uid:', result.user.uid);
+          
+          // 強制 reload user，避免快取
+          await result.user.reload();
+          console.log('user reload 完成');
+          
+          // 檢查 Firestore 是否有完整個人資料
+          const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+          console.log('Firestore 查詢結果:', {
+            exists: userDoc.exists(),
+            data: userDoc.data(),
+            completed: userDoc.data()?.completed
+          });
+          
+          if (!userDoc.exists() || !userDoc.data() || !userDoc.data().completed) {
+            console.log('導向 /CompleteProfile');
+            navigate('/CompleteProfile');
+          } else {
+            console.log('導向首頁 /');
+            navigate('/');
+          }
+        }
+      } catch (error) {
+        console.error('處理 redirect 結果時發生錯誤:', error);
+      }
+    };
+    
+    handleRedirectResult();
+  }, [navigate]);
+
   const showNotice = params.get('needProfile') === '1';
   const t = TEXT[lang];
   
@@ -743,7 +781,7 @@ export default function RegisterPage() {
         improvement
       };
 
-      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/email-verification/verify-code', {
+      const response = await fetch(getApiUrl('/email-verification/verify-code'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -785,7 +823,7 @@ export default function RegisterPage() {
       };
 
       console.log('重發驗證碼到:', email);
-      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/email-verification/send-code', {
+      const response = await fetch(getApiUrl('/email-verification/send-code'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, registrationData })
@@ -796,6 +834,8 @@ export default function RegisterPage() {
       if (data.success) {
         setVerificationCode(''); // 清空舊驗證碼
         setError('已重新發送驗證碼，請輸入新的驗證碼');
+        setShowEmailVerification(true); // 確保顯示驗證碼輸入界面
+        setShowConfirmation(false); // 確保隱藏舊的確認界面
       } else {
         setError(data.error || '重發驗證碼失敗');
       }
@@ -839,7 +879,7 @@ export default function RegisterPage() {
 
       // 發送 email 驗證碼
       console.log('正在發送 email 驗證碼到:', email);
-      const emailResponse = await fetch('https://restarter-backend-6e9s.onrender.com/api/email-verification/send-code', {
+      const emailResponse = await fetch(getApiUrl('/email-verification/send-code'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, registrationData })
@@ -852,16 +892,12 @@ export default function RegisterPage() {
       if (emailData.success) {
         setEmailSent(true);
         setShowEmailVerification(true);
+        setShowConfirmation(false); // 確保隱藏舊的確認界面
         setVerificationCode(''); // 清空驗證碼輸入框
         setSendingEmail(false);
         clearTimeout(slowTimer);
         setSlowNetwork(false);
-        // 第一次發送時顯示簡單提示，重新發送時顯示詳細提示
-        if (showEmailVerification) {
-          setError('請輸入最新收到的驗證碼（舊的驗證碼已失效）');
-        } else {
-          setError('請輸入收到的驗證碼');
-        }
+        setError(''); // 清空錯誤訊息
       } else {
         throw new Error(emailData.error || '生成驗證碼失敗');
       }
@@ -958,18 +994,61 @@ export default function RegisterPage() {
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
+      console.log('開始 Google 登入...');
       setLoading(true);
       setSlowNetwork(false);
       let slowTimer: any = setTimeout(() => setSlowNetwork(true), 1500);
-      const result = await signInWithPopup(auth, provider);
+      
+      // 手機版特殊處理
+      const isMobile = window.innerWidth <= 768;
+      console.log('是否為手機版:', isMobile);
+      
+      let result;
+      if (isMobile) {
+        // 手機版使用原本的簡單邏輯
+        result = await signInWithPopup(auth, provider);
+      } else {
+        // 電腦版使用原本的簡單邏輯
+        result = await signInWithPopup(auth, provider);
+        clearTimeout(slowTimer);
+        setSlowNetwork(false);
+        setLoading(false);
+        navigate('/');
+        return;
+      }
+      
       clearTimeout(slowTimer);
       setSlowNetwork(false);
       setLoading(false);
+      
+      console.log('Google 登入成功，user.uid:', result.user.uid);
+      
+      // 手機版和電腦版都使用簡單邏輯，直接導向首頁
       navigate('/');
     } catch (error) {
       setLoading(false);
       setSlowNetwork(false);
-      alert('Google 登入失敗：' + (error as any).message);
+      console.error('Google 登入錯誤:', error);
+      
+      // 手機版特殊錯誤處理
+      const isMobile = window.innerWidth <= 768;
+      let errorMessage = 'Google 登入失敗：' + (error as any).message;
+      
+      // 根據錯誤類型提供更詳細的訊息
+      if ((error as any).code === 'auth/popup-closed-by-user') {
+        errorMessage = '登入視窗被關閉，請重新嘗試';
+      } else if ((error as any).code === 'auth/popup-blocked') {
+        errorMessage = '登入視窗被瀏覽器阻擋，請允許彈出視窗後重新嘗試';
+      } else if ((error as any).code === 'auth/network-request-failed') {
+        errorMessage = '網路連線失敗，請檢查網路後重新嘗試';
+      } else if ((error as any).code === 'auth/too-many-requests') {
+        errorMessage = '登入嘗試過於頻繁，請稍後再試';
+      }
+      
+      console.log('Google 登入錯誤代碼:', (error as any).code);
+      console.log('Google 登入錯誤訊息:', errorMessage);
+      
+      alert(errorMessage);
     }
   };
 
@@ -999,7 +1078,24 @@ export default function RegisterPage() {
       }
     } catch (error) {
       console.error('Apple 登入錯誤:', error);
-      alert('Apple 登入失敗：' + (error as any).message);
+      
+      let errorMessage = 'Apple 登入失敗：' + (error as any).message;
+      
+      // 根據錯誤類型提供更詳細的訊息
+      if ((error as any).code === 'auth/popup-closed-by-user') {
+        errorMessage = '登入視窗被關閉，請重新嘗試';
+      } else if ((error as any).code === 'auth/popup-blocked') {
+        errorMessage = '登入視窗被瀏覽器阻擋，請允許彈出視窗後重新嘗試';
+      } else if ((error as any).code === 'auth/network-request-failed') {
+        errorMessage = '網路連線失敗，請檢查網路後重新嘗試';
+      } else if ((error as any).code === 'auth/too-many-requests') {
+        errorMessage = '登入嘗試過於頻繁，請稍後再試';
+      }
+      
+      console.log('Apple 登入錯誤代碼:', (error as any).code);
+      console.log('Apple 登入錯誤訊息:', errorMessage);
+      
+      alert(errorMessage);
     }
   };
 
@@ -1408,8 +1504,11 @@ export default function RegisterPage() {
                     width: '100%', 
                     minWidth: 0 
                   }}>
-                    <input type="email" autoComplete="off" placeholder={t.email} value={email} onChange={e => setEmail(e.target.value)} style={{ gridColumn: '1 / -1', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }} className="reg-input" required/>
-                    <input type="password" autoComplete="off" placeholder={t.password} value={password} onChange={e => setPassword(e.target.value)} style={{ gridColumn: '1 / -1', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }} className="reg-input" required/>
+                    {/* 隱藏的假輸入框來防止 Chrome 密碼提示 */}
+                    <input type="text" style={{ display: 'none' }} autoComplete="username" />
+                    <input type="password" style={{ display: 'none' }} autoComplete="current-password" />
+                    <input type="email" autoComplete="new-password" placeholder={t.email} value={email} onChange={e => setEmail(e.target.value)} style={{ gridColumn: '1 / -1', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }} className="reg-input" required/>
+                    <input type="password" autoComplete="new-password" placeholder={t.password} value={password} onChange={e => setPassword(e.target.value)} style={{ gridColumn: '1 / -1', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }} className="reg-input" required/>
                     <input
                       type="text"
                       autoComplete="off"

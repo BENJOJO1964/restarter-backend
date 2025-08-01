@@ -218,7 +218,23 @@ export default function Plans() {
         
         {/* 立即註冊按鈕 */}
         <div style={{display:'flex',justifyContent:'center',marginTop:32}}>
-          <a href="/register" style={{background:'#00CFFF',color:'#fff',fontWeight:700,fontSize:20,padding:'14px 38px',borderRadius:10,boxShadow:'0 2px 8px #00CFFF33',textDecoration:'none',transition:'0.2s'}}>立即註冊免費版</a>
+          <button 
+            onClick={() => navigate('/register')} 
+            style={{
+              background:'#00CFFF',
+              color:'#fff',
+              fontWeight:700,
+              fontSize:20,
+              padding:'14px 38px',
+              borderRadius:10,
+              boxShadow:'0 2px 8px #00CFFF33',
+              border:'none',
+              cursor:'pointer',
+              transition:'0.2s'
+            }}
+          >
+            立即註冊免費版
+          </button>
         </div>
         
         {/* 未登入跳窗提示 */}

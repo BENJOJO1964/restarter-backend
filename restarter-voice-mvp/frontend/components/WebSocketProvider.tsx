@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react';
+import { getWsUrl } from '../src/config/api';
 
 const WSContext = createContext<WebSocket|null>(null);
 
@@ -11,7 +12,7 @@ export default function WebSocketProvider({ children }: { children: React.ReactN
   useEffect(() => {
     try {
       console.log('嘗試連接 WebSocket...');
-      wsRef.current = new WebSocket('wss://restarter-backend-6e9s.onrender.com');
+      wsRef.current = new WebSocket(getWsUrl());
       
       wsRef.current.onopen = () => {
         console.log('WebSocket 連接成功');

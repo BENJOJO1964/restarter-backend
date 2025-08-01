@@ -94,6 +94,7 @@ const subscriptionRouter = require('./routes/subscription');
 const weatherRouter = require('./routes/weather');
 const socialIntegrationRouter = require('./routes/social-integration-assessment');
 const emailVerificationRouter = require('./routes/email-verification');
+const adminFeedbackRouter = require('./routes/admin-feedback');
 
 app.use(express.json());
 app.use('/api/tts', ttsRouter);
@@ -110,6 +111,7 @@ app.use('/api/story', storyRouter);
 app.use('/api/send-message', sendMessageRouter);
 app.use('/api/mood', moodRouter);
 app.use('/api/feedback', feedbackRouter);
+app.use('/api/admin-feedback', adminFeedbackRouter);
 app.use('/api/subscription', subscriptionRouter);
 app.use('/api/weather', weatherRouter);
 app.use('/api/social-integration-assessment', socialIntegrationRouter);

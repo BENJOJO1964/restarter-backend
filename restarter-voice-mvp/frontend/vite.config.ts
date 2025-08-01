@@ -8,8 +8,10 @@ export default defineConfig({
     host: '0.0.0.0', // 允許外部訪問
     proxy: {
       '/api': {
-        target: 'https://restarter-backend-6e9s.onrender.com',
+        target: 'http://localhost:3001',
         changeOrigin: true,
+        secure: false,
+        ws: true,
       },
     },
   },
