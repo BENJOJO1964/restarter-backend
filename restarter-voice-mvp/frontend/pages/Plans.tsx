@@ -230,7 +230,12 @@ export default function Plans() {
               boxShadow:'0 2px 8px #00CFFF33',
               border:'none',
               cursor:'pointer',
-              transition:'0.2s'
+              transition:'0.2s',
+              position:'relative',
+              zIndex:1000,
+              minHeight:'48px',
+              minWidth:'200px',
+              touchAction:'manipulation'
             }}
           >
             立即註冊免費版
