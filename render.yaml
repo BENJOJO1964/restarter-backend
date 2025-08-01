@@ -9,22 +9,19 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 18
 
-  # 後端 API 服務
+  # 後端API服務
   - type: web
     name: restarter-backend
     env: node
-    plan: free
     buildCommand: cd restarter-voice-mvp/backend && npm install
-    startCommand: cd restarter-voice-mvp/backend && PORT=$PORT node server.js
+    startCommand: cd restarter-voice-mvp/backend && npm start
     envVars:
+      - key: NODE_VERSION
+        value: 18
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3001
-      - key: OPENAI_API_KEY
-        value: "your-openai-api-key"
-      - key: AZURE_KEY
-        value: "your-azure-key"
-      - key: AZURE_REGION
-        value: "your-azure-region" 
+    healthCheckPath: /health 
