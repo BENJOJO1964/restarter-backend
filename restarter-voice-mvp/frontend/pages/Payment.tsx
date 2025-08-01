@@ -89,16 +89,39 @@ export default function Payment() {
 
     setIsProcessing(true);
     
-    // 模擬支付處理
-    setTimeout(() => {
-      setIsProcessing(false);
-      setShowSuccess(true);
+    try {
+      // 調用後端支付API
+      const response = await fetch('/api/subscription/payment-success', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.uid,
+          plan: selectedPlan.buttonAction,
+          paymentMethod: paymentMethod,
+          transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          amount: parseInt(selectedPlan.price.replace('NT$', '')),
+          currency: 'TWD'
+        })
+      });
+
+      const result = await response.json();
       
-      // 3秒後跳轉到首頁
-      setTimeout(() => {
-        navigate('/');
-      }, 3000);
-    }, 2000);
+      if (result.success) {
+        setIsProcessing(false);
+        setShowSuccess(true);
+        
+        // 3秒後跳轉到首頁
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
+      } else {
+        throw new Error(result.error || '支付失敗');
+      }
+    } catch (error) {
+      console.error('支付錯誤:', error);
+      setIsProcessing(false);
+      alert('支付失敗，請重試');
+    }
   };
 
   if (!selectedPlan) {
