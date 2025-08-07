@@ -162,30 +162,27 @@ export default function VideoGeneration() {
     setIsGenerating(true);
     setError(null);
     setProgress(0);
-    setProgressMessage('開始SadTalker AI對嘴視頻生成...');
+    setProgressMessage('開始Wav2Lip對嘴視頻生成...');
 
-    // 真實的進度更新（基於SadTalker的處理階段）
+    // 真實的進度更新（基於Wav2Lip的處理階段）
     const progressInterval = setInterval(() => {
       setProgress(prev => {
-        if (prev < 20) {
-          setProgressMessage('正在提取人臉特徵...');
-          return prev + 2;
-        } else if (prev < 40) {
-          setProgressMessage('正在分析音頻...');
-          return prev + 1;
+        if (prev < 30) {
+          setProgressMessage('正在檢測人臉...');
+          return prev + 3;
         } else if (prev < 60) {
-          setProgressMessage('正在生成對嘴動作...');
-          return prev + 1;
-        } else if (prev < 80) {
-          setProgressMessage('正在渲染視頻...');
-          return prev + 1;
+          setProgressMessage('正在分析音頻...');
+          return prev + 2;
+        } else if (prev < 85) {
+          setProgressMessage('正在生成對嘴視頻...');
+          return prev + 2;
         } else if (prev < 95) {
           setProgressMessage('正在優化視頻品質...');
-          return prev + 0.5;
+          return prev + 1;
         }
         return prev;
       });
-    }, 3000);
+    }, 2000);
 
     try {
       const formData = new FormData();
@@ -203,7 +200,7 @@ export default function VideoGeneration() {
       formData.append('batch_size', batchSize.toString());
       formData.append('enhancer', enhancer.toString());
 
-      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/video-generation/generate-video', {
+      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/wav2lip-generation/generate-video', {
         method: 'POST',
         body: formData,
       });
@@ -214,7 +211,7 @@ export default function VideoGeneration() {
         setGeneratedVideoUrl(result.videoUrl);
         setError(null);
         setProgress(100);
-        setProgressMessage('SadTalker AI對嘴視頻生成成功！');
+        setProgressMessage('Wav2Lip對嘴視頻生成成功！');
       } else {
         setError(result.error || t.error);
         setProgress(0);
