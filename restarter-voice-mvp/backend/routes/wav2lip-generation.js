@@ -91,7 +91,7 @@ async function generateWav2LipVideo(imagePath, audioPath, text) {
     console.log('輸入音頻:', audioPath);
     console.log('結果目錄:', resultDir);
     
-    const pythonProcess = spawn('python', [
+    const pythonProcess = spawn('python3', [
       'inference.py',
       '--checkpoint_path', 'checkpoints/wav2lip.pth',
       '--face', imagePath,
