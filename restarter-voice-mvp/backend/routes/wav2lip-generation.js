@@ -83,56 +83,23 @@ async function generateWav2LipVideo(imagePath, audioPath, text) {
       fs.mkdirSync(resultDir, { recursive: true });
     }
     
-    // 首先測試python3是否可用
-    console.log('測試python3可用性...');
-    const testProcess = spawn('python3', ['--version'], {
-      stdio: ['pipe', 'pipe', 'pipe']
+    // 直接使用python，因為Render環境通常有python
+    console.log('使用python執行Wav2Lip...');
+    const pythonProcess = spawn('python', [
+      'inference.py',
+      '--checkpoint_path', 'checkpoints/wav2lip.pth',
+      '--face', imagePath,
+      '--audio', audioPath,
+      '--outfile', videoPath,
+      '--pads', '0 20 0 0',
+      '--resize_factor', '2'
+    ], {
+      cwd: path.join(__dirname, '../../wav2lip'),
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: { ...process.env, PYTHONPATH: path.join(__dirname, '../../wav2lip') }
     });
     
-    testProcess.on('close', (code) => {
-      if (code !== 0) {
-        console.log('python3不可用，嘗試使用python...');
-        // 如果python3不可用，嘗試使用python
-        const pythonProcess = spawn('python', [
-          'inference.py',
-          '--checkpoint_path', 'checkpoints/wav2lip.pth',
-          '--face', imagePath,
-          '--audio', audioPath,
-          '--outfile', videoPath,
-          '--pads', '0 20 0 0',
-          '--resize_factor', '2'
-        ], {
-          cwd: path.join(__dirname, '../../wav2lip'),
-          stdio: ['pipe', 'pipe', 'pipe'],
-          env: { ...process.env, PYTHONPATH: path.join(__dirname, '../../wav2lip') }
-        });
-        
-        handlePythonProcess(pythonProcess, videoPath, resolve, reject);
-      } else {
-        console.log('python3可用，使用python3...');
-        // 使用python3
-        const pythonProcess = spawn('python3', [
-          'inference.py',
-          '--checkpoint_path', 'checkpoints/wav2lip.pth',
-          '--face', imagePath,
-          '--audio', audioPath,
-          '--outfile', videoPath,
-          '--pads', '0 20 0 0',
-          '--resize_factor', '2'
-        ], {
-          cwd: path.join(__dirname, '../../wav2lip'),
-          stdio: ['pipe', 'pipe', 'pipe'],
-          env: { ...process.env, PYTHONPATH: path.join(__dirname, '../../wav2lip') }
-        });
-        
-        handlePythonProcess(pythonProcess, videoPath, resolve, reject);
-      }
-    });
-    
-    testProcess.on('error', (error) => {
-      console.log('python3測試失敗:', error.message);
-      reject(new Error(`Python環境錯誤: ${error.message}`));
-    });
+    handlePythonProcess(pythonProcess, videoPath, resolve, reject);
   });
 }
 
