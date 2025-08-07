@@ -44,7 +44,7 @@ router.post('/generate-video', upload.fields([
     // 返回生成的視頻URL
     res.json({
       success: true,
-      videoUrl: `https://restarter-backend-6e9s.onrender.com/api/download-video/${path.basename(videoPath)}`,
+      videoUrl: `https://restarter-backend-6e9s.onrender.com/api/wav2lip-generation/download-video/${path.basename(videoPath)}`,
       message: 'Wav2Lip對嘴視頻生成成功',
       optimization: {
         size: '256',
@@ -98,51 +98,6 @@ async function generateWav2LipVideo(imagePath, audioPath, text) {
       stdio: ['pipe', 'pipe', 'pipe'],
       env: { ...process.env, PYTHONPATH: path.join(__dirname, '../../wav2lip') }
     });
-    
-    handlePythonProcess(pythonProcess, videoPath, resolve, reject);
-  });
-}
-
-// 處理Python進程的輔助函數
-function handlePythonProcess(pythonProcess, videoPath, resolve, reject) {
-  let stdout = '';
-  let stderr = '';
-  
-  pythonProcess.stdout.on('data', (data) => {
-    stdout += data.toString();
-    console.log('Wav2Lip輸出:', data.toString());
-  });
-  
-  pythonProcess.stderr.on('data', (data) => {
-    stderr += data.toString();
-    console.log('Wav2Lip錯誤:', data.toString());
-  });
-  
-  pythonProcess.on('close', (code) => {
-    console.log('Wav2Lip進程結束，代碼:', code);
-    console.log('完整輸出:', stdout);
-    console.log('完整錯誤:', stderr);
-    
-    if (code === 0) {
-      // 檢查生成的視頻文件
-      if (fs.existsSync(videoPath)) {
-        console.log('Wav2Lip視頻生成成功:', videoPath);
-        resolve(videoPath);
-      } else {
-        console.log('未找到生成的視頻文件');
-        reject(new Error('Wav2Lip生成失敗：未找到視頻文件'));
-      }
-    } else {
-      console.log('Wav2Lip生成失敗，代碼:', code);
-      reject(new Error(`Wav2Lip生成失敗，代碼: ${code}`));
-    }
-  });
-  
-  pythonProcess.on('error', (error) => {
-    console.log('Wav2Lip進程錯誤:', error.message);
-    reject(new Error(`Wav2Lip進程錯誤: ${error.message}`));
-  });
-}
     
     let stdout = '';
     let stderr = '';
