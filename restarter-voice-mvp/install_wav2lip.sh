@@ -12,7 +12,7 @@ git clone https://github.com/Rudrabha/Wav2Lip.git .
 
 # 安裝依賴
 echo "📦 安裝依賴..."
-pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113
+pip install torch==1.12.1+cpu torchvision==0.13.1+cpu torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cpu
 pip install opencv-python
 pip install scipy
 pip install tqdm
@@ -20,6 +20,7 @@ pip install numpy
 pip install librosa
 pip install face-alignment
 pip install dlib
+pip install ffmpeg-python
 
 # 下載預訓練模型
 echo "📥 下載Wav2Lip模型..."
