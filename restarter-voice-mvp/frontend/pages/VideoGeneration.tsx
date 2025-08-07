@@ -191,7 +191,7 @@ export default function VideoGeneration() {
       formData.append('batch_size', batchSize.toString());
       formData.append('enhancer', enhancer.toString());
 
-      const response = await fetch('/api/video-generation/generate-video', {
+      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/video-generation/generate-video', {
         method: 'POST',
         body: formData,
       });
