@@ -669,12 +669,30 @@ export default function Home() {
               <>
                 <img src={user.photoURL || '/ctx-logo.png'} alt="avatar" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', border: '2px solid #6B5BFF' }} />
                 <span style={{ color: '#6B5BFF', fontWeight: 600, fontSize: 12, maxWidth: 60, overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.displayName || user.email || '用戶'}</span>
-                <button className="topbar-btn" onClick={async () => { await signOut(auth); }} style={{ background: '#fff', color: '#ff6347', border: '1px solid #ff6347', borderRadius: 6, fontWeight: 600, fontSize: 12, padding: '4px 8px' }}>{LOGOUT_TEXT[lang]}</button>
+                <button 
+                  className="topbar-btn" 
+                  onClick={async () => { await signOut(auth); }} 
+                  style={{ 
+                    width: '80px', 
+                    fontSize: 14, 
+                    padding: '6px 10px', 
+                    height: '28px',
+                    borderRadius: 4,
+                    fontWeight: 600,
+                    border: '1px solid #ff6347',
+                    color: '#ff6347',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    transition: 'background 0.18s, color 0.18s, border 0.18s'
+                  }}
+                >
+                  {LOGOUT_TEXT[lang]}
+                </button>
               </>
             ) : (
               <button className="topbar-btn" onClick={() => navigate('/register')} style={{ background: '#fff', color: '#1976d2', border: '1px solid #1976d2', borderRadius: 6, fontWeight: 600, fontSize: 12, padding: '4px 8px' }}>{lang==='zh-TW'?'註冊':'zh-CN'===lang?'注册':'en'===lang?'Register':'ja'===lang?'登録':'ko'===lang?'가입':'th'===lang?'สมัคร':'vi'===lang?'Đăng ký':'ms'===lang?'Daftar':'Registrare'}</button>
             )}
-            <LanguageSelector style={{ width: '80px', fontSize: 14, padding: '6px 10px' }} />
+            <LanguageSelector style={{ width: '80px', fontSize: 14, padding: '6px 10px', height: '28px' }} />
 
           </div>
         </div>
@@ -792,6 +810,11 @@ export default function Home() {
                 {TEXT[lang].desc}
               </span>
             </div>
+          </div>
+          
+          {/* 手機版AI機器人圖片 */}
+          <div style={{ width: '100%', padding: '0 16px', marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
+            <img src="/herogirl.png" style={{ width: '100%', maxWidth: 300, height: 'auto', objectFit: 'contain', borderRadius: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} />
           </div>
           
           {/* 社會融入度評估按鈕 */}
@@ -939,7 +962,7 @@ export default function Home() {
               ))}
             </div>
             
-            {/* 第四行：社會模擬所 + 互相幫助&合作實驗室 */}
+            {/* 第四行：社會模擬所 + 互相幫助&合作實驗室 + AI對嘴短影音 */}
             <div style={{ display: 'flex', flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
               {MODULES.slice(4).map(m => (
                 <button 
@@ -974,6 +997,29 @@ export default function Home() {
               >
                 <span style={{ fontSize: 20 }}>🧪</span>
                 <span style={{ fontSize: 12, textAlign: 'center' }}>{MUTUAL_HELP_TEXT[lang]}</span>
+              </button>
+              <button
+                className="feature-btn"
+                style={{
+                  flex: 1,
+                  minWidth: 'calc(50% - 4px)',
+                  padding: '16px 8px',
+                  borderRadius: 12,
+                  border: '2px solid #6B5BFF',
+                  background: '#fff',
+                  color: '#6B5BFF',
+                  fontWeight: 700,
+                  fontSize: 14,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4
+                }}
+                onClick={() => handleFeatureWithAuth(() => navigate('/video-generation'))}
+              >
+                <span style={{ fontSize: 20 }}>🎬</span>
+                <span style={{ fontSize: 12, textAlign: 'center' }}>{lang === 'zh-TW' ? 'AI對嘴短影音' : lang === 'zh-CN' ? 'AI对嘴短视频' : lang === 'ja' ? 'AI対話動画' : lang === 'en' ? 'AI Lip-Sync' : lang === 'ko' ? 'AI 립싱크' : lang === 'th' ? 'AI ลิปซิงค์' : lang === 'vi' ? 'AI Đồng Bộ Môi' : lang === 'ms' ? 'AI Lip-Sync' : 'AI Labiorum Synchronizationis'}</span>
               </button>
             </div>
           </div>
@@ -1209,6 +1255,8 @@ export default function Home() {
                     <span style={{ fontSize: 32 }}>🎮</span>
                     <span style={{ fontWeight: 700, textAlign: 'center', lineHeight: 1.2 }}>{lang === 'zh-TW' ? '情緒發洩區' : lang === 'zh-CN' ? '情绪发泄区' : lang === 'ja' ? '感情発散エリア' : lang === 'en' ? 'Emotion Release Zone' : lang === 'ko' ? '감정 발산 구역' : lang === 'th' ? 'พื้นที่ระบายอารมณ์' : lang === 'vi' ? 'Khu Vực Giải Tỏa Cảm Xúc' : lang === 'ms' ? 'Zon Pelepasan Emosi' : 'Zona Emotio Liberationis'}</span>
                   </button>
+
+
                 </div>
               </div>
             </div>
@@ -1223,7 +1271,7 @@ export default function Home() {
             <div style={{ marginBottom: 18, width: '100%', maxWidth: 300 }}>
               <WeatherWidget />
             </div>
-            <img src="/hero-mic.jpg" className="home-mic-img" style={{ marginBottom: 0, height: 'calc(100vh - 180px)', maxHeight: 520, minHeight: 320, width: '100%', objectFit: 'contain', background: '#232946' }} />
+            <img src="/herogirl.png" className="home-mic-img" style={{ marginBottom: 0, height: 'calc(100vh - 120px)', maxHeight: 600, minHeight: 400, width: '100%', objectFit: 'contain', borderRadius: '0', boxShadow: 'none', border: 'none', marginTop: '-100px' }} />
             <button
               ref={chatBtnRef}
               className="feature-btn home-chat-btn"
@@ -1235,6 +1283,17 @@ export default function Home() {
               <span role="img" aria-label="chat" style={{ fontSize: 32 }}>💬</span>
               <span className="home-chat-btn-text" style={{ fontWeight: 700, textAlign: 'center', lineHeight: 1.2 }}>{t.chat}</span>
             </button>
+            <button
+              className="feature-btn"
+              style={{ height: 80, marginTop: 10, marginBottom: 0, gap: 8, padding: '16px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: '12px' }}
+              onClick={() => handleFeatureWithAuth(() => navigate('/video-generation'))}
+              aria-label={lang === 'zh-TW' ? '一鍵生成會說話的分身影片' : lang === 'zh-CN' ? '一键生成会说话的分身视频' : lang === 'en' ? 'One-click generate talking avatar video' : lang === 'ja' ? 'ワンクリックで話す分身動画を生成' : lang === 'ko' ? '원클릭으로 말하는 분신 비디오 생성' : lang === 'th' ? 'สร้างวิดีโอตัวตนที่พูดได้ด้วยคลิกเดียว' : lang === 'vi' ? 'Tạo video avatar biết nói bằng một cú nhấp' : lang === 'ms' ? 'Menjana video avatar yang bercakap dengan satu klik' : 'Unum click generare video avatar loquentem'}
+              role="button"
+            >
+              <span style={{ fontSize: 32 }}>🎬</span>
+              <span style={{ fontWeight: 700, textAlign: 'center', lineHeight: 1.2 }}>{lang === 'zh-TW' ? 'AI對嘴短影音' : lang === 'zh-CN' ? 'AI对嘴短视频' : lang === 'ja' ? 'AI対話動画' : lang === 'en' ? 'AI Lip-Sync' : lang === 'ko' ? 'AI 립싱크' : lang === 'th' ? 'AI ลิปซิงค์' : lang === 'vi' ? 'AI Đồng Bộ Môi' : lang === 'ms' ? 'AI Lip-Sync' : 'AI Labiorum Synchronizationis'}</span>
+            </button>
+
           </div>
         </div>
       )}

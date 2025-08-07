@@ -95,6 +95,9 @@ const weatherRouter = require('./routes/weather');
 const socialIntegrationRouter = require('./routes/social-integration-assessment');
 const emailVerificationRouter = require('./routes/email-verification');
 const adminFeedbackRouter = require('./routes/admin-feedback');
+const videoGenerationRouter = require('./routes/video-generation');
+const videoGenerationOptimizedRouter = require('./routes/video-generation-optimized');
+// const stripePaymentRouter = require('./routes/stripe-payment');
 
 app.use(express.json());
 app.use('/api/tts', ttsRouter);
@@ -113,8 +116,11 @@ app.use('/api/mood', moodRouter);
 app.use('/api/feedback', feedbackRouter);
 app.use('/api/admin-feedback', adminFeedbackRouter);
 app.use('/api/subscription', subscriptionRouter);
+// app.use('/api/stripe', stripePaymentRouter);
 app.use('/api/weather', weatherRouter);
 app.use('/api/social-integration-assessment', socialIntegrationRouter);
+app.use('/api/video-generation', videoGenerationRouter);
+app.use('/api/video-generation-optimized', videoGenerationOptimizedRouter);
 
 // 後端只提供API，不提供靜態文件
 app.get('/', (req, res) => {

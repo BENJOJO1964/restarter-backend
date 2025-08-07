@@ -732,7 +732,7 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [interest, setInterest] = useState('');
-  const [eventType, setEventType] = useState('');
+
   const [improvement, setImprovement] = useState('');
   const [showLogin, setShowLogin] = useState(false);
   const [loadingDot, setLoadingDot] = useState(0);
@@ -777,7 +777,6 @@ export default function RegisterPage() {
         region,
         age,
         interest,
-        eventType,
         improvement
       };
 
@@ -818,7 +817,6 @@ export default function RegisterPage() {
         region,
         age,
         interest,
-        eventType,
         improvement
       };
 
@@ -873,7 +871,6 @@ export default function RegisterPage() {
         region,
         age,
         interest,
-        eventType,
         improvement
       };
 
@@ -951,7 +948,6 @@ export default function RegisterPage() {
         region,
         age,
         interest,
-        eventType,
         improvement,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -1185,9 +1181,24 @@ export default function RegisterPage() {
                     lang === 'ms' ? 'Kembali' : 'Back'}
               </button>
               
-              {/* 手機版：語言選擇器在右上角 */}
-              <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 100 }}>
-                <LanguageSelector />
+              {/* 手機版：繁中按鈕在右上角 */}
+              <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 1000 }}>
+                <LanguageSelector style={{ 
+                  background: 'rgba(255,255,255,0.9)',
+                  border: 'none',
+                  borderRadius: '20px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  color: '#667eea',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                  width: '60px',
+                  minWidth: '60px',
+                  maxWidth: '60px',
+                  height: '36px',
+                  cursor: 'pointer'
+                }} />
               </div>
               
               {/* 手機版：標語對齊LOGO中的L */}
@@ -1292,7 +1303,7 @@ export default function RegisterPage() {
             alignItems: 'stretch', 
             justifyContent: 'center', 
             width: '100%', 
-            marginTop: 60,
+            marginTop: window.innerWidth <= 768 ? 120 : 60,
             flexDirection: window.innerWidth <= 768 ? 'column' : 'row'
           }}>
             {/* Left Hero Text - 桌面版顯示 */}
@@ -1537,10 +1548,7 @@ export default function RegisterPage() {
                       <option value="" style={{color:'#888'}}>{t.interest}</option>
                       {(INTEREST_OPTIONS[lang] || []).map(i => <option key={i} value={i}>{i}</option>)}
                     </select>
-                    <select value={eventType} onChange={e => setEventType(e.target.value)} className="reg-input" style={{ width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: eventType ? '#333' : '#888' }}>
-                      <option value="" style={{color:'#888'}}>{t.eventType}</option>
-                      {(EVENT_TYPE_OPTIONS[lang] || []).map(e => <option key={e} value={e}>{e}</option>)}
-                    </select>
+
                     <select value={improvement} onChange={e => setImprovement(e.target.value)} className="reg-input" style={{ gridColumn: '1 / -1', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: improvement ? '#333' : '#888' }}>
                       <option value="" style={{color:'#888'}}>{t.whatToImprove}</option>
                       {(IMPROVEMENT_OPTIONS[lang] || []).map(i => <option key={i} value={i}>{i}</option>)}

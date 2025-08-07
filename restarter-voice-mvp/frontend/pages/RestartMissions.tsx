@@ -348,90 +348,170 @@ export default function RestartMissions() {
       overflowX: 'hidden',
       background: `url('/mountain.png') center center / cover no-repeat fixed, linear-gradient(to bottom, #eaf6ff 0%, #f7fafc 100%)`,
     }}>
-      {/* 返回按鈕 - 頁面左上角 */}
-      <button
-          onClick={() => navigate('/')}
-          style={{
+      {/* 手機版：主標題卡片包含按鈕 */}
+      {window.innerWidth <= 768 ? (
+          <div style={{
               position: 'absolute',
               top: '20px',
               left: '20px',
+              right: '20px',
               zIndex: 1000,
-              fontWeight: 700,
-              fontSize: 16,
-              padding: '8px 16px',
-              borderRadius: 8,
-              border: '1.5px solid #6B5BFF',
-              background: '#fff',
-              color: '#6B5BFF',
-              cursor: 'pointer',
-              minWidth: 80,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          }}
-      >
-          {t.back}
-      </button>
-
-      {/* 登出和繁中按鈕 - 頁面右上角 */}
-      <div style={{
-          position: 'absolute',
-          top: '20px',
-          right: '20px',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-      }}>
-          <button
-              onClick={async () => { await signOut(auth); localStorage.clear(); window.location.href = '/'; }}
-              style={{
-                  fontWeight: 700,
-                  fontSize: 16,
-                  padding: '8px 16px',
-                  borderRadius: 8,
-                  border: '1.5px solid #6B5BFF',
-                  background: '#fff',
-                  color: '#6B5BFF',
-                  cursor: 'pointer',
-                  minWidth: 80,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              }}
-          >
-              {t.logout}
-          </button>
-          <div style={{ width: 80 }}>
-              <LanguageSelector style={{ width: '100%' }} />
-          </div>
-      </div>
-
-      {/* Top Bar 獨立卡片 */}
-      <div
-          style={{
-              width: '100%',
-              maxWidth: 700,
-              margin: '20px auto 20px auto',
-              padding: '16px 24px',
-              background: 'rgba(255,255,255,0.95)',
-              borderRadius: 16,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-          }}
-      >
-          <h1 style={{ 
-              fontWeight: 900, 
-              fontSize: 18, 
-              color: '#6B5BFF', 
-              margin: 0, 
-              lineHeight: 1,
-              textShadow: '0 2px 8px #6B5BFF88',
-              textAlign: 'center',
+              justifyContent: 'space-between',
+              background: 'rgba(255,255,255,0.95)',
+              borderRadius: 16,
+              padding: '12px 16px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
           }}>
-              <span role="img" aria-label="mission">🎯</span> 挑戰任務
-          </h1>
-      </div>
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '2rem 0 2rem 0', background: 'rgba(255,255,255,0.92)', borderRadius: 24, boxShadow: '0 8px 32px rgba(0,0,0,0.08)' }}>
+              {/* 返回按鈕 */}
+              <button
+                  onClick={() => navigate('/')}
+                  style={{
+                      fontWeight: 700,
+                      fontSize: 16,
+                      padding: '8px 16px',
+                      borderRadius: 8,
+                      border: '1.5px solid #6B5BFF',
+                      background: '#fff',
+                      color: '#6B5BFF',
+                      cursor: 'pointer',
+                      minWidth: 80,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  }}
+              >
+                  {t.back}
+              </button>
+              
+              {/* 主標題在中間 */}
+              <h1 style={{ 
+                  fontWeight: 900, 
+                  fontSize: 18, 
+                  color: '#6B5BFF', 
+                  margin: 0, 
+                  lineHeight: 1,
+                  textShadow: '0 2px 8px #6B5BFF88',
+                  textAlign: 'center',
+                  flex: 1,
+              }}>
+                  <span role="img" aria-label="mission">🎯</span> 挑戰任務
+              </h1>
+              
+              {/* 登出按鈕 */}
+              <button
+                  onClick={async () => { await signOut(auth); localStorage.clear(); window.location.href = '/'; }}
+                  style={{
+                      fontWeight: 700,
+                      fontSize: 16,
+                      padding: '8px 16px',
+                      borderRadius: 8,
+                      border: '1.5px solid #6B5BFF',
+                      background: '#fff',
+                      color: '#6B5BFF',
+                      cursor: 'pointer',
+                      minWidth: 80,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  }}
+              >
+                  {t.logout}
+              </button>
+          </div>
+      ) : (
+          /* 桌面版：保持原樣 */
+          <>
+              {/* 返回按鈕 - 頁面左上角 */}
+              <button
+                  onClick={() => navigate('/')}
+                  style={{
+                      position: 'absolute',
+                      top: '20px',
+                      left: '20px',
+                      zIndex: 1000,
+                      fontWeight: 700,
+                      fontSize: 16,
+                      padding: '8px 16px',
+                      borderRadius: 8,
+                      border: '1.5px solid #6B5BFF',
+                      background: '#fff',
+                      color: '#6B5BFF',
+                      cursor: 'pointer',
+                      minWidth: 80,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  }}
+              >
+                  {t.back}
+              </button>
+
+              {/* 登出和繁中按鈕 - 頁面右上角 */}
+              <div style={{
+                  position: 'absolute',
+                  top: '20px',
+                  right: '20px',
+                  zIndex: 1000,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+              }}>
+                  <button
+                      onClick={async () => { await signOut(auth); localStorage.clear(); window.location.href = '/'; }}
+                      style={{
+                          fontWeight: 700,
+                          fontSize: 16,
+                          padding: '8px 16px',
+                          borderRadius: 8,
+                          border: '1.5px solid #6B5BFF',
+                          background: '#fff',
+                          color: '#6B5BFF',
+                          cursor: 'pointer',
+                          minWidth: 80,
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      }}
+                  >
+                      {t.logout}
+                  </button>
+                  <div style={{ width: '80px' }}>
+                      <LanguageSelector style={{ 
+                          width: '100%', 
+                          fontSize: '16px',
+                          padding: '8px 16px',
+                          minWidth: '80px'
+                      }} />
+                  </div>
+              </div>
+          </>
+      )}
+
+      {/* Top Bar 獨立卡片 - 只在桌面版顯示 */}
+      {window.innerWidth > 768 && (
+          <div
+              style={{
+                  width: '100%',
+                  maxWidth: 700,
+                  margin: '20px auto 20px auto',
+                  padding: '16px 24px',
+                  background: 'rgba(255,255,255,0.95)',
+                  borderRadius: 16,
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+              }}
+          >
+              <h1 style={{ 
+                  fontWeight: 900, 
+                  fontSize: 18, 
+                  color: '#6B5BFF', 
+                  margin: 0, 
+                  lineHeight: 1,
+                  textShadow: '0 2px 8px #6B5BFF88',
+                  textAlign: 'center',
+              }}>
+                  <span role="img" aria-label="mission">🎯</span> 挑戰任務
+              </h1>
+          </div>
+      )}
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: window.innerWidth <= 768 ? '1rem 0 2rem 0' : '2rem 0 2rem 0', background: 'rgba(255,255,255,0.92)', borderRadius: 24, boxShadow: '0 8px 32px rgba(0,0,0,0.08)', marginTop: window.innerWidth <= 768 ? '120px' : '0' }}>
         <h1 style={{ textAlign: 'center', fontWeight: 700, fontSize: '2rem', marginBottom: 8 }}>{t.title}</h1>
         <div style={{ textAlign: 'center', color: '#666', marginBottom: 32 }}>{t.subtitle}</div>
         <div style={{ background: '#fff', borderRadius: 16, padding: 32, boxShadow: '0 2px 8px #0001', marginBottom: 24 }}>

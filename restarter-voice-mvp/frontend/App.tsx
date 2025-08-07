@@ -53,6 +53,8 @@ import Profile from './pages/Profile';
 import PaymentInfo from './pages/PaymentInfo';
 import Contact from './pages/Contact';
 import TokenTest from './pages/TokenTest';
+import VideoIntro from './pages/VideoIntro';
+import VideoGeneration from './pages/VideoGeneration';
 import TestModeButton from './components/TestModeButton';
 
 // 創建測試模式 Context
@@ -157,7 +159,8 @@ function App() {
                   <Route path="/data-deletion" element={<DataDeletion />} />
                   <Route path="/HelpLab" element={<HelpLab />} />
                   <Route path="/emotion-release" element={<EmotionRelease />} />
-{user && <Route path="/social-integration" element={<SocialIntegration />} />}
+                  {user && <Route path="/social-integration" element={<SocialIntegration />} />}
+                  {user && <Route path="/video-generation" element={<VideoGeneration />} />}
 
                   <Route path="/plans" element={<Plans />} />
                   <Route path="/payment" element={<Payment />} />
