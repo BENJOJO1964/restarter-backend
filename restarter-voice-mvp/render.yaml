@@ -15,8 +15,8 @@ services:
     env: node
     buildCommand: |
       npm install
-      chmod +x install_sadtalker.sh
-      ./install_sadtalker.sh
+      chmod +x install_wav2lip.sh
+      ./install_wav2lip.sh
     startCommand: PORT=3001 NODE_ENV=production node server.js
     envVars:
       - key: NODE_ENV
