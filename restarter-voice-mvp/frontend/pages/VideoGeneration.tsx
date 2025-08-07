@@ -1,246 +1,127 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '../contexts/LanguageContext';
-import { useTestMode } from '../App';
+import { useTranslation } from 'react-i18next';
 
-const TEXT = {
-  'zh-TW': {
-    title: 'AI對嘴短影音生成',
-    subtitle: '上傳圖片，輸入文字或音頻，生成對嘴短影音',
-    uploadImage: '上傳圖片',
-    uploadAudio: '上傳音頻',
-    inputText: '輸入文字',
-    textPlaceholder: '請輸入要轉換成語音的文字...',
-    generateButton: '生成視頻',
-    generating: '生成中...',
-    downloadButton: '下載視頻',
-    settings: '設置',
-    poseStyle: '姿勢風格',
-    resolution: '分辨率',
-    preprocess: '預處理方式',
-    stillMode: '靜止模式',
-    batchSize: '批次大小',
-    enhancer: '人臉增強',
-    backButton: '返回',
-    success: '視頻生成成功！',
-    error: '生成失敗，請重試',
-    loading: '正在生成視頻，請稍候...',
-    imageSizeLimit: '支持 JPG, PNG, GIF 格式，最大 10MB',
-    audioSizeLimit: '支持 WAV, MP3, M4A 格式，最大 50MB',
-    imageSizeError: '圖片文件大小不能超過 10MB',
-    audioSizeError: '音頻文件大小不能超過 50MB',
-    imageFormatError: '請選擇有效的圖片文件 (支持 JPG, PNG, GIF 格式)',
-    audioFormatError: '請選擇有效的音頻文件 (支持 WAV, MP3, M4A 格式)'
-  },
-  'zh-CN': {
-    title: 'AI对嘴短视频生成',
-    subtitle: '上传图片，输入文字或音频，生成对嘴短视频',
-    uploadImage: '上传图片',
-    uploadAudio: '上传音频',
-    inputText: '输入文字',
-    textPlaceholder: '请输入要转换成语音的文字...',
-    generateButton: '生成视频',
-    generating: '生成中...',
-    downloadButton: '下载视频',
-    settings: '设置',
-    poseStyle: '姿势风格',
-    resolution: '分辨率',
-    preprocess: '预处理方式',
-    stillMode: '静止模式',
-    batchSize: '批次大小',
-    enhancer: '人脸增强',
-    backButton: '返回',
-    success: '视频生成成功！',
-    error: '生成失败，请重试',
-    loading: '正在生成视频，请稍候...',
-    imageSizeLimit: '支持 JPG, PNG, GIF 格式，最大 10MB',
-    audioSizeLimit: '支持 WAV, MP3, M4A 格式，最大 50MB',
-    imageSizeError: '图片文件大小不能超过 10MB',
-    audioSizeError: '音频文件大小不能超过 50MB',
-    imageFormatError: '请选择有效的图片文件 (支持 JPG, PNG, GIF 格式)',
-    audioFormatError: '请选择有效的音频文件 (支持 WAV, MP3, M4A 格式)'
-  },
-  'en': {
-    title: 'AI Lip-Sync Video Generation',
-    subtitle: 'Upload image, input text or audio to generate lip-sync videos',
-    uploadImage: 'Upload Image',
-    uploadAudio: 'Upload Audio',
-    inputText: 'Input Text',
-    textPlaceholder: 'Please enter text to convert to speech...',
-    generateButton: 'Generate Video',
-    generating: 'Generating...',
-    downloadButton: 'Download Video',
-    settings: 'Settings',
-    poseStyle: 'Pose Style',
-    resolution: 'Resolution',
-    preprocess: 'Preprocess',
-    stillMode: 'Still Mode',
-    batchSize: 'Batch Size',
-    enhancer: 'Face Enhancer',
-    backButton: 'Back',
-    success: 'Video generated successfully!',
-    error: 'Generation failed, please try again',
-    loading: 'Generating video, please wait...',
-    imageSizeLimit: 'Supports JPG, PNG, GIF formats, max 10MB',
-    audioSizeLimit: 'Supports WAV, MP3, M4A formats, max 50MB',
-    imageSizeError: 'Image file size cannot exceed 10MB',
-    audioSizeError: 'Audio file size cannot exceed 50MB',
-    imageFormatError: 'Please select a valid image file (supports JPG, PNG, GIF formats)',
-    audioFormatError: 'Please select a valid audio file (supports WAV, MP3, M4A formats)'
-  }
-};
-
-export default function VideoGeneration() {
+export default function RelaxationTools() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { lang } = useLanguage();
-  const { isTestMode } = useTestMode();
-  const t = TEXT[lang] || TEXT['zh-TW'];
+  
+  const [currentAudio, setCurrentAudio] = useState<AudioContext | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentSound, setCurrentSound] = useState('');
+  const [volume, setVolume] = useState(0.5);
+  const [duration, setDuration] = useState(10); // 分鐘
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [text, setText] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [progressMessage, setProgressMessage] = useState('');
+  // 生成白噪音
+  const generateWhiteNoise = () => {
+    if (currentAudio) {
+      currentAudio.close();
+    }
 
-  // 設置選項
-  const [poseStyle, setPoseStyle] = useState(0);
-  const [resolution, setResolution] = useState(128);
-  const [preprocess, setPreprocess] = useState('crop');
-  const [stillMode, setStillMode] = useState(false);
-  const [batchSize, setBatchSize] = useState(2);
-  const [enhancer, setEnhancer] = useState(false);
-
-  const imageInputRef = useRef<HTMLInputElement>(null);
-  const audioInputRef = useRef<HTMLInputElement>(null);
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      // 檢查文件大小 (限制為 10MB)
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      if (file.size > maxSize) {
-        setError(t.imageSizeError);
-        return;
+    const audioContext = new AudioContext();
+    const bufferSize = 4096;
+    const whiteNoise = audioContext.createScriptProcessor(bufferSize, 1, 1);
+    const gainNode = audioContext.createGain();
+    
+    whiteNoise.onaudioprocess = function(e) {
+      const output = e.outputBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * volume;
       }
-      setImageFile(file);
-      setError(null);
-    } else {
-      setError(t.imageFormatError);
+    };
+    
+    whiteNoise.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    setCurrentAudio(audioContext);
+    setIsPlaying(true);
+    setCurrentSound('white-noise');
+  };
+
+  // 生成粉紅噪音
+  const generatePinkNoise = () => {
+    if (currentAudio) {
+      currentAudio.close();
+    }
+
+    const audioContext = new AudioContext();
+    const bufferSize = 4096;
+    const pinkNoise = audioContext.createScriptProcessor(bufferSize, 1, 1);
+    const gainNode = audioContext.createGain();
+    
+    let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+    
+    pinkNoise.onaudioprocess = function(e) {
+      const output = e.outputBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        output[i] = (b0 + b1 + b2 + b3 + b4 + b5) * volume;
+      }
+    };
+    
+    pinkNoise.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    setCurrentAudio(audioContext);
+    setIsPlaying(true);
+    setCurrentSound('pink-noise');
+  };
+
+  // 生成雨聲
+  const generateRainSound = () => {
+    if (currentAudio) {
+      currentAudio.close();
+    }
+
+    const audioContext = new AudioContext();
+    const bufferSize = 4096;
+    const rainNoise = audioContext.createScriptProcessor(bufferSize, 1, 1);
+    const gainNode = audioContext.createGain();
+    
+    rainNoise.onaudioprocess = function(e) {
+      const output = e.outputBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        const drop = Math.random() > 0.95 ? Math.random() * 0.5 : 0;
+        output[i] = drop * volume;
+      }
+    };
+    
+    rainNoise.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    setCurrentAudio(audioContext);
+    setIsPlaying(true);
+    setCurrentSound('rain');
+  };
+
+  // 停止播放
+  const stopAudio = () => {
+    if (currentAudio) {
+      currentAudio.close();
+      setCurrentAudio(null);
+      setIsPlaying(false);
+      setCurrentSound('');
     }
   };
 
-  const handleAudioUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type.startsWith('audio/')) {
-      // 檢查文件大小 (限制為 50MB)
-      const maxSize = 50 * 1024 * 1024; // 50MB
-      if (file.size > maxSize) {
-        setError(t.audioSizeError);
-        return;
-      }
-      setAudioFile(file);
-      setError(null);
-    } else {
-      setError(t.audioFormatError);
+  // 音量控制
+  useEffect(() => {
+    if (currentAudio) {
+      const gainNode = currentAudio.createGain();
+      gainNode.gain.value = volume;
     }
-  };
-
-  const handleGenerateVideo = async () => {
-    if (!imageFile) {
-      setError('請上傳圖片');
-      return;
-    }
-
-    if (!audioFile && !text.trim()) {
-      setError('請上傳音頻或輸入文字');
-      return;
-    }
-
-    setIsGenerating(true);
-    setError(null);
-    setProgress(0);
-    setProgressMessage('開始Wav2Lip對嘴視頻生成...');
-
-    // 真實的進度更新（基於Wav2Lip的處理階段）
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev < 30) {
-          setProgressMessage('正在檢測人臉...');
-          return prev + 3;
-        } else if (prev < 60) {
-          setProgressMessage('正在分析音頻...');
-          return prev + 2;
-        } else if (prev < 85) {
-          setProgressMessage('正在生成對嘴視頻...');
-          return prev + 2;
-        } else if (prev < 95) {
-          setProgressMessage('正在優化視頻品質...');
-          return prev + 1;
-        }
-        return prev;
-      });
-    }, 2000);
-
-    try {
-      const formData = new FormData();
-      formData.append('image', imageFile);
-      if (audioFile) {
-        formData.append('audio', audioFile);
-      }
-      if (text.trim()) {
-        formData.append('text', text.trim());
-      }
-      formData.append('pose_style', poseStyle.toString());
-      formData.append('size_of_image', resolution.toString());
-      formData.append('preprocess_type', preprocess);
-      formData.append('is_still_mode', stillMode.toString());
-      formData.append('batch_size', batchSize.toString());
-      formData.append('enhancer', enhancer.toString());
-
-      const response = await fetch('https://restarter-backend-6e9s.onrender.com/api/wav2lip-generation/generate-video', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setGeneratedVideoUrl(result.videoUrl);
-        setError(null);
-        setProgress(100);
-        setProgressMessage('Wav2Lip對嘴視頻生成成功！');
-      } else {
-        setError(result.error || t.error);
-        setProgress(0);
-        setProgressMessage('');
-      }
-    } catch (err) {
-      setError(t.error);
-      console.error('視頻生成錯誤:', err);
-    } finally {
-      clearInterval(progressInterval);
-      setIsGenerating(false);
-    }
-  };
-
-  const handleDownload = () => {
-    if (generatedVideoUrl) {
-      const link = document.createElement('a');
-      link.href = generatedVideoUrl;
-      link.download = 'generated-video.mp4';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
+  }, [volume]);
 
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #6B5BFF 0%, #23c6e6 100%)',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       padding: '20px',
       fontFamily: 'Inter, sans-serif'
     }}>
@@ -252,7 +133,7 @@ export default function VideoGeneration() {
           top: '20px',
           left: '20px',
           background: '#fff',
-          color: '#6B5BFF',
+          color: '#667eea',
           border: 'none',
           borderRadius: '8px',
           padding: '10px 20px',
@@ -262,11 +143,11 @@ export default function VideoGeneration() {
           boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
         }}
       >
-        ← {t.backButton}
+        ← 返回
       </button>
 
       <div style={{
-        maxWidth: '800px',
+        maxWidth: '900px',
         margin: '0 auto',
         paddingTop: '60px'
       }}>
@@ -275,314 +156,227 @@ export default function VideoGeneration() {
           <h1 style={{
             color: '#fff',
             fontSize: '2.5rem',
-            fontWeight: '900',
-            marginBottom: '10px',
-            textShadow: '0 2px 8px rgba(0,0,0,0.3)'
+            fontWeight: '700',
+            marginBottom: '10px'
           }}>
-            {t.title}
+            🧘 冥想與放鬆工具
           </h1>
           <p style={{
             color: '#fff',
             fontSize: '1.1rem',
             opacity: 0.9
           }}>
-            {t.subtitle}
+            幫助您放鬆身心，緩解壓力
           </p>
         </div>
 
-        {/* 主要內容 */}
+        {/* 主要功能區域 */}
         <div style={{
           background: 'rgba(255,255,255,0.95)',
-          borderRadius: '20px',
-          padding: '30px',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+          borderRadius: '16px',
+          padding: '40px',
+          marginBottom: '30px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
         }}>
-          {/* 上傳區域 */}
-          <div style={{ marginBottom: '30px' }}>
-            <h3 style={{ color: '#6B5BFF', marginBottom: '20px' }}>📸 {t.uploadImage}</h3>
-            <div style={{
-              border: '2px dashed #6B5BFF',
-              borderRadius: '12px',
-              padding: '40px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              background: imageFile ? '#f0f8ff' : '#fafafa'
-            }} onClick={() => imageInputRef.current?.click()}>
-              {imageFile ? (
-                <div>
-                  <img 
-                    src={URL.createObjectURL(imageFile)} 
-                    alt="Preview" 
-                    style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
-                  />
-                  <p style={{ marginTop: '10px', color: '#6B5BFF' }}>{imageFile.name}</p>
-                  <p style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
-                    {(imageFile.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <div style={{ fontSize: '3rem', marginBottom: '10px' }}>📷</div>
-                  <p style={{ color: '#666' }}>點擊上傳圖片</p>
-                  <p style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
-                    {t.imageSizeLimit}
-                  </p>
-                </div>
-              )}
-            </div>
-            <input
-              ref={imageInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              style={{ display: 'none' }}
-            />
-          </div>
-
-          {/* 音頻上傳 */}
-          <div style={{ marginBottom: '30px' }}>
-            <h3 style={{ color: '#6B5BFF', marginBottom: '20px' }}>🎵 {t.uploadAudio}</h3>
-            <div style={{
-              border: '2px dashed #6B5BFF',
-              borderRadius: '12px',
-              padding: '40px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              background: audioFile ? '#f0f8ff' : '#fafafa'
-            }} onClick={() => audioInputRef.current?.click()}>
-              {audioFile ? (
-                <div>
-                  <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🎵</div>
-                  <p style={{ color: '#6B5BFF' }}>{audioFile.name}</p>
-                  <p style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
-                    {(audioFile.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🎵</div>
-                  <p style={{ color: '#666' }}>點擊上傳音頻（可選）</p>
-                  <p style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
-                    {t.audioSizeLimit}
-                  </p>
-                </div>
-              )}
-            </div>
-            <input
-              ref={audioInputRef}
-              type="file"
-              accept="audio/*"
-              onChange={handleAudioUpload}
-              style={{ display: 'none' }}
-            />
-          </div>
-
-          {/* 文字輸入 */}
-          <div style={{ marginBottom: '30px' }}>
-            <h3 style={{ color: '#6B5BFF', marginBottom: '20px' }}>✍️ {t.inputText}</h3>
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder={t.textPlaceholder}
-              style={{
-                width: '100%',
-                minHeight: '100px',
-                padding: '15px',
-                borderRadius: '8px',
-                border: '2px solid #e0e0e0',
-                fontSize: '16px',
-                resize: 'vertical'
-              }}
-            />
-          </div>
-
-          {/* 設置選項 */}
-          {/* 優化提示 */}
-          <div style={{ 
-            background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)', 
-            color: 'white', 
-            padding: '15px', 
-            borderRadius: '8px', 
-            marginBottom: '20px',
-            fontSize: '14px'
-          }}>
-            <h4 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>🚀 速度優化提示</h4>
-            <ul style={{ margin: 0, paddingLeft: '20px' }}>
-              <li>選擇64x64分辨率可將時間縮短到30秒-1分鐘</li>
-              <li>使用小於5MB的JPG圖片</li>
-              <li>選擇小於10MB的音頻文件</li>
-              <li>避免複雜背景和多人臉圖片</li>
-            </ul>
-          </div>
-
-          <div style={{ marginBottom: '30px' }}>
-            <h3 style={{ color: '#6B5BFF', marginBottom: '20px' }}>⚙️ {t.settings}</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>
-                  {t.poseStyle}: {poseStyle}
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="46"
-                  value={poseStyle}
-                  onChange={(e) => setPoseStyle(parseInt(e.target.value))}
-                  style={{ width: '100%' }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>
-                  {t.resolution}
-                </label>
-                <select
-                  value={resolution}
-                  onChange={(e) => setResolution(parseInt(e.target.value))}
-                  style={{ width: '100%', padding: '8px', borderRadius: '4px' }}
-                >
-                  <option value={64}>64 (極快)</option>
-                  <option value={128}>128 (快速)</option>
-                  <option value={256}>256 (標準)</option>
-                  <option value={512}>512 (高品質)</option>
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>
-                  {t.preprocess}
-                </label>
-                <select
-                  value={preprocess}
-                  onChange={(e) => setPreprocess(e.target.value)}
-                  style={{ width: '100%', padding: '8px', borderRadius: '4px' }}
-                >
-                  <option value="crop">crop</option>
-                  <option value="resize">resize</option>
-                  <option value="full">full</option>
-                  <option value="extcrop">extcrop</option>
-                  <option value="extfull">extfull</option>
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <input
-                    type="checkbox"
-                    checked={stillMode}
-                    onChange={(e) => setStillMode(e.target.checked)}
-                  />
-                  {t.stillMode}
-                </label>
-              </div>
-              <div>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <input
-                    type="checkbox"
-                    checked={enhancer}
-                    onChange={(e) => setEnhancer(e.target.checked)}
-                  />
-                  {t.enhancer}
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* 進度條 */}
-          {isGenerating && (
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ 
-                width: '100%', 
-                height: '8px', 
-                backgroundColor: '#f0f0f0', 
-                borderRadius: '4px',
-                overflow: 'hidden',
-                marginBottom: '10px'
-              }}>
-                <div style={{
-                  width: `${progress}%`,
-                  height: '100%',
-                  background: 'linear-gradient(135deg, #6B5BFF 0%, #23c6e6 100%)',
-                  transition: 'width 0.3s ease'
-                }} />
-              </div>
-              <p style={{ 
-                textAlign: 'center', 
-                color: '#6B5BFF',
-                fontSize: '14px',
-                margin: 0
-              }}>
-                {progressMessage} ({progress}%)
-              </p>
-            </div>
-          )}
-
-          {/* 生成按鈕 */}
-          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-            <button
-              onClick={handleGenerateVideo}
-              disabled={isGenerating || !imageFile || (!audioFile && !text.trim())}
-              style={{
-                background: isGenerating || !imageFile || (!audioFile && !text.trim()) ? '#ccc' : 'linear-gradient(135deg, #6B5BFF 0%, #23c6e6 100%)',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '12px',
-                padding: '15px 40px',
-                fontSize: '18px',
-                fontWeight: '700',
-                cursor: isGenerating || !imageFile || (!audioFile && !text.trim()) ? 'not-allowed' : 'pointer',
-                boxShadow: '0 4px 16px rgba(107, 91, 255, 0.3)'
-              }}
-            >
-              {isGenerating ? t.generating : t.generateButton}
-            </button>
-          </div>
-
-          {/* 錯誤訊息 */}
-          {error && (
-            <div style={{
-              background: '#ffebee',
-              color: '#c62828',
-              padding: '15px',
-              borderRadius: '8px',
+          {/* 生成式音頻 */}
+          <div style={{ marginBottom: '40px' }}>
+            <h2 style={{
+              color: '#333',
+              fontSize: '1.5rem',
               marginBottom: '20px',
               textAlign: 'center'
             }}>
-              {error}
-            </div>
-          )}
-
-          {/* 生成的視頻 */}
-          {generatedVideoUrl && (
-            <div style={{ textAlign: 'center' }}>
-              <h3 style={{ color: '#6B5BFF', marginBottom: '20px' }}>✅ {t.success}</h3>
-              <video
-                src={generatedVideoUrl}
-                controls
-                style={{
-                  maxWidth: '100%',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.2)'
-                }}
-              >
-                您的瀏覽器不支持視頻播放。
-              </video>
+              🎵 生成式放鬆音頻
+            </h2>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '20px',
+              marginBottom: '20px'
+            }}>
               <button
-                onClick={handleDownload}
+                onClick={generateWhiteNoise}
+                disabled={isPlaying && currentSound === 'white-noise'}
                 style={{
-                  background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
+                  background: isPlaying && currentSound === 'white-noise' 
+                    ? '#4CAF50' 
+                    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   color: '#fff',
                   border: 'none',
-                  borderRadius: '8px',
-                  padding: '12px 30px',
-                  fontSize: '16px',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  fontSize: '1rem',
                   fontWeight: '600',
-                  cursor: 'pointer',
-                  marginTop: '20px',
-                  boxShadow: '0 2px 8px rgba(76, 175, 80, 0.3)'
+                  cursor: isPlaying && currentSound === 'white-noise' ? 'default' : 'pointer',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
                 }}
               >
-                📥 {t.downloadButton}
+                🌫️ 白噪音
+                <br />
+                <small>助眠放鬆</small>
+              </button>
+
+              <button
+                onClick={generatePinkNoise}
+                disabled={isPlaying && currentSound === 'pink-noise'}
+                style={{
+                  background: isPlaying && currentSound === 'pink-noise' 
+                    ? '#4CAF50' 
+                    : 'linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: isPlaying && currentSound === 'pink-noise' ? 'default' : 'pointer',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                }}
+              >
+                🌸 粉紅噪音
+                <br />
+                <small>自然放鬆</small>
+              </button>
+
+              <button
+                onClick={generateRainSound}
+                disabled={isPlaying && currentSound === 'rain'}
+                style={{
+                  background: isPlaying && currentSound === 'rain' 
+                    ? '#4CAF50' 
+                    : 'linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: isPlaying && currentSound === 'rain' ? 'default' : 'pointer',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                }}
+              >
+                🌧️ 雨聲
+                <br />
+                <small>自然環境音</small>
               </button>
             </div>
-          )}
+
+            {/* 控制面板 */}
+            {isPlaying && (
+              <div style={{
+                background: '#f8f9fa',
+                borderRadius: '12px',
+                padding: '20px',
+                marginTop: '20px'
+              }}>
+                <h3 style={{ color: '#333', marginBottom: '15px' }}>
+                  🎛️ 控制面板
+                </h3>
+                
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>
+                    音量: {Math.round(volume * 100)}%
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={volume}
+                    onChange={(e) => setVolume(parseFloat(e.target.value))}
+                    style={{ width: '100%' }}
+                  />
+                </div>
+
+                <button
+                  onClick={stopAudio}
+                  style={{
+                    background: '#dc3545',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '10px 20px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ⏹️ 停止播放
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* 免費音效庫 */}
+          <div style={{ marginBottom: '40px' }}>
+            <h2 style={{
+              color: '#333',
+              fontSize: '1.5rem',
+              marginBottom: '20px',
+              textAlign: 'center'
+            }}>
+              🎼 免費音效庫
+            </h2>
+            
+            <div style={{
+              background: '#fff3cd',
+              border: '1px solid #ffeaa7',
+              borderRadius: '8px',
+              padding: '20px',
+              textAlign: 'center'
+            }}>
+              <h3 style={{ color: '#856404', marginBottom: '15px' }}>
+                🚧 開發中
+              </h3>
+              <p style={{ color: '#856404', lineHeight: '1.6' }}>
+                我們正在收集免費的自然音效和冥想音樂。<br />
+                包括：森林鳥叫、海浪聲、輕柔音樂等。<br />
+                敬請期待！
+              </p>
+            </div>
+          </div>
+
+          {/* 使用說明 */}
+          <div style={{
+            background: '#d1ecf1',
+            border: '1px solid #bee5eb',
+            borderRadius: '8px',
+            padding: '20px'
+          }}>
+            <h3 style={{ color: '#0c5460', marginBottom: '15px' }}>
+              💡 使用建議
+            </h3>
+            <ul style={{ color: '#0c5460', lineHeight: '1.6' }}>
+              <li><strong>白噪音：</strong>適合助眠，屏蔽環境噪音</li>
+              <li><strong>粉紅噪音：</strong>更自然的放鬆效果</li>
+              <li><strong>雨聲：</strong>營造寧靜的自然環境</li>
+              <li><strong>建議時長：</strong>10-30分鐘，配合深呼吸</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* 返回主頁按鈕 */}
+        <div style={{ textAlign: 'center' }}>
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '15px 30px',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+              transition: 'transform 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
+            onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+          >
+            返回主頁
+          </button>
         </div>
       </div>
     </div>
