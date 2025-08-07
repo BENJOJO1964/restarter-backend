@@ -1286,11 +1286,11 @@ export default function Home() {
             <button
               className="feature-btn"
               style={{ height: 80, marginTop: 10, marginBottom: 0, gap: 8, padding: '16px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: '12px' }}
-              onClick={() => handleFeatureWithAuth(() => navigate('/video-generation'))}
-              aria-label={lang === 'zh-TW' ? '一鍵生成會說話的分身影片' : lang === 'zh-CN' ? '一键生成会说话的分身视频' : lang === 'en' ? 'One-click generate talking avatar video' : lang === 'ja' ? 'ワンクリックで話す分身動画を生成' : lang === 'ko' ? '원클릭으로 말하는 분신 비디오 생성' : lang === 'th' ? 'สร้างวิดีโอตัวตนที่พูดได้ด้วยคลิกเดียว' : lang === 'vi' ? 'Tạo video avatar biết nói bằng một cú nhấp' : lang === 'ms' ? 'Menjana video avatar yang bercakap dengan satu klik' : 'Unum click generare video avatar loquentem'}
+              onClick={() => handleFeatureWithAuth(() => navigate('/relaxation-tools'))}
+              aria-label={lang === 'zh-TW' ? '冥想放鬆園地' : lang === 'zh-CN' ? '冥想放松园地' : lang === 'ja' ? '瞑想リラックス園' : lang === 'en' ? 'Relaxation Garden' : lang === 'ko' ? '명상 휴식원' : lang === 'th' ? 'สวนผ่อนคลาย' : lang === 'vi' ? 'Vườn Thư Giãn' : lang === 'ms' ? 'Taman Relaksasi' : 'Hortus Relaxationis'}
               role="button"
             >
-              <span style={{ fontSize: 32 }}>🎬</span>
+              <span style={{ fontSize: 32 }}>🧘</span>
               <span style={{ fontWeight: 700, textAlign: 'center', lineHeight: 1.2 }}>{lang === 'zh-TW' ? '冥想放鬆園地' : lang === 'zh-CN' ? '冥想放松园地' : lang === 'ja' ? '瞑想リラックス園' : lang === 'en' ? 'Relaxation Garden' : lang === 'ko' ? '명상 휴식원' : lang === 'th' ? 'สวนผ่อนคลาย' : lang === 'vi' ? 'Vườn Thư Giãn' : lang === 'ms' ? 'Taman Relaksasi' : 'Hortus Relaxationis'}</span>
             </button>
 
