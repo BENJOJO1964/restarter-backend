@@ -130,19 +130,28 @@ async function generateOptimizedVideo(imagePath, audioPath, text, options) {
     }
     
     const timestamp = Date.now();
-    const videoPath = path.join(__dirname, '../uploads', `video_${timestamp}.mp4`);
+    const resultDir = path.join(__dirname, '../uploads', `result_${timestamp}`);
+    const videoPath = path.join(resultDir, `video_${timestamp}.mp4`);
+    
+    // 確保結果目錄存在
+    if (!fs.existsSync(resultDir)) {
+      fs.mkdirSync(resultDir, { recursive: true });
+    }
     
     // 調用真正的SadTalker
     const { spawn } = require('child_process');
     const sadtalkerPath = path.join(__dirname, '../../SadTalker');
     
     console.log('調用SadTalker:', sadtalkerPath);
+    console.log('輸入圖片:', imagePath);
+    console.log('輸入音頻:', audioPath);
+    console.log('結果目錄:', resultDir);
     
     const pythonProcess = spawn('python', [
       'inference.py',
       '--driven_audio', audioPath,
       '--source_image', imagePath,
-      '--result_dir', path.join(__dirname, '../uploads'),
+      '--result_dir', resultDir,
       '--pose_style', options.pose_style || '0',
       '--size', options.size_of_image || '128',
       '--preprocess', options.preprocess_type || 'crop',
@@ -152,7 +161,8 @@ async function generateOptimizedVideo(imagePath, audioPath, text, options) {
       '--batch_size', '1'
     ], {
       cwd: sadtalkerPath,
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: { ...process.env, PYTHONPATH: sadtalkerPath }
     });
     
     let stdout = '';
@@ -175,9 +185,8 @@ async function generateOptimizedVideo(imagePath, audioPath, text, options) {
       
       if (code === 0) {
         // 查找生成的視頻文件
-        const resultDir = path.join(__dirname, '../uploads');
         const files = fs.readdirSync(resultDir);
-        const videoFile = files.find(file => file.endsWith('.mp4') && file.includes('video_'));
+        const videoFile = files.find(file => file.endsWith('.mp4'));
         
         if (videoFile) {
           const finalVideoPath = path.join(resultDir, videoFile);

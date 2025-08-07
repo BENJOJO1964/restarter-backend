@@ -13,13 +13,16 @@ services:
   - type: web
     name: restarter-backend
     env: node
-    buildCommand: npm install
+    buildCommand: |
+      npm install
+      chmod +x install_sadtalker.sh
+      ./install_sadtalker.sh
     startCommand: PORT=3001 NODE_ENV=production node server.js
     envVars:
       - key: NODE_ENV
         value: production
-      - key: GPU_SERVICE_URL
-        value: https://restarter-gpu-service.onrender.com
+      - key: PYTHON_VERSION
+        value: 3.10.14
 
   # GPU加速服務（付費）
   - type: web

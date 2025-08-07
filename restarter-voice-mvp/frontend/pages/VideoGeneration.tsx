@@ -162,18 +162,30 @@ export default function VideoGeneration() {
     setIsGenerating(true);
     setError(null);
     setProgress(0);
-    setProgressMessage('開始生成視頻...');
+    setProgressMessage('開始SadTalker AI對嘴視頻生成...');
 
-    // 模擬進度更新
+    // 真實的進度更新（基於SadTalker的處理階段）
     const progressInterval = setInterval(() => {
       setProgress(prev => {
-        if (prev < 90) {
-          setProgressMessage('正在處理視頻...');
-          return prev + Math.random() * 10;
+        if (prev < 20) {
+          setProgressMessage('正在提取人臉特徵...');
+          return prev + 2;
+        } else if (prev < 40) {
+          setProgressMessage('正在分析音頻...');
+          return prev + 1;
+        } else if (prev < 60) {
+          setProgressMessage('正在生成對嘴動作...');
+          return prev + 1;
+        } else if (prev < 80) {
+          setProgressMessage('正在渲染視頻...');
+          return prev + 1;
+        } else if (prev < 95) {
+          setProgressMessage('正在優化視頻品質...');
+          return prev + 0.5;
         }
         return prev;
       });
-    }, 2000);
+    }, 3000);
 
     try {
       const formData = new FormData();
@@ -202,7 +214,7 @@ export default function VideoGeneration() {
         setGeneratedVideoUrl(result.videoUrl);
         setError(null);
         setProgress(100);
-        setProgressMessage('視頻生成完成！');
+        setProgressMessage('SadTalker AI對嘴視頻生成成功！');
       } else {
         setError(result.error || t.error);
         setProgress(0);
