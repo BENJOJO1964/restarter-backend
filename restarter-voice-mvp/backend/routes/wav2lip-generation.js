@@ -83,27 +83,99 @@ async function generateWav2LipVideo(imagePath, audioPath, text) {
       fs.mkdirSync(resultDir, { recursive: true });
     }
     
-    // 調用Wav2Lip
-    const wav2lipPath = path.join(__dirname, '../../wav2lip');
-    
-    console.log('調用Wav2Lip:', wav2lipPath);
-    console.log('輸入圖片:', imagePath);
-    console.log('輸入音頻:', audioPath);
-    console.log('結果目錄:', resultDir);
-    
-    const pythonProcess = spawn('python3', [
-      'inference.py',
-      '--checkpoint_path', 'checkpoints/wav2lip.pth',
-      '--face', imagePath,
-      '--audio', audioPath,
-      '--outfile', videoPath,
-      '--pads', '0 20 0 0',
-      '--resize_factor', '2'
-    ], {
-      cwd: wav2lipPath,
-      stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env, PYTHONPATH: wav2lipPath }
+    // 首先測試python3是否可用
+    console.log('測試python3可用性...');
+    const testProcess = spawn('python3', ['--version'], {
+      stdio: ['pipe', 'pipe', 'pipe']
     });
+    
+    testProcess.on('close', (code) => {
+      if (code !== 0) {
+        console.log('python3不可用，嘗試使用python...');
+        // 如果python3不可用，嘗試使用python
+        const pythonProcess = spawn('python', [
+          'inference.py',
+          '--checkpoint_path', 'checkpoints/wav2lip.pth',
+          '--face', imagePath,
+          '--audio', audioPath,
+          '--outfile', videoPath,
+          '--pads', '0 20 0 0',
+          '--resize_factor', '2'
+        ], {
+          cwd: path.join(__dirname, '../../wav2lip'),
+          stdio: ['pipe', 'pipe', 'pipe'],
+          env: { ...process.env, PYTHONPATH: path.join(__dirname, '../../wav2lip') }
+        });
+        
+        handlePythonProcess(pythonProcess, videoPath, resolve, reject);
+      } else {
+        console.log('python3可用，使用python3...');
+        // 使用python3
+        const pythonProcess = spawn('python3', [
+          'inference.py',
+          '--checkpoint_path', 'checkpoints/wav2lip.pth',
+          '--face', imagePath,
+          '--audio', audioPath,
+          '--outfile', videoPath,
+          '--pads', '0 20 0 0',
+          '--resize_factor', '2'
+        ], {
+          cwd: path.join(__dirname, '../../wav2lip'),
+          stdio: ['pipe', 'pipe', 'pipe'],
+          env: { ...process.env, PYTHONPATH: path.join(__dirname, '../../wav2lip') }
+        });
+        
+        handlePythonProcess(pythonProcess, videoPath, resolve, reject);
+      }
+    });
+    
+    testProcess.on('error', (error) => {
+      console.log('python3測試失敗:', error.message);
+      reject(new Error(`Python環境錯誤: ${error.message}`));
+    });
+  });
+}
+
+// 處理Python進程的輔助函數
+function handlePythonProcess(pythonProcess, videoPath, resolve, reject) {
+  let stdout = '';
+  let stderr = '';
+  
+  pythonProcess.stdout.on('data', (data) => {
+    stdout += data.toString();
+    console.log('Wav2Lip輸出:', data.toString());
+  });
+  
+  pythonProcess.stderr.on('data', (data) => {
+    stderr += data.toString();
+    console.log('Wav2Lip錯誤:', data.toString());
+  });
+  
+  pythonProcess.on('close', (code) => {
+    console.log('Wav2Lip進程結束，代碼:', code);
+    console.log('完整輸出:', stdout);
+    console.log('完整錯誤:', stderr);
+    
+    if (code === 0) {
+      // 檢查生成的視頻文件
+      if (fs.existsSync(videoPath)) {
+        console.log('Wav2Lip視頻生成成功:', videoPath);
+        resolve(videoPath);
+      } else {
+        console.log('未找到生成的視頻文件');
+        reject(new Error('Wav2Lip生成失敗：未找到視頻文件'));
+      }
+    } else {
+      console.log('Wav2Lip生成失敗，代碼:', code);
+      reject(new Error(`Wav2Lip生成失敗，代碼: ${code}`));
+    }
+  });
+  
+  pythonProcess.on('error', (error) => {
+    console.log('Wav2Lip進程錯誤:', error.message);
+    reject(new Error(`Wav2Lip進程錯誤: ${error.message}`));
+  });
+}
     
     let stdout = '';
     let stderr = '';
