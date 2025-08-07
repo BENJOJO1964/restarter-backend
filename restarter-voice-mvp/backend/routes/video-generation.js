@@ -65,13 +65,28 @@ router.post('/generate-video', upload.fields([
 // 下載生成的視頻
 router.get('/download-video/:filename', (req, res) => {
   const filename = req.params.filename;
-  const videoPath = path.join(__dirname, '../uploads', filename);
+  
+  // 嘗試多個可能的路徑
+  const possiblePaths = [
+    path.join(__dirname, '../uploads', filename),
+    path.join(process.cwd(), 'uploads', filename),
+    path.join('/opt/render/project/src/restarter-voice-mvp/backend/uploads', filename)
+  ];
   
   console.log('嘗試下載文件:', filename);
-  console.log('文件路徑:', videoPath);
-  console.log('文件是否存在:', fs.existsSync(videoPath));
+  console.log('可能的路徑:', possiblePaths);
   
-  if (fs.existsSync(videoPath)) {
+  let videoPath = null;
+  for (const testPath of possiblePaths) {
+    console.log('檢查路徑:', testPath, '存在:', fs.existsSync(testPath));
+    if (fs.existsSync(testPath)) {
+      videoPath = testPath;
+      break;
+    }
+  }
+  
+  if (videoPath) {
+    console.log('找到文件，提供下載:', videoPath);
     res.setHeader('Content-Type', 'video/mp4');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.download(videoPath);
@@ -90,7 +105,8 @@ router.get('/download-video/:filename', (req, res) => {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
     
-    fs.writeFileSync(videoPath, testVideoContent);
+    const fallbackPath = path.join(uploadDir, filename);
+    fs.writeFileSync(fallbackPath, testVideoContent);
     res.setHeader('Content-Type', 'video/mp4');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.send(testVideoContent);
