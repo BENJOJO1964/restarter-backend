@@ -144,7 +144,9 @@ app.get('/', (req, res) => {
       '/api/feedback',
       '/api/subscription',
       '/api/weather',
-      '/api/social-integration-assessment'
+      '/api/social-integration-assessment',
+      '/api/video-generation',
+      '/api/video-generation-optimized'
     ]
   });
 });
