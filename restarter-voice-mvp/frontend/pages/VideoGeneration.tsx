@@ -545,6 +545,7 @@ export default function VideoGeneration() {
             <div style={{ textAlign: 'center' }}>
               <h3 style={{ color: '#6B5BFF', marginBottom: '20px' }}>✅ {t.success}</h3>
               <video
+                src={generatedVideoUrl}
                 controls
                 style={{
                   maxWidth: '100%',
@@ -552,7 +553,6 @@ export default function VideoGeneration() {
                   boxShadow: '0 4px 16px rgba(0,0,0,0.2)'
                 }}
               >
-                <source src={generatedVideoUrl} type="video/mp4" />
                 您的瀏覽器不支持視頻播放。
               </video>
               <button
