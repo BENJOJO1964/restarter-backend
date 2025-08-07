@@ -104,34 +104,4 @@ function getEstimatedTime(size) {
   return timeMap[size] || '2-4分鐘';
 }
 
-    let output = '';
-    let errorOutput = '';
-
-    process.stdout.on('data', (data) => {
-      output += data.toString();
-      console.log('SadTalker output:', data.toString());
-    });
-
-    process.stderr.on('data', (data) => {
-      errorOutput += data.toString();
-      console.log('SadTalker error:', data.toString());
-    });
-
-    process.on('close', (code) => {
-      console.log('SadTalker process exited with code:', code);
-      if (code === 0) {
-        // 查找生成的視頻文件
-        const videoFile = `${outputDir}.mp4`;
-        if (fs.existsSync(videoFile)) {
-          resolve(videoFile);
-        } else {
-          reject(new Error('無法找到生成的視頻文件'));
-        }
-      } else {
-        reject(new Error(`SadTalker執行失敗: ${errorOutput}`));
-      }
-    });
-  });
-}
-
 module.exports = router;
