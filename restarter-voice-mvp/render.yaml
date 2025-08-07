@@ -17,31 +17,12 @@ services:
       npm install
       # 使用系統Python，不強制安裝python3
       python -m pip install -r requirements.txt
-      chmod +x install_wav2lip.sh
-      ./install_wav2lip.sh
     startCommand: PORT=3001 NODE_ENV=production node server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PYTHON_VERSION
         value: 3.10.14
-      - key: PYTHONPATH
-        value: /opt/render/project/src/restarter-voice-mvp/wav2lip
 
-  # GPU加速服務（付費）
-  - type: web
-    name: restarter-gpu-service
-    env: python
-    buildCommand: |
-      pip install -r requirements-gpu.txt
-      cd SadTalker && python scripts/download_models.sh
-    startCommand: python render-gpu-service.py
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.10.14
-      - key: CUDA_VISIBLE_DEVICES
-        value: "0"
-    plan: standard-gpu  # 使用GPU實例
-    scaling:
-      minInstances: 0  # 按需啟動
-      maxInstances: 1  # 最多1個實例
+
+

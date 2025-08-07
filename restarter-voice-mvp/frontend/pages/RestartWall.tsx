@@ -786,7 +786,7 @@ export default function RestartWall() {
             }
             setIsListening(false);
             setIsRecording(false);
-            alert('錄音時間已達1分鐘限制，已自動停止錄音');
+            alert('⏰ 親愛的朋友，錄音時間已達1分鐘限制，已自動停止錄音囉～\n\n💭 我們希望給您足夠的時間表達，但也要照顧其他朋友的使用體驗。');
           }
           return newDuration;
         });
@@ -796,7 +796,7 @@ export default function RestartWall() {
       console.log('開始錄音...');
     } catch (error) {
       console.error('錄音失敗:', error);
-      alert('無法訪問麥克風，請檢查權限設置');
+              alert('🎤 親愛的朋友，無法訪問麥克風呢～\n\n🔧 請檢查瀏覽器權限設置，允許我們使用麥克風功能。\n\n💡 通常在網址列旁邊有個麥克風圖示，點擊允許即可。');
     }
   };
 
@@ -869,6 +869,9 @@ export default function RestartWall() {
       setRecordedDuration(0);
       setShowSubmitDialog(false);
       setLoading(false);
+      
+      // 顯示我的留言列表
+      setShowMyMessages(true);
     }
   };
 
@@ -1115,7 +1118,7 @@ export default function RestartWall() {
 
   // 刪除留言功能
   const handleDeleteMessage = (messageId: string) => {
-    if (window.confirm('💝 您確定要刪除這條留言嗎？\n\n刪除後將無法恢復，請確認您的選擇。')) {
+    if (window.confirm('🤗 親愛的朋友，您真的要刪除這條留言嗎？\n\n💭 我們理解您可能想要重新整理思緒，但刪除後就無法找回囉～\n\n✨ 如果您確定要刪除，我們會溫柔地幫您處理。')) {
       const updatedMessages = messages.filter(msg => msg.id !== messageId);
       setMessages(updatedMessages);
       localStorage.setItem('messages', JSON.stringify(updatedMessages));
@@ -1212,7 +1215,7 @@ export default function RestartWall() {
             background: window.innerWidth <= 768 ? 'linear-gradient(135deg, #FFB366 0%, #FFE5CC 100%)' : 'linear-gradient(135deg, #FFB366 0%, #FFE5CC 100%)'
           }}>
                       <h2 className="modern-title" style={{ 
-              fontSize: window.innerWidth <= 768 ? '1.2rem' : '1.2rem', 
+              fontSize: window.innerWidth <= 768 ? '1.4rem' : '1.4rem', 
               margin: 0, 
               flex: 1, 
               textAlign: 'center', 
@@ -1296,11 +1299,11 @@ export default function RestartWall() {
           boxShadow: '0 8px 32px rgba(107, 91, 255, 0.15)',
           backdropFilter: 'blur(10px)',
           textAlign: 'center',
-          marginTop: window.innerWidth <= 768 ? '20px' : window.innerWidth <= 768 ? '0' : '-10px'
+          marginTop: window.innerWidth <= 768 ? '40px' : window.innerWidth <= 768 ? '20px' : '10px'
         }}>
           <h3 style={{
             color: '#fff',
-            fontSize: window.innerWidth <= 768 ? '1.2rem' : '1.5rem',
+            fontSize: window.innerWidth <= 768 ? '1.2rem' : '1.2rem',
             fontWeight: '700',
             margin: '0 0 12px 0',
             textShadow: '0 2px 8px rgba(107, 91, 255, 0.3)'
@@ -2037,7 +2040,7 @@ export default function RestartWall() {
                   fontWeight: '600'
                 }}
               >
-                發送語音
+                確定
               </button>
               <button
                 onClick={handleCancelSubmit}

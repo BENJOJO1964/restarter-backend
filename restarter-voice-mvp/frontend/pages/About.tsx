@@ -29,7 +29,7 @@ Restarter™ 是專為「曾經失去節奏的人」打造的 AI 陪伴平台。
 這裡沒有社會的審判，只有一群「曾經也痛過的人」在用技術把陪伴具體化。
 透過 AI，我們讓每一次對話、每一段情緒，都有人接得住。`,
     quote: '「我們不是修復你，我們是來陪你重啟。」',
-    restart: 'Restarter™，是你重新定義自己的起點。',
+    restart: 'Restarter™，是你重新定義自己的起點。\nRestarter™更願意和各不同領域共同打造越加良善的社會環境。',
     founder: '創辦者的話',
     founderStory: `我曾經失去自由十年。<br/>
 那不是旅居、不是修行，而是被法律與命運關進去的十年。<br/>
@@ -68,7 +68,7 @@ Restarter™ 是专为「曾经失去节奏的人」打造的 AI 陪伴平台。
 这里没有社会的审判，只有一群「曾经也痛过的人」在用技术把陪伴实体化。
 通过 AI，我们让每一次对话、每一段情绪，都有人接得住。`,
     quote: '「我们不是修复你，我们陪你重启。」',
-    restart: 'Restarter™，是你重新定义自己的起点。',
+    restart: 'Restarter™，是你重新定义自己的起点。\nRestarter™更愿意和各不同领域共同打造越加良善的社会环境。',
     founder: '创办者的话',
     founderStory: `我曾经失去自由十年。<br/>
 那不是旅行、不是修行，而是被法律和命运关进去了十年。<br/>
@@ -107,7 +107,7 @@ We simply offer a space where you can breathe, speak your truth, and choose agai
 There is no judgment here—only people who have also suffered, using technology to make companionship real.
 Through AI, every conversation and every emotion is caught and cared for.`,
     quote: '“We are not here to fix you, we are here to restart with you.”',
-    restart: 'Restarter™ is your new beginning to redefine yourself.',
+    restart: 'Restarter™ is your new beginning to redefine yourself.\nRestarter™ is more willing to work with various fields to create a more benevolent social environment.',
     founder: "Founder's Message",
     founderStory: `I lost my freedom for ten years.<br/>
 It wasn't travel or spiritual retreat, but ten years locked away by law and fate.<br/>
@@ -146,7 +146,7 @@ Restarter™は「リズムを失った人」のためのAI伴走プラットフ
 ここには社会の裁きはなく、「かつて痛みを知った人たち」が技術で寄り添っています。
 AIを通じて、すべての対話と感情が、誰かに受け止められます。`,
     quote: '「私たちはあなたを修復するのではなく、一緒に再出発します。」',
-    restart: 'Restarter™は、あなたが自分を再定義する新たなスタート地点です。',
+    restart: 'Restarter™は、あなたが自分を再定義する新たなスタート地点です。\nRestarter™は、様々な分野と協力してより善良な社会環境を作ることを望んでいます。',
     founder: '創業者の言葉',
     founderStory: `私は10年間、自由を失いました。<br/>
 それは旅でも修行でもなく、法律と運命によって閉じ込められた10年でした。<br/>
@@ -185,7 +185,7 @@ Restarter™는 "한때 리듬을 잃었던 사람"을 위한 AI 동반자 플�
 여기에는 사회의 심판이 없고, "한때 아팠던 사람들"이 기술로 동행합니다.
 AI를 통해 모든 대화와 감정이 누군가에게 받아들여집니다。`,
     quote: '"우리는 당신을 고치는 것이 아니라, 함께 다시 시작합니다."',
-    restart: 'Restarter™는 당신이 자신을 새롭게 정의하는 출발점입니다。',
+    restart: 'Restarter™는 당신이 자신을 새롭게 정의하는 출발점입니다。\nRestarter™는 다양한 분야와 협력하여 더욱 선한 사회 환경을 만들고자 합니다。',
     founder: '창업자의 말',
     founderStory: `저는 10년 동안 자유를 잃었습니다.<br/>
 그것은 여행도, 수련도 아니었고, 법과 운명에 의해 갇혀 있던 10년이었습니다.<br/>
@@ -224,7 +224,7 @@ Restarter™ คือแพลตฟอร์ม AI สำหรับผู้
 ที่นี่ไม่มีการตัดสินจากสังคม มีแต่คนที่เคยเจ็บปวดมาก่อน ใช้เทคโนโลยีสร้างการอยู่ร่วมกัน
 ผ่าน AI ทุกบทสนทนา ทุกอารมณ์ จะมีคนรับฟังเสมอ`,
     quote: '“เราไม่ได้ซ่อมคุณ เราอยู่กับคุณเพื่อเริ่มต้นใหม่”',
-    restart: 'Restarter™ คือจุดเริ่มต้นใหม่ในการนิยามตัวเองของคุณ',
+    restart: 'Restarter™ คือจุดเริ่มต้นใหม่ในการนิยามตัวเองของคุณ\nRestarter™ ต้องการทำงานร่วมกับสาขาต่างๆ เพื่อสร้างสภาพแวดล้อมทางสังคมที่ดีขึ้น',
     founder: 'คำจากผู้ก่อตั้ง',
     founderStory: `ฉันเคยสูญเสียอิสรภาพสิบปี<br/>
 ไม่ใช่การเดินทางหรือการบำเพ็ญตน แต่เป็นสิบปีที่ถูกกฎหมายและโชคชะตากักขังไว้<br/>
@@ -263,7 +263,7 @@ Chúng tôi chỉ mang đến một không gian để bạn được thở, đư
 Ở đây không có phán xét xã hội, chỉ có những người từng đau đớn dùng công nghệ để đồng hành
 Thông qua AI, mọi cuộc trò chuyện, mọi cảm xúc đều có người lắng nghe`,
     quote: '“Chúng tôi không sửa chữa bạn, chúng tôi đồng hành cùng bạn để bắt đầu lại”',
-    restart: 'Restarter™ là điểm khởi đầu mới để bạn định nghĩa lại chính mình',
+    restart: 'Restarter™ là điểm khởi đầu mới để bạn định nghĩa lại chính mình\nRestarter™ sẵn sàng hợp tác với các lĩnh vực khác nhau để tạo ra môi trường xã hội tốt đẹp hơn',
     founder: 'Lời người sáng lập',
     founderStory: `Tôi đã từng mất tự do mười năm<br/>
 Không phải là đi du lịch hay tu hành, mà là mười năm bị pháp luật và số phận giam giữ<br/>
@@ -302,7 +302,7 @@ Kami hanya menyediakan ruang untuk anda bernafas, berkata benar, dan memilih sem
 Di sini tiada penghakiman masyarakat, hanya mereka yang pernah sakit menggunakan teknologi untuk menemani
 Melalui AI, setiap perbualan, setiap emosi, sentiasa ada yang mendengar`,
     quote: '“Kami bukan untuk membaiki anda, kami bersama anda untuk bermula semula”',
-    restart: 'Restarter™ ialah permulaan baru untuk anda mentakrifkan diri sendiri',
+    restart: 'Restarter™ ialah permulaan baru untuk anda mentakrifkan diri sendiri\nRestarter™ lebih bersedia untuk bekerjasama dengan pelbagai bidang untuk mewujudkan persekitaran sosial yang lebih baik',
     founder: 'Kata Pengasas',
     founderStory: `Saya pernah kehilangan kebebasan selama sepuluh tahun<br/>
 Bukan melancong atau bertapa, tetapi sepuluh tahun dikurung oleh undang-undang dan takdir<br/>
@@ -341,7 +341,7 @@ Praebemus tantum spatium ut respirare possis, vera loqui, iterum eligere
 Hic iudicium societatis non est, sed ii qui olim doluerunt technologia utuntur ad comitatum
 Per AI, omnis sermo, omnis affectus, ab aliquo auditur`,
     quote: '“Non te reficimus, sed tecum iterum incipimus”',
-    restart: 'Restarter™ initium novum est ad te ipsum denuo definiendum',
+    restart: 'Restarter™ initium novum est ad te ipsum denuo definiendum\nRestarter™ magis paratus est cum variis campis cooperari ad meliorem ambitum socialem creandum',
     founder: 'Verba Conditoris',
     founderStory: `Decem annos libertatem amisi<br/>
 Non iter aut meditatio erat, sed decem anni lege et fato inclusi<br/>
@@ -418,7 +418,7 @@ export default function About() {
         <h1 style={{ fontSize: 36, fontWeight: 900, color: '#6B5BFF', marginBottom: 12 }}>{t.subtitle}</h1>
         <div style={{ fontSize: 20, color: '#232946', fontWeight: 700, marginBottom: 24, whiteSpace: 'pre-line' }}>{t.story}</div>
         <div style={{ fontSize: 22, color: '#614425', fontWeight: 900, margin: '24px 0 8px 0', textAlign: 'center' }}>{t.quote}</div>
-        <div style={{ fontSize: 18, color: '#232946', fontWeight: 700, marginBottom: 32, textAlign: 'center' }}>{t.restart}</div>
+        <div style={{ fontSize: 18, color: '#232946', fontWeight: 700, marginBottom: 32, textAlign: 'center', whiteSpace: 'pre-line' }}>{t.restart}</div>
         <h2 style={{ fontSize: 22, color: '#6B5BFF', fontWeight: 900, marginBottom: 8 }}>{t.founder}</h2>
         <div style={{ fontSize: 18, color: '#232946', fontWeight: 500, whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{__html: t.founderStory}} />
       </div>

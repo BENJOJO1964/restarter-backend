@@ -95,9 +95,7 @@ const weatherRouter = require('./routes/weather');
 const socialIntegrationRouter = require('./routes/social-integration-assessment');
 const emailVerificationRouter = require('./routes/email-verification');
 const adminFeedbackRouter = require('./routes/admin-feedback');
-const videoGenerationRouter = require('./routes/video-generation');
-const videoGenerationOptimizedRouter = require('./routes/video-generation-optimized');
-const wav2lipGenerationRouter = require('./routes/wav2lip-generation');
+
 // const stripePaymentRouter = require('./routes/stripe-payment');
 
 app.use(express.json());
@@ -120,9 +118,7 @@ app.use('/api/subscription', subscriptionRouter);
 // app.use('/api/stripe', stripePaymentRouter);
 app.use('/api/weather', weatherRouter);
 app.use('/api/social-integration-assessment', socialIntegrationRouter);
-app.use('/api/video-generation', videoGenerationRouter);
-app.use('/api/video-generation-optimized', videoGenerationOptimizedRouter);
-app.use('/api/wav2lip-generation', wav2lipGenerationRouter);
+
 
 // 後端只提供API，不提供靜態文件
 app.get('/', (req, res) => {
@@ -147,9 +143,7 @@ app.get('/', (req, res) => {
       '/api/subscription',
       '/api/weather',
       '/api/social-integration-assessment',
-      '/api/video-generation',
-      '/api/video-generation-optimized',
-      '/api/wav2lip-generation'
+
     ]
   });
 });

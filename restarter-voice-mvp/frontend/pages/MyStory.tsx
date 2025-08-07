@@ -589,7 +589,7 @@ export default function MyStory() {
   };
 
   const handleDeleteMilestone = (id: number) => {
-    if (window.confirm('確定要刪除這個里程碑嗎？')) {
+    if (window.confirm('🌟 親愛的朋友，您真的要刪除這個里程碑嗎？\n\n💫 每個里程碑都記錄著您成長的足跡，刪除後就無法找回囉～\n\n✨ 如果您確定要刪除，我們會溫柔地幫您處理。')) {
       const updatedMilestones = milestones.filter(m => m.id !== id);
       setMilestones(updatedMilestones);
       saveMilestonesToStorage(updatedMilestones);

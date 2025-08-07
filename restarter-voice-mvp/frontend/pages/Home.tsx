@@ -718,18 +718,7 @@ export default function Home() {
             >
               {lang==='zh-TW'?'💬 意見箱｜我們想聽你說':'zh-CN'===lang?'💬 意见箱｜我们想听你说':'en'===lang?'💬 Feedback｜We Want to Hear You':'ja'===lang?'💬 ご意見箱｜あなたの声を聞かせて':'ko'===lang?'💬 피드백｜여러분의 의견을 듣고 싶어요':'th'===lang?'💬 กล่องความคิดเห็น｜เราอยากฟังคุณ':'vi'===lang?'💬 Hộp góp ý｜Chúng tôi muốn lắng nghe bạn':'ms'===lang?'💬 Kotak Maklum Balas｜Kami ingin mendengar anda':'💬 Arca Consilii｜Te audire volumus'}
             </button>
-            {/* Token 測試按鈕 - 僅在開發環境顯示 */}
-            {(import.meta as any).env?.DEV && (
-              <button 
-                className="topbar-btn" 
-                onClick={() => navigate('/token-test')} 
-                style={{ background: '#fff', color: '#ff6b6b', border: '2px solid #ff6b6b', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 14px', minWidth: 120 }}
-                aria-label="Token 消耗測試"
-                role="button"
-              >
-                🧪 Token 測試
-              </button>
-            )}
+
             {user ? (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -998,29 +987,7 @@ export default function Home() {
                 <span style={{ fontSize: 20 }}>🧪</span>
                 <span style={{ fontSize: 12, textAlign: 'center' }}>{MUTUAL_HELP_TEXT[lang]}</span>
               </button>
-              <button
-                className="feature-btn"
-                style={{
-                  flex: 1,
-                  minWidth: 'calc(50% - 4px)',
-                  padding: '16px 8px',
-                  borderRadius: 12,
-                  border: '2px solid #6B5BFF',
-                  background: '#fff',
-                  color: '#6B5BFF',
-                  fontWeight: 700,
-                  fontSize: 14,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 4
-                }}
-                onClick={() => handleFeatureWithAuth(() => navigate('/relaxation-tools'))}
-              >
-                <span style={{ fontSize: 20 }}>🧘</span>
-                <span style={{ fontSize: 12, textAlign: 'center' }}>{lang === 'zh-TW' ? '冥想放鬆園地' : lang === 'zh-CN' ? '冥想放松园地' : lang === 'ja' ? '瞑想リラックス園' : lang === 'en' ? 'Relaxation Garden' : lang === 'ko' ? '명상 휴식원' : lang === 'th' ? 'สวนผ่อนคลาย' : lang === 'vi' ? 'Vườn Thư Giãn' : lang === 'ms' ? 'Taman Relaksasi' : 'Hortus Relaxationis'}</span>
-              </button>
+
             </div>
           </div>
           
@@ -1283,16 +1250,7 @@ export default function Home() {
               <span role="img" aria-label="chat" style={{ fontSize: 32 }}>💬</span>
               <span className="home-chat-btn-text" style={{ fontWeight: 700, textAlign: 'center', lineHeight: 1.2 }}>{t.chat}</span>
             </button>
-            <button
-              className="feature-btn"
-              style={{ height: 80, marginTop: 10, marginBottom: 0, gap: 8, padding: '16px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: '12px' }}
-              onClick={() => handleFeatureWithAuth(() => navigate('/relaxation-tools'))}
-              aria-label={lang === 'zh-TW' ? '冥想放鬆園地' : lang === 'zh-CN' ? '冥想放松园地' : lang === 'ja' ? '瞑想リラックス園' : lang === 'en' ? 'Relaxation Garden' : lang === 'ko' ? '명상 휴식원' : lang === 'th' ? 'สวนผ่อนคลาย' : lang === 'vi' ? 'Vườn Thư Giãn' : lang === 'ms' ? 'Taman Relaksasi' : 'Hortus Relaxationis'}
-              role="button"
-            >
-              <span style={{ fontSize: 32 }}>🧘</span>
-              <span style={{ fontWeight: 700, textAlign: 'center', lineHeight: 1.2 }}>{lang === 'zh-TW' ? '冥想放鬆園地' : lang === 'zh-CN' ? '冥想放松园地' : lang === 'ja' ? '瞑想リラックス園' : lang === 'en' ? 'Relaxation Garden' : lang === 'ko' ? '명상 휴식원' : lang === 'th' ? 'สวนผ่อนคลาย' : lang === 'vi' ? 'Vườn Thư Giãn' : lang === 'ms' ? 'Taman Relaksasi' : 'Hortus Relaxationis'}</span>
-            </button>
+
 
           </div>
         </div>

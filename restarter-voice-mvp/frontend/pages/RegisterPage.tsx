@@ -1276,23 +1276,56 @@ export default function RegisterPage() {
                 }}>{SLOGAN2[lang]}</span>
               </div>
               
-              {/* 桌面版：語言選擇器在右上角 */}
-              <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 100 }}>
-                <LanguageSelector style={{ 
+              {/* 桌面版：繁中下拉選單在右上角 */}
+              <select
+                value={(window as any).lang || 'zh-TW'}
+                onChange={(e) => {
+                  const newLang = e.target.value;
+                  (window as any).lang = newLang;
+                  localStorage.setItem('lang', newLang);
+                  window.location.reload();
+                }}
+                style={{
+                  position: 'fixed',
+                  top: 24,
+                  right: 120,
+                  zIndex: 10001,
                   background: 'rgba(255,255,255,0.9)',
                   border: 'none',
                   borderRadius: '25px',
                   padding: '8px 16px',
                   fontSize: '14px',
                   fontWeight: 'bold',
+                  cursor: 'pointer',
                   color: '#667eea',
                   transition: 'all 0.3s ease',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  width: 'fit-content',
-                  minWidth: 'auto',
-                  maxWidth: 'fit-content'
-                }} />
-              </div>
+                  width: '80px',
+                  minWidth: '80px',
+                  maxWidth: '80px',
+                  outline: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#667eea';
+                  e.currentTarget.style.color = '#fff';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
+                  e.currentTarget.style.color = '#667eea';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <option value="zh-TW">繁中</option>
+                <option value="zh-CN">简中</option>
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+                <option value="ko">한국어</option>
+                <option value="vi">Tiếng Việt</option>
+                <option value="th">ไทย</option>
+                <option value="la">Latin</option>
+                <option value="ms">Bahasa Melayu</option>
+              </select>
             </>
           )}
           {/* 響應式佈局：桌面版三欄，手機版單欄 */}
@@ -1535,21 +1568,21 @@ export default function RegisterPage() {
                     {nicknameCheckMsg && (
                       <div style={{ gridColumn: '1 / -1', color: nicknameCheck==='ok' ? '#1a7f1a' : (nicknameCheck==='invalid'||nicknameCheck==='exists' ? 'red' : '#333'), fontSize: 14, marginTop: -8, marginBottom: 4 }}>{nicknameCheckMsg}</div>
                     )}
-                    <select value={age} onChange={e => setAge(e.target.value)} className="reg-input" style={{ width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: age ? '#333' : '#888' }} required>
+                    <select value={age} onChange={e => setAge(e.target.value)} className="reg-input" style={{ width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: age ? '#333' : '#888', background: '#fff' }} required>
                       <option value="" style={{color:'#888'}}>{t.selectAge}</option>
                       {ageRanges.map(a => <option key={a} value={a}>{a}</option>)}
                     </select>
-                    <select value={country} onChange={e => setCountry(e.target.value)} className="reg-input" style={{ width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: country ? '#333' : '#888' }} required>
+                    <select value={country} onChange={e => setCountry(e.target.value)} className="reg-input" style={{ width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: country ? '#333' : '#888', background: '#fff' }} required>
                       <option value="" style={{color:'#888'}}>{t.country}</option>
                       {(COUNTRY_OPTIONS[lang] || []).map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <input type="text" placeholder={t.city} value={region} onChange={e => setRegion(e.target.value)} className="reg-input" style={{ width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }} />
-                    <select value={interest} onChange={e => setInterest(e.target.value)} className="reg-input" style={{ width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: interest ? '#333' : '#888' }}>
+                    <select value={interest} onChange={e => setInterest(e.target.value)} className="reg-input" style={{ width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: interest ? '#333' : '#888', background: '#fff' }}>
                       <option value="" style={{color:'#888'}}>{t.interest}</option>
                       {(INTEREST_OPTIONS[lang] || []).map(i => <option key={i} value={i}>{i}</option>)}
                     </select>
 
-                    <select value={improvement} onChange={e => setImprovement(e.target.value)} className="reg-input" style={{ gridColumn: '1 / -1', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: improvement ? '#333' : '#888' }}>
+                    <select value={improvement} onChange={e => setImprovement(e.target.value)} className="reg-input" style={{ gridColumn: '1 / -1', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', color: improvement ? '#333' : '#888', background: '#fff' }}>
                       <option value="" style={{color:'#888'}}>{t.whatToImprove}</option>
                       {(IMPROVEMENT_OPTIONS[lang] || []).map(i => <option key={i} value={i}>{i}</option>)}
                     </select>
