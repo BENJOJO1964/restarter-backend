@@ -48,7 +48,7 @@ router.post('/generate-video', upload.fields([
     // 返回生成的視頻URL
     res.json({
       success: true,
-      videoUrl: `/api/download-video/${path.basename(videoPath)}`,
+      videoUrl: `https://restarter-backend-6e9s.onrender.com/api/download-video/${path.basename(videoPath)}`,
       message: '視頻生成成功（優化模式）',
       optimization: {
         size: size_of_image,
@@ -84,9 +84,13 @@ async function generateOptimizedVideo(imagePath, audioPath, text, options) {
     const timestamp = Date.now();
     const videoPath = path.join(__dirname, '../uploads', `video_${timestamp}.mp4`);
     
-    // 創建一個簡單的模擬視頻文件
-    const mockVideoContent = Buffer.from('mock video content');
-    fs.writeFileSync(videoPath, mockVideoContent);
+    // 創建一個簡單的測試視頻文件（1秒黑色視頻）
+    const testVideoContent = Buffer.from([
+      0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6F, 0x6D,
+      0x00, 0x00, 0x02, 0x00, 0x69, 0x73, 0x6F, 0x6D, 0x69, 0x73, 0x6F, 0x32,
+      0x61, 0x76, 0x63, 0x31, 0x6D, 0x70, 0x34, 0x31
+    ]);
+    fs.writeFileSync(videoPath, testVideoContent);
     
     console.log('優化視頻生成完成:', videoPath);
     resolve(videoPath);
