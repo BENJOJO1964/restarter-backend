@@ -49,8 +49,7 @@ router.post('/generate-video', upload.fields([
     res.json({
       success: true,
       videoUrl: `https://restarter-backend-6e9s.onrender.com/api/download-video/${path.basename(videoPath)}`,
-      message: '視頻生成完成（測試模式）',
-      note: '注意：這是測試視頻，實際功能需要GPU服務',
+      message: 'SadTalker視頻生成成功',
       optimization: {
         size: size_of_image,
         estimated_time: getEstimatedTime(size_of_image)
@@ -114,10 +113,10 @@ router.get('/download-video/:filename', (req, res) => {
   }
 });
 
-// 真正的視頻生成函數
+// 真正的SadTalker視頻生成函數
 async function generateOptimizedVideo(imagePath, audioPath, text, options) {
   return new Promise((resolve, reject) => {
-    console.log('開始真正的視頻生成:', { imagePath, audioPath, text, options });
+    console.log('開始SadTalker視頻生成:', { imagePath, audioPath, text, options });
     
     // 檢查是否有真實的輸入文件
     if (!imagePath || !fs.existsSync(imagePath)) {
@@ -133,76 +132,70 @@ async function generateOptimizedVideo(imagePath, audioPath, text, options) {
     const timestamp = Date.now();
     const videoPath = path.join(__dirname, '../uploads', `video_${timestamp}.mp4`);
     
-    // 使用FFmpeg創建真正的視頻
+    // 調用真正的SadTalker
     const { spawn } = require('child_process');
+    const sadtalkerPath = path.join(__dirname, '../../SadTalker');
     
-    // 檢查FFmpeg是否可用
-    const ffmpegCheck = spawn('ffmpeg', ['-version']);
+    console.log('調用SadTalker:', sadtalkerPath);
     
-    ffmpegCheck.on('error', (error) => {
-      console.log('FFmpeg不可用，創建簡單的測試視頻');
-      // 如果沒有FFmpeg，創建一個簡單的測試視頻
-      const testVideoContent = Buffer.from([
-        0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6F, 0x6D,
-        0x00, 0x00, 0x02, 0x00, 0x69, 0x73, 0x6F, 0x6D, 0x69, 0x73, 0x6F, 0x32,
-        0x61, 0x76, 0x63, 0x31, 0x6D, 0x70, 0x34, 0x31
-      ]);
-      fs.writeFileSync(videoPath, testVideoContent);
-      console.log('創建測試視頻文件:', videoPath);
-      resolve(videoPath);
+    const pythonProcess = spawn('python', [
+      'inference.py',
+      '--driven_audio', audioPath,
+      '--source_image', imagePath,
+      '--result_dir', path.join(__dirname, '../uploads'),
+      '--pose_style', options.pose_style || '0',
+      '--size', options.size_of_image || '128',
+      '--preprocess', options.preprocess_type || 'crop',
+      '--still', options.is_still_mode || 'false',
+      '--enhancer', options.enhancer || 'false',
+      '--device', 'cpu',
+      '--batch_size', '1'
+    ], {
+      cwd: sadtalkerPath,
+      stdio: ['pipe', 'pipe', 'pipe']
     });
     
-    ffmpegCheck.on('close', (code) => {
+    let stdout = '';
+    let stderr = '';
+    
+    pythonProcess.stdout.on('data', (data) => {
+      stdout += data.toString();
+      console.log('SadTalker輸出:', data.toString());
+    });
+    
+    pythonProcess.stderr.on('data', (data) => {
+      stderr += data.toString();
+      console.log('SadTalker錯誤:', data.toString());
+    });
+    
+    pythonProcess.on('close', (code) => {
+      console.log('SadTalker進程結束，代碼:', code);
+      console.log('完整輸出:', stdout);
+      console.log('完整錯誤:', stderr);
+      
       if (code === 0) {
-        // FFmpeg可用，創建真正的視頻
-        console.log('使用FFmpeg創建視頻');
-        const ffmpeg = spawn('ffmpeg', [
-          '-i', imagePath,
-          '-i', audioPath,
-          '-c:v', 'libx264',
-          '-c:a', 'aac',
-          '-shortest',
-          '-y',
-          videoPath
-        ]);
+        // 查找生成的視頻文件
+        const resultDir = path.join(__dirname, '../uploads');
+        const files = fs.readdirSync(resultDir);
+        const videoFile = files.find(file => file.endsWith('.mp4') && file.includes('video_'));
         
-        ffmpeg.on('close', (code) => {
-          if (code === 0) {
-            console.log('FFmpeg視頻生成成功:', videoPath);
-            resolve(videoPath);
-          } else {
-            console.log('FFmpeg視頻生成失敗，創建測試視頻');
-            // 如果FFmpeg失敗，創建測試視頻
-            const testVideoContent = Buffer.from([
-              0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6F, 0x6D,
-              0x00, 0x00, 0x02, 0x00, 0x69, 0x73, 0x6F, 0x6D, 0x69, 0x73, 0x6F, 0x32,
-              0x61, 0x76, 0x63, 0x31, 0x6D, 0x70, 0x34, 0x31
-            ]);
-            fs.writeFileSync(videoPath, testVideoContent);
-            resolve(videoPath);
-          }
-        });
-        
-        ffmpeg.on('error', (error) => {
-          console.log('FFmpeg錯誤，創建測試視頻:', error.message);
-          const testVideoContent = Buffer.from([
-            0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6F, 0x6D,
-            0x00, 0x00, 0x02, 0x00, 0x69, 0x73, 0x6F, 0x6D, 0x69, 0x73, 0x6F, 0x32,
-            0x61, 0x76, 0x63, 0x31, 0x6D, 0x70, 0x34, 0x31
-          ]);
-          fs.writeFileSync(videoPath, testVideoContent);
-          resolve(videoPath);
-        });
+        if (videoFile) {
+          const finalVideoPath = path.join(resultDir, videoFile);
+          console.log('SadTalker視頻生成成功:', finalVideoPath);
+          resolve(finalVideoPath);
+        } else {
+          console.log('未找到生成的視頻文件');
+          reject(new Error('SadTalker生成失敗：未找到視頻文件'));
+        }
       } else {
-        console.log('FFmpeg不可用，創建測試視頻');
-        const testVideoContent = Buffer.from([
-          0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6F, 0x6D,
-          0x00, 0x00, 0x02, 0x00, 0x69, 0x73, 0x6F, 0x6D, 0x69, 0x73, 0x6F, 0x32,
-          0x61, 0x76, 0x63, 0x31, 0x6D, 0x70, 0x34, 0x31
-        ]);
-        fs.writeFileSync(videoPath, testVideoContent);
-        resolve(videoPath);
+        console.log('SadTalker生成失敗，代碼:', code);
+        reject(new Error(`SadTalker生成失敗，代碼: ${code}`));
       }
+    });
+    
+    pythonProcess.on('error', (error) => {
+      console.log('SadTalker進程錯誤:', error.message);
+      reject(new Error(`SadTalker進程錯誤: ${error.message}`));
     });
   });
 }
