@@ -153,14 +153,14 @@ export default function RelaxationTools() {
       }}>
         {/* 標題 */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h1 style={{
-            color: '#fff',
-            fontSize: '2.5rem',
-            fontWeight: '700',
-            marginBottom: '10px'
-          }}>
-            🧘 冥想與放鬆工具
-          </h1>
+                      <h1 style={{
+              color: '#fff',
+              fontSize: '2.5rem',
+              fontWeight: '700',
+              marginBottom: '10px'
+            }}>
+              🧘 冥想放鬆園地
+            </h1>
           <p style={{
             color: '#fff',
             fontSize: '1.1rem',

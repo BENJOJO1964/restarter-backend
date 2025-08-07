@@ -54,7 +54,7 @@ import PaymentInfo from './pages/PaymentInfo';
 import Contact from './pages/Contact';
 import TokenTest from './pages/TokenTest';
 import VideoIntro from './pages/VideoIntro';
-import VideoGeneration from './pages/VideoGeneration';
+import RelaxationTools from './pages/RelaxationTools';
 import TestModeButton from './components/TestModeButton';
 
 // 創建測試模式 Context
@@ -160,7 +160,7 @@ function App() {
                   <Route path="/HelpLab" element={<HelpLab />} />
                   <Route path="/emotion-release" element={<EmotionRelease />} />
                   {user && <Route path="/social-integration" element={<SocialIntegration />} />}
-                  {user && <Route path="/video-generation" element={<VideoGeneration />} />}
+                  {user && <Route path="/relaxation-tools" element={<RelaxationTools />} />}
 
                   <Route path="/plans" element={<Plans />} />
                   <Route path="/payment" element={<Payment />} />

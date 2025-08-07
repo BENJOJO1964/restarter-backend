@@ -962,7 +962,7 @@ export default function Home() {
               ))}
             </div>
             
-            {/* 第四行：社會模擬所 + 互相幫助&合作實驗室 + AI對嘴短影音 */}
+            {/* 第四行：社會模擬所 + 互相幫助&合作實驗室 + 冥想放鬆工具 */}
             <div style={{ display: 'flex', flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
               {MODULES.slice(4).map(m => (
                 <button 
@@ -1016,10 +1016,10 @@ export default function Home() {
                   justifyContent: 'center',
                   gap: 4
                 }}
-                onClick={() => handleFeatureWithAuth(() => navigate('/video-generation'))}
+                onClick={() => handleFeatureWithAuth(() => navigate('/relaxation-tools'))}
               >
-                <span style={{ fontSize: 20 }}>🎬</span>
-                <span style={{ fontSize: 12, textAlign: 'center' }}>{lang === 'zh-TW' ? 'AI對嘴短影音' : lang === 'zh-CN' ? 'AI对嘴短视频' : lang === 'ja' ? 'AI対話動画' : lang === 'en' ? 'AI Lip-Sync' : lang === 'ko' ? 'AI 립싱크' : lang === 'th' ? 'AI ลิปซิงค์' : lang === 'vi' ? 'AI Đồng Bộ Môi' : lang === 'ms' ? 'AI Lip-Sync' : 'AI Labiorum Synchronizationis'}</span>
+                <span style={{ fontSize: 20 }}>🧘</span>
+                <span style={{ fontSize: 12, textAlign: 'center' }}>{lang === 'zh-TW' ? '冥想放鬆園地' : lang === 'zh-CN' ? '冥想放松园地' : lang === 'ja' ? '瞑想リラックス園' : lang === 'en' ? 'Relaxation Garden' : lang === 'ko' ? '명상 휴식원' : lang === 'th' ? 'สวนผ่อนคลาย' : lang === 'vi' ? 'Vườn Thư Giãn' : lang === 'ms' ? 'Taman Relaksasi' : 'Hortus Relaxationis'}</span>
               </button>
             </div>
           </div>
@@ -1291,7 +1291,7 @@ export default function Home() {
               role="button"
             >
               <span style={{ fontSize: 32 }}>🎬</span>
-              <span style={{ fontWeight: 700, textAlign: 'center', lineHeight: 1.2 }}>{lang === 'zh-TW' ? 'AI對嘴短影音' : lang === 'zh-CN' ? 'AI对嘴短视频' : lang === 'ja' ? 'AI対話動画' : lang === 'en' ? 'AI Lip-Sync' : lang === 'ko' ? 'AI 립싱크' : lang === 'th' ? 'AI ลิปซิงค์' : lang === 'vi' ? 'AI Đồng Bộ Môi' : lang === 'ms' ? 'AI Lip-Sync' : 'AI Labiorum Synchronizationis'}</span>
+              <span style={{ fontWeight: 700, textAlign: 'center', lineHeight: 1.2 }}>{lang === 'zh-TW' ? '冥想放鬆園地' : lang === 'zh-CN' ? '冥想放松园地' : lang === 'ja' ? '瞑想リラックス園' : lang === 'en' ? 'Relaxation Garden' : lang === 'ko' ? '명상 휴식원' : lang === 'th' ? 'สวนผ่อนคลาย' : lang === 'vi' ? 'Vườn Thư Giãn' : lang === 'ms' ? 'Taman Relaksasi' : 'Hortus Relaxationis'}</span>
             </button>
 
           </div>
