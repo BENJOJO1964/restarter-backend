@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const FOOTER_TEXT = {
   'zh-TW': {
@@ -76,6 +76,7 @@ const FEEDBACK_TEXT = {
 const Footer: React.FC = () => {
   const { lang } = useLanguage();
   const location = useLocation();
+  const navigate = useNavigate();
   const t = FOOTER_TEXT[lang] || FOOTER_TEXT['zh-TW'];
   const [footerPosition, setFooterPosition] = useState(20);
 
@@ -138,11 +139,11 @@ const Footer: React.FC = () => {
         }}
       >
         {/* 所有按鈕一行排列 */}
-        <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{t.privacy}</a>
-        <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{t.terms}</a>
-        <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{t.deletion}</a>
-        <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{ABOUT_TEXT[lang] || ABOUT_TEXT['zh-TW']}</a>
-        <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14 }}>{FEEDBACK_TEXT[lang] || FEEDBACK_TEXT['zh-TW']}</a>
+        <span onClick={() => navigate('/privacy-policy')} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14, cursor: 'pointer' }}>{t.privacy}</span>
+        <span onClick={() => navigate('/terms')} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14, cursor: 'pointer' }}>{t.terms}</span>
+        <span onClick={() => navigate('/data-deletion')} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14, cursor: 'pointer' }}>{t.deletion}</span>
+        <span onClick={() => navigate('/about')} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14, cursor: 'pointer' }}>{ABOUT_TEXT[lang] || ABOUT_TEXT['zh-TW']}</span>
+        <span onClick={() => navigate('/feedback')} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: isHomePage ? '4px 8px' : '4px 8px', fontSize: isHomePage ? 12 : 14, cursor: 'pointer' }}>{FEEDBACK_TEXT[lang] || FEEDBACK_TEXT['zh-TW']}</span>
       </div>
       <style>{`
         @media (max-width: 768px) {

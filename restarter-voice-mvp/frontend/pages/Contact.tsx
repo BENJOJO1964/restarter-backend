@@ -12,10 +12,10 @@ export default function Contact() {
           如有任何問題、付款疑問、升級需求，歡迎透過以下方式聯絡我們：
         </div>
         <ul style={{ fontSize: 17, color: '#666', marginBottom: 32, marginLeft: 24 }}>
-          <li>Email：<a href="mailto:support@restarter.app" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>support@restarter.app</a></li>
-          <li>LINE 客服：<a href="https://line.me/R/ti/p/@restarter" target="_blank" rel="noopener noreferrer" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>@restarter</a></li>
-          <li>Messenger：<a href="https://m.me/restarterapp" target="_blank" rel="noopener noreferrer" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>Restarter 粉專</a></li>
-          <li>線上表單：<a href="https://forms.gle/xxxxxx" target="_blank" rel="noopener noreferrer" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>填寫表單</a></li>
+          <li>Email：<span href="mailto:support@restarter.app" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>support@restarter.app</span></li>
+          <li>LINE 客服：<span href="https://line.me/R/ti/p/@restarter" target="_blank" rel="noopener noreferrer" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>@restarter</span></li>
+          <li>Messenger：<span href="https://m.me/restarterapp" target="_blank" rel="noopener noreferrer" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>Restarter 粉專</span></li>
+          <li>線上表單：<span href="https://forms.gle/xxxxxx" target="_blank" rel="noopener noreferrer" style={{ color: '#6B5BFF', textDecoration: 'underline' }}>填寫表單</span></li>
         </ul>
         <div style={{ fontSize: 16, color: '#888', marginTop: 24 }}>客服回覆時間：週一至週五 10:00-18:00</div>
       </div>

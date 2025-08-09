@@ -979,11 +979,11 @@ const StoryWall = () => {
             boxShadow: '0 2px 12px #6B5BFF22'
           }}>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-              <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
-              <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-              <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
-              <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
-              <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
+              <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>🧬 Restarter™｜我們是誰</span>
+              <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>隱私權政策</span>
+              <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>條款/聲明</span>
+              <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>資料刪除說明</span>
+              <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>💬 意見箱｜我們想聽你說</span>
             </div>
           </div>
         </>
@@ -1215,7 +1215,7 @@ const StoryWall = () => {
           boxShadow: '0 2px 12px #6B5BFF22'
         }}>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+            <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {safeLang === 'zh-TW' ? '隱私權政策' : 
                safeLang === 'zh-CN' ? '隐私政策' : 
                safeLang === 'en' ? 'Privacy Policy' : 
@@ -1225,8 +1225,8 @@ const StoryWall = () => {
                safeLang === 'vi' ? 'Chính sách bảo mật' : 
                safeLang === 'ms' ? 'Dasar Privasi' : 
                'Consilium de Privata'}
-            </a>
-            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+            </span>
+            <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {safeLang === 'zh-TW' ? '條款/聲明' : 
                safeLang === 'zh-CN' ? '条款/声明' : 
                safeLang === 'en' ? 'Terms/Statement' : 
@@ -1236,8 +1236,8 @@ const StoryWall = () => {
                safeLang === 'vi' ? 'Điều khoản/Tuyên bố' : 
                safeLang === 'ms' ? 'Terma/Pernyataan' : 
                'Termini/Declaratio'}
-            </a>
-            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+            </span>
+            <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {safeLang === 'zh-TW' ? '資料刪除說明' : 
                safeLang === 'zh-CN' ? '数据删除说明' : 
                safeLang === 'en' ? 'Data Deletion' : 
@@ -1247,8 +1247,8 @@ const StoryWall = () => {
                safeLang === 'vi' ? 'Giải thích xóa dữ liệu' : 
                safeLang === 'ms' ? 'Penjelasan Penghapusan Data' : 
                'Explicatio Deletionis Datae'}
-            </a>
-            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+            </span>
+            <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {safeLang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
                safeLang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
                safeLang === 'en' ? '🧬 Restarter™｜Who We Are' : 
@@ -1258,8 +1258,8 @@ const StoryWall = () => {
                safeLang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
                safeLang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
                '🧬 Restarter™｜Quis sumus'}
-            </a>
-            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+            </span>
+            <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {safeLang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
                safeLang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
                safeLang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
@@ -1269,7 +1269,7 @@ const StoryWall = () => {
                safeLang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
                safeLang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
                '💬 Arca Consilii｜Volumus Audire a Te'}
-            </a>
+            </span>
           </div>
         </div>
       </>

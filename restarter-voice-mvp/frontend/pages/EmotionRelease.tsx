@@ -502,14 +502,14 @@ export default function EmotionRelease() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {/* 第一行：我們是誰、隱私權政策、條款/聲明 */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                  <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
-                  <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-                  <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
+                  <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>🧬 Restarter™｜我們是誰</span>
+                  <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>隱私權政策</span>
+                  <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>條款/聲明</span>
                 </div>
                 {/* 第二行：資料刪除說明、意見箱 */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                  <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
-                  <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
+                  <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>資料刪除說明</span>
+                  <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>💬 意見箱｜我們想聽你說</span>
                 </div>
               </div>
             </div>
@@ -525,7 +525,7 @@ export default function EmotionRelease() {
               boxShadow: '0 2px 12px #6B5BFF22'
             }}>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+                <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
                   {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
                    lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
                    lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
@@ -535,8 +535,8 @@ export default function EmotionRelease() {
                    lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
                    lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
                    '🧬 Restarter™｜Quis sumus'}
-                </a>
-                <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+                </span>
+                <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
                   {lang === 'zh-TW' ? '隱私權政策' : 
                    lang === 'zh-CN' ? '隐私政策' : 
                    lang === 'en' ? 'Privacy Policy' : 
@@ -546,8 +546,8 @@ export default function EmotionRelease() {
                    lang === 'vi' ? 'Chính sách bảo mật' : 
                    lang === 'ms' ? 'Dasar Privasi' : 
                    'Consilium de Privata'}
-                </a>
-                <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+                </span>
+                <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
                   {lang === 'zh-TW' ? '條款/聲明' : 
                    lang === 'zh-CN' ? '条款/声明' : 
                    lang === 'en' ? 'Terms/Statement' : 
@@ -557,8 +557,8 @@ export default function EmotionRelease() {
                    lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
                    lang === 'ms' ? 'Terma/Pernyataan' : 
                    'Termini/Declaratio'}
-                </a>
-                <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+                </span>
+                <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
                   {lang === 'zh-TW' ? '資料刪除說明' : 
                    lang === 'zh-CN' ? '数据删除说明' : 
                    lang === 'en' ? 'Data Deletion' : 
@@ -568,8 +568,8 @@ export default function EmotionRelease() {
                    lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
                    lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
                    'Explicatio Deletionis Datae'}
-                </a>
-                <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+                </span>
+                <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
                   {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
                    lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
                    lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
@@ -579,7 +579,7 @@ export default function EmotionRelease() {
                    lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
                    lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
                    '💬 Arca Consilii｜Volumus Audire a Te'}
-                </a>
+                </span>
               </div>
             </div>
           )}

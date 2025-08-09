@@ -606,7 +606,7 @@ function LoginModal({ t, setShowLogin, navigate, setShowReset }: { t: any, setSh
             {t.login}
           </button>
           <div style={{ textAlign:'right', marginTop:8 }}>
-            <a href="#" style={{ color:'#6B5BFF', fontSize:14, textDecoration:'underline', cursor:'pointer' }} onClick={e=>{e.preventDefault(); setShowReset(true);}}>忘記密碼？</a>
+            <span href="#" style={{ color:'#6B5BFF', fontSize:14, textDecoration:'underline', cursor:'pointer' }} onClick={e=>{e.preventDefault(); setShowReset(true);}}>忘記密碼？</span>
           </div>
         </form>
       </div>
@@ -1704,13 +1704,13 @@ export default function RegisterPage() {
                     flexWrap: 'nowrap',
                     overflow: 'hidden'
                   }}>
-                    <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap' }}>{t.privacy || '隱私權政策'}</a>
+                    <span onClick={() => navigate("/privacy-policy")} style={{ color: "#6B5BFF", textDecoration: "underline", padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap' }}>{t.privacy || '隱私權政策'}</span>
                     <span style={{ color: '#666', fontSize: 12 }}>/</span>
                     <button type="button" onClick={() => navigate('/terms')} style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap' }}>
                       {t.terms}
                     </button>
                     <span style={{ color: '#666', fontSize: 12 }}>/</span>
-                    <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap' }}>{t.deletion || '資料刪除說明'}</a>
+                    <span onClick={() => navigate("/data-deletion")} style={{ color: "#6B5BFF", textDecoration: "underline", padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap' }}>{t.deletion || '資料刪除說明'}</span>
                   </div>
                 </div>
               </form>

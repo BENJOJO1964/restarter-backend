@@ -80,7 +80,7 @@ const POLICY = {
         <li>不會將您的個人資料出售、出租或未經授權分享給第三方</li>
       </ul>
       <h2>三、第三方服務</h2>
-      <p>本應用程式使用 Google Firebase 作為後端服務平台，Firebase 可能會根據其 <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">隱私政策</a> 處理技術資料（如裝置資訊、IP、操作紀錄等）。</p>
+      <p>本應用程式使用 Google Firebase 作為後端服務平台，Firebase 可能會根據其 <span href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">隱私政策</span> 處理技術資料（如裝置資訊、IP、操作紀錄等）。</p>
       <p>如您使用 Google、Apple、Facebook 等第三方帳號登入，僅會取得必要的公開資訊（如 email、暱稱、頭像），不會取得您的密碼。</p>
       <h2>四、Cookie 與追蹤技術</h2>
       <p>本應用程式可能使用 Cookie 或類似技術以提升用戶體驗與安全性。您可於瀏覽器設定中管理 Cookie 偏好。</p>
@@ -93,7 +93,7 @@ const POLICY = {
       <ul>
         <li>您有權查詢、更正、下載或刪除您的個人資料。</li>
         <li>您可隨時於 App 內或來信要求刪除帳號與所有資料，我們將於 3-5 個工作天內完成。</li>
-        <li>聯絡信箱：<a href="mailto:rbben521@gmail.com">rbben521@gmail.com</a></li>
+        <li>聯絡信箱：<span href="mailto:rbben521@gmail.com">rbben521@gmail.com</span></li>
       </ul>
       <h2>七、政策變更</h2>
       <p>如本政策有重大變更，將於 App 內公告並更新本頁內容。</p>
@@ -121,7 +121,7 @@ const POLICY = {
         <li>不会将您的个人资料出售、出租或未经授权分享给第三方</li>
       </ul>
       <h2>三、第三方服务</h2>
-      <p>本应用程序使用 Google Firebase 作为后端服务平台，Firebase 可能会根据其 <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">隐私政策</a> 处理技术资料（如设备信息、IP、操作记录等）。</p>
+      <p>本应用程序使用 Google Firebase 作为后端服务平台，Firebase 可能会根据其 <span href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">隐私政策</span> 处理技术资料（如设备信息、IP、操作记录等）。</p>
       <p>如您使用 Google、Apple、Facebook 等第三方账号登录，仅会取得必要的公开信息（如 email、昵称、头像），不会取得您的密码。</p>
       <h2>四、Cookie 与追踪技术</h2>
       <p>本应用程序可能使用 Cookie 或类似技术以提升用户体验与安全性。您可于浏览器设置中管理 Cookie 偏好。</p>
@@ -134,7 +134,7 @@ const POLICY = {
       <ul>
         <li>您有权查询、更正、下载或删除您的个人资料。</li>
         <li>您可随时于 App 内或来信要求删除账号与所有资料，我们将于 3-5 个工作天内完成。</li>
-        <li>联系邮箱：<a href="mailto:rbben521@gmail.com">rbben521@gmail.com</a></li>
+        <li>联系邮箱：<span href="mailto:rbben521@gmail.com">rbben521@gmail.com</span></li>
       </ul>
       <h2>七、政策变更</h2>
       <p>如本政策有重大变更，将于 App 内公告并更新本页内容。</p>
@@ -162,7 +162,7 @@ const POLICY = {
         <li>We do not sell, rent, or share your personal data with third parties without your consent</li>
       </ul>
       <h2>3. Third-Party Services</h2>
-      <p>This app uses Google Firebase as its backend. Firebase may process technical data according to its <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> (e.g., device info, IP, activity logs).</p>
+      <p>This app uses Google Firebase as its backend. Firebase may process technical data according to its <span href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</span> (e.g., device info, IP, activity logs).</p>
       <p>If you log in via Google, Apple, or Facebook, we only access your public info (email, nickname, avatar), never your password.</p>
       <h2>4. Cookies and Tracking</h2>
       <p>We may use cookies or similar technologies to enhance your experience and security. You can manage cookie preferences in your browser settings.</p>
@@ -175,7 +175,7 @@ const POLICY = {
       <ul>
         <li>You have the right to access, correct, download, or delete your personal data.</li>
         <li>You may request account/data deletion at any time via the app or by email. We will process your request within 3-5 business days.</li>
-        <li>Contact: <a href="mailto:rbben521@gmail.com">rbben521@gmail.com</a></li>
+        <li>Contact: <span href="mailto:rbben521@gmail.com">rbben521@gmail.com</span></li>
       </ul>
       <h2>7. Policy Updates</h2>
       <p>We will notify users of major changes to this policy via in-app announcements and update this page accordingly.</p>
@@ -203,7 +203,7 @@ const POLICY = {
         <li>同意なく第三者に個人情報を販売・共有しません</li>
       </ul>
       <h2>3. サードパーティサービス</h2>
-      <p>本アプリはGoogle Firebaseをバックエンドとして使用しています。Firebaseは <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">プライバシーポリシー</a> に従い技術情報（デバイス情報、IP、操作履歴など）を処理する場合があります。</p>
+      <p>本アプリはGoogle Firebaseをバックエンドとして使用しています。Firebaseは <span href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">プライバシーポリシー</span> に従い技術情報（デバイス情報、IP、操作履歴など）を処理する場合があります。</p>
       <p>Google、Apple、Facebook等でログインした場合、公開情報（メール、ニックネーム、アバター）のみ取得し、パスワードは取得しません。</p>
       <h2>4. Cookieとトラッキング技術</h2>
       <p>本アプリはユーザー体験と安全性向上のため コッキー または類似技術を使用する場合があります。ブラウザ設定でCookieの管理が可能です。</p>
@@ -216,7 +216,7 @@ const POLICY = {
       <ul>
         <li>個人情報の照会、訂正、ダウンロード、削除が可能です。</li>
         <li>アプリ内またはメールでいつでも削除依頼ができ、3～5営業日以内に対応します。</li>
-        <li>連絡先：<a href="mailto:rbben521@gmail.com">rbben521@gmail.com</a></li>
+        <li>連絡先：<span href="mailto:rbben521@gmail.com">rbben521@gmail.com</span></li>
       </ul>
       <h2>7. ポリシーの変更</h2>
       <p>本ポリシーに重大な変更がある場合、アプリ内で告知し本ページを更新します。</p>
@@ -244,7 +244,7 @@ const POLICY = {
         <li>동의 없이 제3자에게 개인정보를 판매, 임대, 공유하지 않습니다</li>
       </ul>
       <h2>3. 제3자 서비스</h2>
-      <p>본 앱은 Google Firebase를 백엔드로 사용합니다. Firebase는 <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">개인정보처리방침</a>에 따라 기술 정보를 처리할 수 있습니다(예: 기기 정보, IP, 활동 기록 등).</p>
+      <p>본 앱은 Google Firebase를 백엔드로 사용합니다. Firebase는 <span href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">개인정보처리방침</span>에 따라 기술 정보를 처리할 수 있습니다(예: 기기 정보, IP, 활동 기록 등).</p>
       <p>Google, Apple, Facebook 등으로 로그인 시 공개 정보(이메일, 닉네임, 아바타)만 수집하며, 비밀번호는 수집하지 않습니다.</p>
       <h2>4. 쿠키 및 추적 기술</h2>
       <p>본 앱은 사용자 경험 및 보안 향상을 위해 쿠키 또는 유사 기술을 사용할 수 있습니다. 브라우저 설정에서 쿠키 환경설정이 가능합니다.</p>
@@ -257,7 +257,7 @@ const POLICY = {
       <ul>
         <li>개인정보의 조회, 수정, 다운로드, 삭제가 가능합니다.</li>
         <li>앱 내 또는 이메일로 언제든 삭제 요청이 가능하며, 3~5영업일 이내에 처리됩니다.</li>
-        <li>연락처: <a href="mailto:rbben521@gmail.com">rbben521@gmail.com</a></li>
+        <li>연락처: <span href="mailto:rbben521@gmail.com">rbben521@gmail.com</span></li>
       </ul>
       <h2>7. 정책 변경</h2>
       <p>정책에 중대한 변경이 있을 경우 앱 내 공지 및 본 페이지를 업데이트합니다.</p>
@@ -285,7 +285,7 @@ const POLICY = {
         <li>จะไม่ขาย ให้เช่า หรือแบ่งปันข้อมูลส่วนบุคคลของคุณกับบุคคลที่สามโดยไม่ได้รับความยินยอม</li>
       </ul>
       <h2>3. บริการของบุคคลที่สาม</h2>
-      <p>แอปนี้ใช้ Google Firebase เป็นแบ็กเอนด์ Firebase อาจประมวลผลข้อมูลทางเทคนิคตาม <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">นโยบายความเป็นส่วนตัว</a> (เช่น ข้อมูลอุปกรณ์ IP บันทึกกิจกรรม)</p>
+      <p>แอปนี้ใช้ Google Firebase เป็นแบ็กเอนด์ Firebase อาจประมวลผลข้อมูลทางเทคนิคตาม <span href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">นโยบายความเป็นส่วนตัว</span> (เช่น ข้อมูลอุปกรณ์ IP บันทึกกิจกรรม)</p>
       <p>หากคุณเข้าสู่ระบบผ่าน Google, Apple หรือ Facebook เราจะเข้าถึงเฉพาะข้อมูลสาธารณะ (อีเมล ชื่อเล่น อวาตาร์) ไม่เคยเข้าถึงรหัสผ่านของคุณ</p>
       <h2>4. คุกกี้และการติดตาม</h2>
       <p>เราอาจใช้คุกกี้หรือเทคโนโลยีที่คล้ายกันเพื่อปรับปรุงประสบการณ์และความปลอดภัยของคุณ คุณสามารถจัดการคุกกี้ได้ในเบราว์เซอร์ของคุณ</p>
@@ -298,7 +298,7 @@ const POLICY = {
       <ul>
         <li>คุณมีสิทธิ์เข้าถึง แก้ไข ดาวน์โหลด หรือขอลบข้อมูลส่วนบุคคลของคุณ</li>
         <li>คุณสามารถขอลบบัญชี/ข้อมูลได้ตลอดเวลาผ่านแอปหรืออีเมล เราจะดำเนินการภายใน 3-5 วันทำการ</li>
-        <li>ติดต่อ: <a href="mailto:rbben521@gmail.com">rbben521@gmail.com</a></li>
+        <li>ติดต่อ: <span href="mailto:rbben521@gmail.com">rbben521@gmail.com</span></li>
       </ul>
       <h2>7. การอัปเดตนโยบาย</h2>
       <p>เราจะแจ้งให้ผู้ใช้ทราบถึงการเปลี่ยนแปลงที่สำคัญของนโยบายนี้ผ่านการประกาศในแอปและอัปเดตหน้านี้ตามความเหมาะสม</p>
@@ -326,7 +326,7 @@ const POLICY = {
         <li>Chúng tôi không bán, cho thuê hoặc chia sẻ dữ liệu cá nhân của bạn với bên thứ ba nếu không có sự đồng ý của bạn</li>
       </ul>
       <h2>3. Dịch vụ của bên thứ ba</h2>
-      <p>Ứng dụng này sử dụng Google Firebase làm backend. Firebase có thể xử lý dữ liệu kỹ thuật theo <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Chính sách bảo mật</a> (ví dụ: thông tin thiết bị, IP, nhật ký hoạt động).</p>
+      <p>Ứng dụng này sử dụng Google Firebase làm backend. Firebase có thể xử lý dữ liệu kỹ thuật theo <span href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Chính sách bảo mật</span> (ví dụ: thông tin thiết bị, IP, nhật ký hoạt động).</p>
       <p>Nếu bạn đăng nhập qua Google, Apple hoặc Facebook, chúng tôi chỉ truy cập thông tin công khai của bạn (email, biệt danh, ảnh đại diện), không bao giờ truy cập mật khẩu của bạn.</p>
       <h2>4. Cookie và theo dõi</h2>
       <p>Chúng tôi có thể sử dụng cookie hoặc các công nghệ tương tự để nâng cao trải nghiệm và bảo mật của bạn. Bạn có thể quản lý cookie trong cài đặt trình duyệt của mình.</p>
@@ -339,7 +339,7 @@ const POLICY = {
       <ul>
         <li>Bạn có quyền truy cập, chỉnh sửa, tải xuống hoặc xóa dữ liệu cá nhân của mình.</li>
         <li>Bạn có thể yêu cầu xóa tài khoản/dữ liệu bất cứ lúc nào qua ứng dụng hoặc email. Chúng tôi sẽ xử lý yêu cầu của bạn trong vòng 3-5 ngày làm việc.</li>
-        <li>Liên hệ: <a href="mailto:rbben521@gmail.com">rbben521@gmail.com</a></li>
+        <li>Liên hệ: <span href="mailto:rbben521@gmail.com">rbben521@gmail.com</span></li>
       </ul>
       <h2>7. Cập nhật chính sách</h2>
       <p>Chúng tôi sẽ thông báo cho người dùng về những thay đổi lớn đối với chính sách này qua thông báo trong ứng dụng và cập nhật trang này cho phù hợp.</p>
@@ -367,7 +367,7 @@ const POLICY = {
         <li>Kami tidak akan menjual, menyewa atau berkongsi data peribadi anda dengan pihak ketiga tanpa kebenaran anda</li>
       </ul>
       <h2>3. Perkhidmatan Pihak Ketiga</h2>
-      <p>Aplikasi ini menggunakan Google Firebase sebagai backend. Firebase mungkin memproses data teknikal mengikut <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Dasar Privasi</a> (cth: maklumat peranti, IP, log aktiviti).</p>
+      <p>Aplikasi ini menggunakan Google Firebase sebagai backend. Firebase mungkin memproses data teknikal mengikut <span href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Dasar Privasi</span> (cth: maklumat peranti, IP, log aktiviti).</p>
       <p>Jika anda log masuk melalui Google, Apple atau Facebook, kami hanya mengakses maklumat awam anda (emel, nama samaran, avatar), tidak pernah kata laluan anda.</p>
       <h2>4. Kuki dan Penjejakan</h2>
       <p>Kami mungkin menggunakan kuki atau teknologi serupa untuk meningkatkan pengalaman dan keselamatan anda. Anda boleh mengurus pilihan kuki dalam tetapan pelayar anda.</p>
@@ -380,7 +380,7 @@ const POLICY = {
       <ul>
         <li>Anda berhak untuk mengakses, membetulkan, memuat turun atau memadam data peribadi anda.</li>
         <li>Anda boleh meminta pemadaman akaun/data pada bila-bila masa melalui aplikasi atau e-mel. Kami akan memproses permintaan anda dalam masa 3-5 hari bekerja.</li>
-        <li>Hubungi: <a href="mailto:rbben521@gmail.com">rbben521@gmail.com</a></li>
+        <li>Hubungi: <span href="mailto:rbben521@gmail.com">rbben521@gmail.com</span></li>
       </ul>
       <h2>7. Kemas Kini Polisi</h2>
       <p>Kami akan memaklumkan pengguna tentang perubahan besar pada polisi ini melalui pengumuman dalam aplikasi dan mengemas kini halaman ini dengan sewajarnya.</p>
@@ -408,7 +408,7 @@ const POLICY = {
         <li>Notitias tuas non vendimus, locamus, nec sine consensu communicamus</li>
       </ul>
       <h2>3. Officia tertiarum partium</h2>
-      <p>Haec app utitur Google Firebase ut backend. Firebase potest notitias technicas tractare secundum <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Consilium Privacy</a> (ex. info de machina, IP, acta actionum).</p>
+      <p>Haec app utitur Google Firebase ut backend. Firebase potest notitias technicas tractare secundum <span href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Consilium Privacy</span> (ex. info de machina, IP, acta actionum).</p>
       <p>Si per Google, Apple, Facebook ingredieris, solum publicas notitias tuas accedimus (email, sobriquet, avatar), numquam tesseram tuam.</p>
       <h2>4. Cookies et vestigatio</h2>
       <p>Possumus uti cookies aut similibus technologiis ad experientiam et securitatem tuam augendam. Praeferentias cookies in navigatoris tuis regere potes.</p>
@@ -421,7 +421,7 @@ const POLICY = {
       <ul>
         <li>Ius habes accedere, corrigere, extrahere, aut delere notitias tuas personales.</li>
         <li>Potes petere deletionem rationis/datae quovis tempore per app vel email. Processum intra 3-5 dies negotiales perficimus.</li>
-        <li>Contactus: <a href="mailto:rbben521@gmail.com">rbben521@gmail.com</a></li>
+        <li>Contactus: <span href="mailto:rbben521@gmail.com">rbben521@gmail.com</span></li>
       </ul>
       <h2>7. Renovatio consilii</h2>
       <p>De mutationibus maioribus huius consilii usores per nuntios in app certiorem faciemus et hanc paginam proinde renovabimus.</p>
@@ -435,7 +435,7 @@ export default function PrivacyPolicy() {
   return (
     <div style={{ minHeight: '100vh', background: '#111827', color: 'white', padding: '2rem', display: 'flex', flexDirection: 'column' }}>
       <button
-        onClick={() => navigate('/register', { replace: true })}
+        onClick={() => navigate('/', { replace: true })}
         style={{ position: 'absolute', top: 32, left: 36, zIndex: 10, backgroundColor: '#374151', color: 'white', fontWeight: 'bold', padding: '0.5rem 1rem', borderRadius: '0.375rem', border: 'none', cursor: 'pointer', fontSize: 16 }}>
         &larr; {BACK_TEXT[lang] || '返回'}
       </button>
@@ -458,11 +458,11 @@ export default function PrivacyPolicy() {
         boxShadow: '0 2px 12px #6B5BFF22'
       }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-          <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-          <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
-          <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
-          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
-          <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
+          <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>隱私權政策</span>
+          <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>條款/聲明</span>
+          <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>資料刪除說明</span>
+          <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>🧬 Restarter™｜我們是誰</span>
+          <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>💬 意見箱｜我們想聽你說</span>
         </div>
       </div>
     </div>

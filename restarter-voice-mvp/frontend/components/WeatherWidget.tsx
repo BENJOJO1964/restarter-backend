@@ -930,15 +930,37 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ className = '', showDetai
   
   const localizedWeather = getLocalizedWeather(weather, lang);
 
+  // 處理天氣組件點擊
+  const handleWeatherClick = () => {
+    // 跳轉到 Google 天氣頁面
+    const city = weather?.city || 'Taipei';
+    const weatherUrl = `https://www.google.com/search?q=weather+${encodeURIComponent(city)}`;
+    window.open(weatherUrl, '_blank');
+  };
+
   return (
-    <div className={`weather-widget ${className}`} style={{
-      background: '#ffffff',
-      borderRadius: '8px',
-      padding: '8px 12px',
-      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      marginTop: '8px'
-    }}>
+    <div 
+      className={`weather-widget ${className}`} 
+      onClick={handleWeatherClick}
+      style={{
+        background: '#ffffff',
+        borderRadius: '8px',
+        padding: '8px 12px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        marginTop: '8px',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+        e.currentTarget.style.transform = 'translateY(-1px)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+        e.currentTarget.style.transform = 'translateY(0)';
+      }}
+    >
       <div style={{
         display: 'flex',
         alignItems: 'center',

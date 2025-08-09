@@ -9,6 +9,7 @@ import { TokenRenewalModal } from '../components/TokenRenewalModal';
 import { UpgradeModal } from '../components/UpgradeModal';
 import Footer from '../components/Footer';
 import { useTestMode } from '../App';
+import SharedHeader from '../components/SharedHeader';
 
 const TEXTS = {
   'zh-TW': {
@@ -979,55 +980,20 @@ export default function MyStory() {
     <div style={{ 
       minHeight: '100vh', 
       background: 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)',
-      padding: '20px'
+      padding: window.innerWidth <= 768 ? '0' : '20px'
     }}>
-      {/* 導航欄 */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        marginBottom: '30px'
-      }}>
-        <button 
-          onClick={() => navigate('/home')}
-          style={{
-            background: '#fff',
-            border: '1.5px solid #6B5BFF',
-            borderRadius: '8px',
-            padding: '6px 10px',
-            color: '#6B5BFF',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: '600',
-            transition: 'all 0.3s ease'
-          }}
-        >
-          {t.backToHome}
-        </button>
-        
-        <h1 style={{ 
-          color: 'white', 
-          fontSize: '24px', 
-          fontWeight: 'bold',
-          margin: 0,
-          marginBottom: '8px'
+      {/* 手機版使用共用頁頭，桌面版使用原有導航欄 */}
+      {window.innerWidth <= 768 ? (
+        <SharedHeader />
+      ) : (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '30px'
         }}>
-          {t.myMilestones}
-        </h1>
-        <p style={{
-          color: 'rgba(255,255,255,0.8)',
-          fontSize: '14px',
-          fontWeight: 400,
-          margin: 0,
-          textAlign: 'center',
-          lineHeight: 1.4
-        }}>
-          {t.subtitle}
-        </p>
-        
-        <div style={{ display: 'flex', gap: '10px' }}>
           <button 
-            onClick={() => navigate('/logout')}
+            onClick={() => navigate('/home')}
             style={{
               background: '#fff',
               border: '1.5px solid #6B5BFF',
@@ -1040,14 +1006,58 @@ export default function MyStory() {
               transition: 'all 0.3s ease'
             }}
           >
-            {t.logout}
+            {t.backToHome}
           </button>
-          <LanguageSelector />
+          
+          <h1 style={{ 
+            color: 'white', 
+            fontSize: '24px', 
+            fontWeight: 'bold',
+            margin: 0,
+            marginBottom: '8px'
+          }}>
+            {t.myMilestones}
+          </h1>
+          <p style={{
+            color: 'rgba(255,255,255,0.8)',
+            fontSize: '14px',
+            fontWeight: 400,
+            margin: 0,
+            textAlign: 'center',
+            lineHeight: 1.4
+          }}>
+            {t.subtitle}
+          </p>
+          
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              onClick={() => navigate('/logout')}
+              style={{
+                background: '#fff',
+                border: '1.5px solid #6B5BFF',
+                borderRadius: '8px',
+                padding: '6px 10px',
+                color: '#6B5BFF',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: '600',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              {t.logout}
+            </button>
+            <LanguageSelector />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 主要內容 */}
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <div style={{ 
+        maxWidth: '800px', 
+        margin: '0 auto',
+        marginTop: window.innerWidth <= 768 ? '100px' : '0',
+        padding: window.innerWidth <= 768 ? '20px' : '0'
+      }}>
         {/* 用戶概況卡片 */}
         <div style={{
           background: 'rgba(255,255,255,0.95)',
@@ -2251,7 +2261,7 @@ export default function MyStory() {
         }}>
           {/* 第一行：我們是誰、隱私權政策、條款/聲明 */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
+            <span onClick={() => navigate("/about")} style={{ color: "#6B5BFF", textDecoration: "underline", fontWeight: 700, padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
               {lang === 'zh-TW' ? '🧬 我們是誰' : 
                lang === 'zh-CN' ? '🧬 我们是谁' : 
                lang === 'en' ? '🧬 Who We Are' : 
@@ -2261,8 +2271,8 @@ export default function MyStory() {
                lang === 'vi' ? '🧬 Chúng tôi là ai' : 
                lang === 'ms' ? '🧬 Siapa Kami' : 
                '🧬 Quis sumus'}
-            </a>
-            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
+            </span>
+            <span onClick={() => navigate("/privacy-policy")} style={{ color: "#6B5BFF", textDecoration: "underline", padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
               {lang === 'zh-TW' ? '隱私權政策' : 
                lang === 'zh-CN' ? '隐私政策' : 
                lang === 'en' ? 'Privacy Policy' : 
@@ -2272,8 +2282,8 @@ export default function MyStory() {
                lang === 'vi' ? 'Chính sách bảo mật' : 
                lang === 'ms' ? 'Dasar Privasi' : 
                'Consilium de Privata'}
-            </a>
-            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
+            </span>
+            <span onClick={() => navigate("/terms")} style={{ color: "#6B5BFF", textDecoration: "underline", padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
               {lang === 'zh-TW' ? '條款/聲明' : 
                lang === 'zh-CN' ? '条款/声明' : 
                lang === 'en' ? 'Terms/Statement' : 
@@ -2283,11 +2293,11 @@ export default function MyStory() {
                lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
                lang === 'ms' ? 'Terma/Pernyataan' : 
                'Termini/Declaratio'}
-            </a>
+            </span>
           </div>
           {/* 第二行：資料刪除說明、意見箱 */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
+            <span onClick={() => navigate("/data-deletion")} style={{ color: "#6B5BFF", textDecoration: "underline", padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
               {lang === 'zh-TW' ? '資料刪除說明' : 
                lang === 'zh-CN' ? '数据删除说明' : 
                lang === 'en' ? 'Data Deletion' : 
@@ -2297,8 +2307,8 @@ export default function MyStory() {
                lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
                lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
                'Explicatio Deletionis Datae'}
-            </a>
-            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
+            </span>
+            <span onClick={() => navigate("/feedback")} style={{ color: "#6B5BFF", textDecoration: "underline", fontWeight: 700, padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
               {lang === 'zh-TW' ? '💬 意見箱' : 
                lang === 'zh-CN' ? '💬 意见箱' : 
                lang === 'en' ? '💬 Feedback' : 
@@ -2308,7 +2318,7 @@ export default function MyStory() {
                lang === 'vi' ? '💬 Hộp góp ý' : 
                lang === 'ms' ? '💬 Kotak Maklum Balas' : 
                '💬 Arca Consilii'}
-            </a>
+            </span>
           </div>
       </footer>
       ) : (
@@ -2323,7 +2333,7 @@ export default function MyStory() {
           boxShadow: '0 2px 12px #6B5BFF22'
         }}>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-            <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+            <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
                lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
                lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
@@ -2333,8 +2343,8 @@ export default function MyStory() {
                lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
                lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
                '🧬 Restarter™｜Quis sumus'}
-            </a>
-            <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+            </span>
+            <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {lang === 'zh-TW' ? '隱私權政策' : 
                lang === 'zh-CN' ? '隐私政策' : 
                lang === 'en' ? 'Privacy Policy' : 
@@ -2344,8 +2354,8 @@ export default function MyStory() {
                lang === 'vi' ? 'Chính sách bảo mật' : 
                lang === 'ms' ? 'Dasar Privasi' : 
                'Consilium de Privata'}
-            </a>
-            <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+            </span>
+            <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {lang === 'zh-TW' ? '條款/聲明' : 
                lang === 'zh-CN' ? '条款/声明' : 
                lang === 'en' ? 'Terms/Statement' : 
@@ -2355,8 +2365,8 @@ export default function MyStory() {
                lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
                lang === 'ms' ? 'Terma/Pernyataan' : 
                'Termini/Declaratio'}
-            </a>
-            <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+            </span>
+            <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {lang === 'zh-TW' ? '資料刪除說明' : 
                lang === 'zh-CN' ? '数据删除说明' : 
                lang === 'en' ? 'Data Deletion' : 
@@ -2366,8 +2376,8 @@ export default function MyStory() {
                lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
                lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
                'Explicatio Deletionis Datae'}
-            </a>
-            <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+            </span>
+            <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
               {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
                lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
                lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
@@ -2377,7 +2387,7 @@ export default function MyStory() {
                lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
                lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
                '💬 Arca Consilii｜Volumus Audire a Te'}
-            </a>
+            </span>
           </div>
         </div>
       )}

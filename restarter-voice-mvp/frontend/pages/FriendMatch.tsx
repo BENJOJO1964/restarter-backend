@@ -11,6 +11,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import MyLinks from './MyLinks';
 import InvitesPage from './InvitesPage';
 import Footer from '../components/Footer';
+import SharedHeader from '../components/SharedHeader';
 type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'th' | 'vi' | 'ms' | 'la';
 type Role = 'peer' | 'mentor' | 'skillPartner';
 type Goal = 'jobSeeking' | 'learnNewSkills' | 'emotionalSupport' | 'networking' | 'startupPrep';
@@ -447,17 +448,8 @@ export default function FriendMatch() {
       {window.innerWidth <= 768 ? (
         // 手機版佈局
         <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column', background: `url('/green_hut.png') center center / cover no-repeat fixed` }}>
-          {/* 手機版頂部導航 */}
-          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(255,255,255,0.95)', padding: '8px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 8px #0001' }}>
-            <button className="topbar-btn" onClick={() => navigate('/')} style={{ fontWeight: 700, fontSize: 14, padding: '6px 12px', borderRadius: 8, border: '1.5px solid #6B5BFF', background: '#fff', color: '#6B5BFF', cursor: 'pointer' }}>{UI_TEXT.backToHome[lang]}</button>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#6B5BFF', margin: 0, textAlign: 'center' }}>
-              🦋 {UI_TEXT.pageTitle[lang]}
-            </h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <button className="topbar-btn" onClick={async () => { await signOut(auth); localStorage.clear(); window.location.href = '/' }} style={{ fontWeight: 700, fontSize: 14, padding: '6px 12px', borderRadius: 8, border: '1.5px solid #6B5BFF', background: '#fff', color: '#6B5BFF', cursor: 'pointer' }}>{UI_TEXT.logout[lang]}</button>
-              <LanguageSelector style={{ width: '80px', fontSize: 14, padding: '6px 10px' }} />
-            </div>
-          </div>
+          {/* 手機版共用頁頭 */}
+          <SharedHeader />
           
           {/* 手機版主內容區 */}
           <div style={{ marginTop: 60, padding: '16px', flex: 1, overflowY: 'auto' }}>
@@ -507,7 +499,7 @@ export default function FriendMatch() {
                 <button onClick={() => navigate('/chatroom')} style={{ padding: '8px', borderRadius: 8, border: rightTab === 'chat' ? '2px solid #8ec6f7' : '1px solid #eee', background: rightTab === 'chat' ? '#e6f7ff' : '#fff', color: rightTab === 'chat' ? '#23c6e6' : '#333', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>{UI_TEXT.chatroom[lang]}</button>
                 <button onClick={() => setRightTab('invites')} style={{ padding: '8px', borderRadius: 8, border: rightTab === 'invites' ? '2px solid #6B5BFF' : '1px solid #eee', background: rightTab === 'invites' ? '#f5f4ff' : '#fff', color: rightTab === 'invites' ? '#6B5BFF' : '#333', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>{UI_TEXT.invites[lang]}</button>
                 <button onClick={() => setRightTab('links')} style={{ padding: '8px', borderRadius: 8, border: rightTab === 'links' ? '2px solid #6B5BFF' : '1px solid #eee', background: rightTab === 'links' ? '#f5f4ff' : '#fff', color: rightTab === 'links' ? '#6B5BFF' : '#333', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>{UI_TEXT.mylinks[lang]}</button>
-                <a href="/storywall" style={{ padding: '8px', borderRadius: 8, border: '1px solid #23c6e6', background: '#fff', color: '#23c6e6', fontWeight: 600, fontSize: 14, cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'block' }}>{UI_TEXT.returnFriendStories[lang]} 🦋</a>
+                <span href="/storywall" style={{ padding: '8px', borderRadius: 8, border: '1px solid #23c6e6', background: '#fff', color: '#23c6e6', fontWeight: 600, fontSize: 14, cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'block' }}>{UI_TEXT.returnFriendStories[lang]} 🦋</span>
               </div>
             </div>
             
@@ -587,14 +579,14 @@ export default function FriendMatch() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {/* 第一行：我們是誰、隱私權政策、條款/聲明 */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                  <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>🧬 Restarter™｜我們是誰</a>
-                  <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>隱私權政策</a>
-                  <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>條款/聲明</a>
+                  <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>🧬 Restarter™｜我們是誰</span>
+                  <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>隱私權政策</span>
+                  <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>條款/聲明</span>
                 </div>
                 {/* 第二行：資料刪除說明、意見箱 */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                  <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>資料刪除說明</a>
-                  <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>💬 意見箱｜我們想聽你說</a>
+                  <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>資料刪除說明</span>
+                  <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>💬 意見箱｜我們想聽你說</span>
                 </div>
               </div>
             </div>
@@ -666,7 +658,7 @@ export default function FriendMatch() {
               <button onClick={() => navigate('/chatroom')} style={{ width: '100%', marginBottom: 12, padding: '12px 0', borderRadius: 10, border: rightTab === 'chat' ? '2px solid #8ec6f7' : '1.5px solid #eee', background: rightTab === 'chat' ? '#e6f7ff' : '#fff', color: rightTab === 'chat' ? '#23c6e6' : '#333', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: rightTab === 'chat' ? '0 2px 8px #23c6e622' : '0 2px 8px #0001', transition: 'all 0.2s' }}>{UI_TEXT.chatroom[lang]}</button>
               <button onClick={() => setRightTab('invites')} style={{ width: '100%', marginBottom: 12, padding: '12px 0', borderRadius: 10, border: rightTab === 'invites' ? '2px solid #6B5BFF' : '1.5px solid #eee', background: rightTab === 'invites' ? '#f5f4ff' : '#fff', color: rightTab === 'invites' ? '#6B5BFF' : '#333', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: rightTab === 'invites' ? '0 2px 8px #6B5BFF22' : '0 2px 8px #0001', transition: 'all 0.2s' }}>{UI_TEXT.invites[lang]}</button>
               <button onClick={() => setRightTab('links')} style={{ width: '100%', marginBottom: 12, padding: '12px 0', borderRadius: 10, border: rightTab === 'links' ? '2px solid #6B5BFF' : '1.5px solid #eee', background: rightTab === 'links' ? '#f5f4ff' : '#fff', color: rightTab === 'links' ? '#6B5BFF' : '#333', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: rightTab === 'links' ? '0 2px 8px #6B5BFF22' : '0 2px 8px #0001', transition: 'all 0.2s' }}>{UI_TEXT.mylinks[lang]}</button>
-              <a href="/storywall" style={{ width: '100%', marginBottom: 12, padding: '12px 0', borderRadius: 10, border: '1.5px solid #23c6e6', background: '#fff', color: '#23c6e6', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #23c6e622', textAlign: 'center', textDecoration: 'none', display: 'block', transition: 'all 0.2s' }}>{UI_TEXT.returnFriendStories[lang]} 🦋</a>
+              <span href="/storywall" style={{ width: '100%', marginBottom: 12, padding: '12px 0', borderRadius: 10, border: '1.5px solid #23c6e6', background: '#fff', color: '#23c6e6', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #23c6e622', textAlign: 'center', textDecoration: 'none', display: 'block', transition: 'all 0.2s' }}>{UI_TEXT.returnFriendStories[lang]} 🦋</span>
             </div>
           </div>
           
@@ -761,7 +753,7 @@ export default function FriendMatch() {
          boxShadow: '0 2px 12px #6B5BFF22'
        }}>
          <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-           <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+           <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
               lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
               lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
@@ -771,8 +763,8 @@ export default function FriendMatch() {
               lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
               lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
               '🧬 Restarter™｜Quis sumus'}
-           </a>
-           <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+           </span>
+           <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '隱私權政策' : 
               lang === 'zh-CN' ? '隐私政策' : 
               lang === 'en' ? 'Privacy Policy' : 
@@ -782,8 +774,8 @@ export default function FriendMatch() {
               lang === 'vi' ? 'Chính sách bảo mật' : 
               lang === 'ms' ? 'Dasar Privasi' : 
               'Consilium de Privata'}
-           </a>
-           <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+           </span>
+           <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '條款/聲明' : 
               lang === 'zh-CN' ? '条款/声明' : 
               lang === 'en' ? 'Terms/Statement' : 
@@ -793,8 +785,8 @@ export default function FriendMatch() {
               lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
               lang === 'ms' ? 'Terma/Pernyataan' : 
               'Termini/Declaratio'}
-           </a>
-           <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+           </span>
+           <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '資料刪除說明' : 
               lang === 'zh-CN' ? '数据删除说明' : 
               lang === 'en' ? 'Data Deletion' : 
@@ -804,8 +796,8 @@ export default function FriendMatch() {
               lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
               lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
               'Explicatio Deletionis Datae'}
-           </a>
-           <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+           </span>
+           <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
               lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
               lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
@@ -815,7 +807,7 @@ export default function FriendMatch() {
               lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
               lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
               '💬 Arca Consilii｜Volumus Audire a Te'}
-           </a>
+           </span>
          </div>
        </div>
           </div>

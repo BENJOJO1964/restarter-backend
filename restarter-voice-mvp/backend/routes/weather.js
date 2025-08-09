@@ -11,8 +11,26 @@ router.get('/current', async (req, res) => {
   try {
     const { lat, lon, city } = req.query;
     
+    // 如果沒有API key，返回模擬數據
     if (!WEATHERAPI_KEY) {
-      return res.status(500).json({ error: 'WeatherAPI key not configured' });
+      console.log('WeatherAPI key not found, using mock data');
+      const mockWeather = {
+        temp: 22,
+        description: '多雲',
+        icon: '//cdn.weatherapi.com/weather/64x64/day/116.png',
+        humidity: 65,
+        windSpeed: 8,
+        city: city || 'Taipei',
+        country: 'Taiwan',
+        feelsLike: 24,
+        pressure: 1013,
+        visibility: 10,
+        sunrise: '06:30',
+        sunset: '17:45',
+        uv: 3,
+        lastUpdated: new Date().toISOString()
+      };
+      return res.json({ weather: mockWeather });
     }
 
     let query;

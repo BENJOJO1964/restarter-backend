@@ -10,6 +10,7 @@ import { usePermission } from '../hooks/usePermission';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
 import Footer from '../components/Footer';
 import { useTestMode } from '../App';
+import SharedHeader from '../components/SharedHeader';
 type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'vi' | 'th' | 'la' | 'ms';
 
 const LANGS: { code: LanguageCode; label: string }[] = [
@@ -1137,52 +1138,57 @@ export default function RestartWall() {
       display: 'flex', 
       flexDirection: 'column' 
     }}>
-      <div style={{
-        position:'absolute',
-        top:0,
-        left:0,
-        width:'100%',
-        zIndex:100,
-        display:'flex',
-        justifyContent:'space-between',
-        alignItems:'center',
-        padding: window.innerWidth <= 768 ? '12px 16px 0 16px' : '18px 32px 0 32px',
-        boxSizing:'border-box',
-        background:'transparent'
-      }}>
-        <button onClick={()=>navigate('/')} style={{
-          background:'#fff',
-          border:'2px solid #6B5BFF',
-          borderRadius:8,
-          color:'#6B5BFF',
-          fontWeight:700,
-          fontSize: window.innerWidth <= 768 ? 14 : 16,
-          cursor:'pointer',
-          padding: window.innerWidth <= 768 ? '4px 12px' : '6px 18px',
-          transition:'background 0.2s, color 0.2s, box-shadow 0.2s'
-        }}>{t.back}</button>
+      {/* 手機版使用共用頁頭，桌面版使用原有頁頭 */}
+      {window.innerWidth <= 768 ? (
+        <SharedHeader />
+      ) : (
         <div style={{
+          position:'absolute',
+          top:0,
+          left:0,
+          width:'100%',
+          zIndex:100,
           display:'flex',
-          gap: window.innerWidth <= 768 ? 8 : 12,
-          marginRight: window.innerWidth <= 768 ? 4 : 8
+          justifyContent:'space-between',
+          alignItems:'center',
+          padding: '18px 32px 0 32px',
+          boxSizing:'border-box',
+          background:'transparent'
         }}>
-          <button className="topbar-btn" onClick={async()=>{const auth=getAuth();await auth.signOut();localStorage.clear();window.location.href='/'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}} style={{
-            fontSize: window.innerWidth <= 768 ? 12 : 16,
-            padding: window.innerWidth <= 768 ? '4px 8px' : '6px 12px'
-          }}>{t.logout}</button>
-                      <select className="topbar-select" value={lang} onChange={e=>{const newLang = e.target.value as LanguageCode; setLang(newLang); localStorage.setItem('lang', newLang);}} style={{
-                        padding: window.innerWidth <= 768 ? '4px 6px' : '6px 8px',
-                        borderRadius:8,
-                        fontWeight:600,
-                        cursor:'pointer',
-                        minWidth: window.innerWidth <= 768 ? '40px' : '50px',
-                        width: window.innerWidth <= 768 ? '40px' : '50px',
-                        fontSize: window.innerWidth <= 768 ? 12 : 14
-                      }} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}}>
-            {LANGS.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
-          </select>
+          <button onClick={()=>navigate('/')} style={{
+            background:'#fff',
+            border:'2px solid #6B5BFF',
+            borderRadius:8,
+            color:'#6B5BFF',
+            fontWeight:700,
+            fontSize: 16,
+            cursor:'pointer',
+            padding: '6px 18px',
+            transition:'background 0.2s, color 0.2s, box-shadow 0.2s'
+          }}>{t.back}</button>
+          <div style={{
+            display:'flex',
+            gap: 12,
+            marginRight: 8
+          }}>
+            <button className="topbar-btn" onClick={async()=>{const auth=getAuth();await auth.signOut();localStorage.clear();window.location.href='/'}} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}} style={{
+              fontSize: 16,
+              padding: '6px 12px'
+            }}>{t.logout}</button>
+                        <select className="topbar-select" value={lang} onChange={e=>{const newLang = e.target.value as LanguageCode; setLang(newLang); localStorage.setItem('lang', newLang);}} style={{
+                          padding: '6px 8px',
+                          borderRadius:8,
+                          fontWeight:600,
+                          cursor:'pointer',
+                          minWidth: '50px',
+                          width: '50px',
+                          fontSize: 14
+                        }} onMouseOver={e=>{e.currentTarget.style.background='#6B5BFF';e.currentTarget.style.color='#fff';}} onMouseOut={e=>{e.currentTarget.style.background='';e.currentTarget.style.color='';}}>
+              {LANGS.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
+            </select>
+          </div>
         </div>
-      </div>
+      )}
       <div className="modern-container" style={{ 
         maxWidth: window.innerWidth <= 768 ? '100%' : 600, 
         width: '100%', 
@@ -2085,7 +2091,7 @@ export default function RestartWall() {
          boxShadow: '0 2px 12px #6B5BFF22'
        }}>
          <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-           <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+           <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
               lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
               lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
@@ -2095,8 +2101,8 @@ export default function RestartWall() {
               lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
               lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
               '🧬 Restarter™｜Quis sumus'}
-           </a>
-           <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+           </span>
+           <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '隱私權政策' : 
               lang === 'zh-CN' ? '隐私政策' : 
               lang === 'en' ? 'Privacy Policy' : 
@@ -2106,8 +2112,8 @@ export default function RestartWall() {
               lang === 'vi' ? 'Chính sách bảo mật' : 
               lang === 'ms' ? 'Dasar Privasi' : 
               'Consilium de Privata'}
-           </a>
-           <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+           </span>
+           <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '條款/聲明' : 
               lang === 'zh-CN' ? '条款/声明' : 
               lang === 'en' ? 'Terms/Statement' : 
@@ -2117,8 +2123,8 @@ export default function RestartWall() {
               lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
               lang === 'ms' ? 'Terma/Pernyataan' : 
               'Termini/Declaratio'}
-           </a>
-           <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+           </span>
+           <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '資料刪除說明' : 
               lang === 'zh-CN' ? '数据删除说明' : 
               lang === 'en' ? 'Data Deletion' : 
@@ -2128,8 +2134,8 @@ export default function RestartWall() {
               lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
               lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
               'Explicatio Deletionis Datae'}
-           </a>
-           <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+           </span>
+           <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
              {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
               lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
               lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
@@ -2139,7 +2145,7 @@ export default function RestartWall() {
               lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
               lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
               '💬 Arca Consilii｜Volumus Audire a Te'}
-           </a>
+           </span>
          </div>
        </div>
     </div>

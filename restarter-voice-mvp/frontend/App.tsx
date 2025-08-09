@@ -46,6 +46,15 @@ import EmotionRelease from './pages/EmotionRelease';
 import SocialIntegration from './pages/SocialIntegration';
 import ConfirmRegistration from './pages/ConfirmRegistration';
 
+// 新增法律文件页面导入
+import AIStatement from './pages/AIStatement';
+import MentalHealthDisclaimer from './pages/MentalHealthDisclaimer';
+import CookiePolicy from './pages/CookiePolicy';
+import ChildrenPrivacy from './pages/ChildrenPrivacy';
+import InternationalUsers from './pages/InternationalUsers';
+import SecurityStatement from './pages/SecurityStatement';
+import UpdateNotification from './pages/UpdateNotification';
+
 import Plans from './pages/Plans';
 import Payment from './pages/Payment';
 import Upgrade from './pages/Upgrade';
@@ -160,6 +169,15 @@ function App() {
                   <Route path="/HelpLab" element={<HelpLab />} />
                   <Route path="/emotion-release" element={<EmotionRelease />} />
                   {user && <Route path="/social-integration" element={<SocialIntegration />} />}
+                  
+                  {/* 新增法律文件React页面路由 */}
+                  <Route path="/ai-statement" element={<AIStatement />} />
+                  <Route path="/mental-health-disclaimer" element={<MentalHealthDisclaimer />} />
+                  <Route path="/cookie-policy" element={<CookiePolicy />} />
+                  <Route path="/children-privacy" element={<ChildrenPrivacy />} />
+                  <Route path="/international-users" element={<InternationalUsers />} />
+                  <Route path="/security-statement" element={<SecurityStatement />} />
+                  <Route path="/update-notification" element={<UpdateNotification />} />
 
 
                   <Route path="/plans" element={<Plans />} />

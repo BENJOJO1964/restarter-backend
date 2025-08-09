@@ -1754,7 +1754,7 @@ export default function HelpLab() {
                     <div style={{ color:'#232946', marginBottom:8, lineHeight:'1.5' }}>{msg.content}</div>
                     <div style={{ color:'#888', fontSize:13, marginBottom:8 }}>{msg.timestamp?.toDate?.().toLocaleString?.()}</div>
                     <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-                      <a href={`mailto:${msg.fromEmail}`} style={{ color:'#6B5BFF', fontWeight:700, textDecoration:'underline', fontSize:13 }}>{TRANSLATIONS[lang]?.messages?.contactUser || '聯絡對方'}</a>
+                      <span href={`mailto:${msg.fromEmail}`} style={{ color:'#6B5BFF', fontWeight:700, textDecoration:'underline', fontSize:13 }}>{TRANSLATIONS[lang]?.messages?.contactUser || '聯絡對方'}</span>
                       <button 
                         onClick={(e) => {
                           e.stopPropagation(); // 防止觸發父元素的點擊事件
@@ -1968,7 +1968,7 @@ export default function HelpLab() {
                           <div style={{ marginBottom:8 }}><b>特別聲明：</b>{item.statement}</div>
                           <div style={{ marginBottom:8 }}><b>幫助頻率：</b>{item.freq}{item.freqOther?`、${item.freqOther}`:''}</div>
                           <div style={{ marginTop:12 }}>
-                            <a href={`mailto:${item.email}`} style={{ color:'#6B5BFF', textDecoration:'underline', marginLeft:12 }}>{item.email}</a>
+                            <span href={`mailto:${item.email}`} style={{ color:'#6B5BFF', textDecoration:'underline', marginLeft:12 }}>{item.email}</span>
                           </div>
                         </td>
                       </tr>
@@ -2025,7 +2025,7 @@ export default function HelpLab() {
                           <div style={{ marginBottom:8 }}><b>補充說明：</b>{item.statement}</div>
                           <div style={{ marginBottom:8 }}><b>協助頻率：</b>{item.freq}{item.freqOther?`、${item.freqOther}`:''}</div>
                           <div style={{ marginTop:12 }}>
-                            <a href={`mailto:${item.email}`} style={{ color:'#ff4d4f', textDecoration:'underline', marginLeft:12 }}>{item.email}</a>
+                            <span href={`mailto:${item.email}`} style={{ color:'#ff4d4f', textDecoration:'underline', marginLeft:12 }}>{item.email}</span>
                           </div>
                         </td>
                       </tr>
@@ -2064,7 +2064,7 @@ export default function HelpLab() {
         boxShadow: '0 2px 12px #6B5BFF22'
       }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-          <a href="/about" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+          <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
             {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
              lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
              lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
@@ -2074,8 +2074,8 @@ export default function HelpLab() {
              lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
              lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
              '🧬 Restarter™｜Quis sumus'}
-          </a>
-          <a href="/privacy-policy" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+          </span>
+          <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
             {lang === 'zh-TW' ? '隱私權政策' : 
              lang === 'zh-CN' ? '隐私政策' : 
              lang === 'en' ? 'Privacy Policy' : 
@@ -2085,8 +2085,8 @@ export default function HelpLab() {
              lang === 'vi' ? 'Chính sách bảo mật' : 
              lang === 'ms' ? 'Dasar Privasi' : 
              'Consilium de Privata'}
-          </a>
-          <a href="/terms" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+          </span>
+          <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
             {lang === 'zh-TW' ? '條款/聲明' : 
              lang === 'zh-CN' ? '条款/声明' : 
              lang === 'en' ? 'Terms/Statement' : 
@@ -2096,8 +2096,8 @@ export default function HelpLab() {
              lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
              lang === 'ms' ? 'Terma/Pernyataan' : 
              'Termini/Declaratio'}
-          </a>
-          <a href="/data-deletion" style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12 }}>
+          </span>
+          <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
             {lang === 'zh-TW' ? '資料刪除說明' : 
              lang === 'zh-CN' ? '数据删除说明' : 
              lang === 'en' ? 'Data Deletion' : 
@@ -2107,8 +2107,8 @@ export default function HelpLab() {
              lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
              lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
              'Explicatio Deletionis Datae'}
-          </a>
-          <a href="/feedback" style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12 }}>
+          </span>
+          <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
             {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
              lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
              lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
@@ -2118,7 +2118,7 @@ export default function HelpLab() {
              lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
              lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
              '💬 Arca Consilii｜Volumus Audire a Te'}
-          </a>
+          </span>
         </div>
       </div>
     </div>
