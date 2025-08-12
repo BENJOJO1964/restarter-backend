@@ -1434,6 +1434,8 @@ export default function RegisterPage() {
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                           <input
                             type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             value={verificationCode}
                             onChange={(e) => setVerificationCode(e.target.value)}
                             placeholder="請輸入 6 位數驗證碼"
