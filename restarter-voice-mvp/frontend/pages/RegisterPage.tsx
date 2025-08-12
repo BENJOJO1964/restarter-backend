@@ -1704,13 +1704,13 @@ export default function RegisterPage() {
                     flexWrap: 'nowrap',
                     overflow: 'hidden'
                   }}>
-                    <span onClick={() => navigate("/privacy-policy")} style={{ color: "#6B5BFF", textDecoration: "underline", padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap' }}>{t.privacy || '隱私權政策'}</span>
+                                          <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap', padding: "4px 8px", cursor: "pointer" }}>{t.privacy || '隱私權政策'}</span>
                     <span style={{ color: '#666', fontSize: 12 }}>/</span>
                     <button type="button" onClick={() => navigate('/terms')} style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap' }}>
                       {t.terms}
                     </button>
                     <span style={{ color: '#666', fontSize: 12 }}>/</span>
-                    <span onClick={() => navigate("/data-deletion")} style={{ color: "#6B5BFF", textDecoration: "underline", padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap' }}>{t.deletion || '資料刪除說明'}</span>
+                                          <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 12, flex: 1, textAlign: 'center', whiteSpace: 'nowrap', padding: "4px 8px", cursor: "pointer" }}>{t.deletion || '資料刪除說明'}</span>
                   </div>
                 </div>
               </form>

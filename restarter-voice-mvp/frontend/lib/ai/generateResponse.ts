@@ -10,6 +10,18 @@ export async function* generateResponse(userText: string, lang: string, systemPr
       throw new Error('用戶未登入');
     }
 
+    // 獲取Firebase認證令牌
+    let headers: any = {
+      'x-test-mode': isTestMode ? 'true' : 'false'
+    };
+    
+    try {
+      const token = await user.getIdToken();
+      headers['Authorization'] = `Bearer ${token}`;
+    } catch (error) {
+      console.error('Failed to get user token:', error);
+    }
+
     // 使用傳入的isTestMode參數，而不是從localStorage讀取
     const response = await axios.post('/api/gpt', {
       messages: [
@@ -18,9 +30,7 @@ export async function* generateResponse(userText: string, lang: string, systemPr
       system_prompt: systemPrompt,
       userId: user.uid
     }, {
-      headers: {
-        'x-test-mode': isTestMode ? 'true' : 'false'
-      }
+      headers
     });
     
     const reply = response.data.reply;

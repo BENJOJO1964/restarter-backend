@@ -1,7 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAuth, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import app from '../src/firebaseConfig';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LanguageSelector } from '../components/LanguageSelector';
 import Footer from '../components/Footer';
+import SharedHeader from '../components/SharedHeader';
+
+const LOGOUT_TEXT = {
+  'zh-TW': '登出',
+  'zh-CN': '登出',
+  'en': 'Logout',
+  'ja': 'ログアウト',
+  'ko': '로그아웃',
+  'th': 'ออกจากระบบ',
+  'vi': 'Đăng xuất',
+  'ms': 'Log keluar',
+  'la': 'Exire'
+};
 
 // 本地存儲工具函數
 const saveGameProgress = (gameId: string, data: any) => {
@@ -23,9 +39,44 @@ const loadGameProgress = (gameId: string) => {
 };
 
 export default function EmotionRelease() {
-  const { lang } = useLanguage();
+  const navigate = useNavigate();
+  const { lang, setLang } = useLanguage();
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [showLegalMenu, setShowLegalMenu] = useState(false);
+  const [showLangBox, setShowLangBox] = useState(false);
+  const legalMenuRef = useRef<HTMLDivElement>(null);
+  const langBoxRef = useRef<HTMLDivElement>(null);
+  const auth = getAuth(app);
+
+  // 監聽用戶認證狀態
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 點擊外部關閉選單
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (legalMenuRef.current && !legalMenuRef.current.contains(event.target as Node)) {
+        setShowLegalMenu(false);
+      }
+      if (langBoxRef.current && !langBoxRef.current.contains(event.target as Node)) {
+        setShowLangBox(false);
+      }
+    };
+
+    if (showLegalMenu || showLangBox) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showLegalMenu, showLangBox]);
 
   // 預載入背景圖片
   useEffect(() => {
@@ -48,7 +99,7 @@ export default function EmotionRelease() {
     const translations: { [key: string]: { [key: string]: string } } = {
       'zh-TW': {
         title: '情緒發洩區',
-        subtitle: '選擇適合的遊戲來釋放你的情緒',
+        subtitle: '簡單遊戲，不複雜，輕鬆釋放你的情緒。',
         farm: '生活農場',
         farmDesc: '點擊種植，感受成長的喜悅',
         whackAMole: '打地鼠',
@@ -68,7 +119,7 @@ export default function EmotionRelease() {
       },
       'zh-CN': {
         title: '情绪发泄区',
-        subtitle: '选择适合的游戏来释放你的情绪',
+        subtitle: '简单游戏，不复杂，轻松释放你的情绪。',
         farm: '生活农场',
         farmDesc: '点击种植，感受成长的喜悦',
         whackAMole: '打地鼠',
@@ -88,7 +139,7 @@ export default function EmotionRelease() {
       },
       'en': {
         title: 'Emotion Release Zone',
-        subtitle: 'Choose a game to release your emotions',
+        subtitle: 'Simple games, not complicated, easily release your emotions.',
         farm: 'Life Farm',
         farmDesc: 'Click to plant, feel the joy of growth',
         whackAMole: 'Whack-a-Mole',
@@ -108,7 +159,7 @@ export default function EmotionRelease() {
       },
       'ja': {
         title: '感情発散エリア',
-        subtitle: '感情を解放するゲームを選択してください',
+        subtitle: 'シンプルなゲーム、複雑ではなく、簡単に感情を解放。',
         farm: 'ライフファーム',
         farmDesc: 'クリックして植える、成長の喜びを感じる',
         whackAMole: 'モグラたたき',
@@ -128,7 +179,7 @@ export default function EmotionRelease() {
       },
       'ko': {
         title: '감정 발산 구역',
-        subtitle: '감정을 해방할 게임을 선택하세요',
+        subtitle: '간단한 게임, 복잡하지 않고, 쉽게 감정을 해방하세요.',
         farm: '라이프 팜',
         farmDesc: '클릭하여 심고, 성장의 기쁨을 느끼세요',
         whackAMole: '두더지 잡기',
@@ -148,7 +199,7 @@ export default function EmotionRelease() {
       },
       'vi': {
         title: 'Khu Vực Giải Tỏa Cảm Xúc',
-        subtitle: 'Chọn trò chơi để giải tỏa cảm xúc của bạn',
+        subtitle: 'Trò chơi đơn giản, không phức tạp, dễ dàng giải tỏa cảm xúc của bạn.',
         farm: 'Nông Trại Cuộc Sống',
         farmDesc: 'Nhấp để trồng, cảm nhận niềm vui của sự phát triển',
         whackAMole: 'Đập Chuột',
@@ -168,7 +219,7 @@ export default function EmotionRelease() {
       },
       'th': {
         title: 'พื้นที่ระบายอารมณ์',
-        subtitle: 'เลือกเกมเพื่อระบายอารมณ์ของคุณ',
+        subtitle: 'เกมง่ายๆ ไม่ซับซ้อน ปลดปล่อยอารมณ์ของคุณได้อย่างง่ายดาย',
         farm: 'ฟาร์มชีวิต',
         farmDesc: 'คลิกเพื่อปลูก รู้สึกถึงความสุขของการเติบโต',
         whackAMole: 'ตีตุ่น',
@@ -188,7 +239,7 @@ export default function EmotionRelease() {
       },
       'la': {
         title: 'Zona Emotio Liberationis',
-        subtitle: 'Elige ludum ad liberationem emotionum tuarum',
+        subtitle: 'Ludi simplices, non complicati, facile libera emotiones tuas.',
         farm: 'Villa Vitae',
         farmDesc: 'Clicca ad plantandum, senti gaudium incrementi',
         whackAMole: 'Talpa Percutere',
@@ -208,7 +259,7 @@ export default function EmotionRelease() {
       },
       'ms': {
         title: 'Zon Pelepasan Emosi',
-        subtitle: 'Pilih permainan untuk melepaskan emosi anda',
+        subtitle: 'Permainan mudah, tidak rumit, mudah melepaskan emosi anda.',
         farm: 'Ladang Kehidupan',
         farmDesc: 'Klik untuk menanam, rasakan kegembiraan pertumbuhan',
         whackAMole: 'Pukul Tikus',
@@ -309,6 +360,191 @@ export default function EmotionRelease() {
       position: 'relative'
     }}>
 
+      {/* 手機版頁頭 */}
+      {window.innerWidth <= 768 && (
+        <SharedHeader />
+      )}
+      
+      {/* 桌面版頁頭 - 完整複製首頁的頁頭 */}
+      {window.innerWidth > 768 && (
+        <div style={{ position: 'fixed', top: 8, right: 36, zIndex: 9999, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18, pointerEvents: 'auto', width: '100%', justifyContent: 'flex-end' }}>
+          {/* 左側：LOGO */}
+          <div style={{ position: 'fixed', top: 16, left: 42, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 10000, paddingTop: 0, marginTop: 0 }}>
+            <img src="/ctx-logo.png" style={{ marginBottom: 0, width: 182, height: 182, cursor: 'pointer', marginTop: '-40px' }} onClick={() => navigate('/')} />
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 18, marginRight: 24 }}>
+            <button 
+              className="topbar-btn" 
+              onClick={() => navigate('/about')} 
+              style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 80 }}
+              aria-label={lang==='zh-TW'?'了解 Restarter 平台':'zh-CN'===lang?'了解 Restarter 平台':'en'===lang?'Learn about Restarter platform':'ja'===lang?'Restarter プラットフォームについて':'ko'===lang?'Restarter 플랫폼에 대해 알아보기':'th'===lang?'เรียนรู้เกี่ยวกับแพลตฟอร์ม Restarter':'vi'===lang?'Tìm hiểu về nền tảng Restarter':'ms'===lang?'Ketahui tentang platform Restarter':'Cognosce de suggestum Restarter'}
+              role="button"
+            >
+              {lang==='zh-TW'?'🧬 Restarter™｜我們是誰':'zh-CN'===lang?'🧬 Restarter™｜我们是谁':'en'===lang?'🧬 Restarter™｜Who We Are':'ja'===lang?'🧬 Restarter™｜私たちについて':'ko'===lang?'🧬 Restarter™｜우리는 누구인가':'th'===lang?'🧬 Restarter™｜เราเป็นใคร':'vi'===lang?'🧬 Restarter™｜Chúng tôi là ai':'ms'===lang?'🧬 Restarter™｜Siapa Kami':'🧬 Restarter™｜Quis sumus'}
+            </button>
+            <button 
+              className="topbar-btn" 
+              onClick={() => navigate('/feedback')} 
+              style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 100 }}
+              aria-label={lang==='zh-TW'?'提供意見和建議':'zh-CN'===lang?'提供意见和建议':'en'===lang?'Provide feedback and suggestions':'ja'===lang?'ご意見やご提案を提供':'ko'===lang?'의견과 제안 제공':'th'===lang?'ให้ข้อเสนอแนะและคำแนะนำ':'vi'===lang?'Cung cấp phản hồi và đề xuất':'ms'===lang?'Berikan maklum balas dan cadangan':'Praebe consilia et suggestiones'}
+              role="button"
+            >
+              {lang==='zh-TW'?'💬 意見箱｜我們想聽你說':'zh-CN'===lang?'💬 意见箱｜我们想听你说':'en'===lang?'💬 Feedback｜We Want to Hear You':'ja'===lang?'💬 ご意見箱｜あなたの声を聞かせて':'ko'===lang?'💬 피드백｜여러분의 의견을 듣고 싶어요':'th'===lang?'💬 กล่องความคิดเห็น｜เราอยากฟังคุณ':'vi'===lang?'💬 Hộp góp ý｜Chúng tôi muốn lắng nghe bạn':'ms'===lang?'💬 Kotak Maklum Balas｜Kami ingin mendengar anda':'💬 Arca Consilii｜Te audire volumus'}
+            </button>
+
+            {user ? (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <img src={user.photoURL || '/ctx-logo.png'} alt="avatar" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid #90caf9' }} />
+                  <span style={{ color: '#1976d2', fontWeight: 700, fontSize: 16 }}>{user.displayName || user.email || '用戶'}</span>
+                  <button className="topbar-btn" onClick={async () => { await signOut(auth); }} style={{ background: '#fff', color: '#ff6347', border: '2px solid #ffb4a2', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 14px', marginLeft: 6 }}>{LOGOUT_TEXT[lang]}</button>
+                </div>
+              </>
+            ) : (
+              <button className="topbar-btn" onClick={() => navigate('/register')} style={{ background: '#fff', color: '#1976d2', border: '2px solid #90caf9', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 10px', minWidth: 90 }}>{lang==='zh-TW'?'註冊/登入':'zh-CN'===lang?'注册/登录':'en'===lang?'Register / Login':'ja'===lang?'登録/ログイン':'ko'===lang?'가입/로그인':'th'===lang?'สมัคร/เข้าสู่ระบบ':'vi'===lang?'Đăng ký/Đăng nhập':'ms'===lang?'Daftar / Log Masuk':'Registrare / Login'}</button>
+            )}
+          </div>
+          {/* 語言選擇按鈕，靠右且寬度縮短，點擊彈出小框 */}
+          <div ref={langBoxRef} style={{ position: 'relative', display: 'inline-block' }} className="language-selector">
+            <button
+              className="topbar-btn"
+              style={{
+                background: '#6B5BFF',
+                color: '#fff',
+                border: '2px solid #6B5BFF',
+                borderRadius: 8,
+                fontWeight: 700,
+                fontSize: 16,
+                padding: '8px 10px',
+                minWidth: 90,
+                maxWidth: 120,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+              onClick={() => setShowLangBox(v => !v)}
+            >
+              {lang === 'zh-TW' ? '繁中' : lang === 'zh-CN' ? '简中' : lang === 'en' ? 'English' : lang === 'ja' ? '日本語' : lang === 'ko' ? '한국어' : lang === 'th' ? 'ไทย' : lang === 'vi' ? 'Tiếng Việt' : lang === 'ms' ? 'Bahasa Melayu' : 'Latin'}
+              <span style={{ marginLeft: 6 }}>▼</span>
+            </button>
+            {showLangBox && (
+              <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', border: '1.5px solid #6B5BFF', borderRadius: 8, boxShadow: '0 4px 16px #0002', zIndex: 9999, minWidth: 120 }}>
+                {['zh-TW', 'zh-CN', 'en', 'ja', 'ko', 'th', 'vi', 'ms', 'la'].map(l => (
+                  <div key={l} style={{ padding: '10px 18px', cursor: 'pointer', color: l === lang ? '#6B5BFF' : '#232946', fontWeight: l === lang ? 700 : 500, background: l === lang ? '#f3f0ff' : '#fff' }} onClick={() => { setLang(l as any); setShowLangBox(false); }}>
+                    {l === 'zh-TW' ? '繁中' : l === 'zh-CN' ? '简中' : l === 'en' ? 'English' : l === 'ja' ? '日本語' : l === 'ko' ? '한국어' : l === 'th' ? 'ไทย' : l === 'vi' ? 'Tiếng Việt' : l === 'ms' ? 'Bahasa Melayu' : 'Latin'}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {/* 漢堡選單 - 法律文件 */}
+          <div ref={legalMenuRef} style={{ position: 'relative', display: 'inline-block' }} className="legal-menu">
+            <button
+              className="topbar-btn"
+              style={{
+                background: '#fff',
+                color: '#6B5BFF',
+                border: '2px solid #6B5BFF',
+                borderRadius: 8,
+                fontWeight: 700,
+                fontSize: 16,
+                padding: '8px 10px',
+                minWidth: 44,
+                height: '44px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease'
+              }}
+              onClick={() => setShowLegalMenu(v => !v)}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = '#f3f0ff';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = '#fff';
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+              </div>
+            </button>
+            {showLegalMenu && (
+              <div style={{ 
+                position: 'absolute', 
+                right: 0, 
+                top: '110%', 
+                background: '#fff', 
+                border: '1.5px solid #6B5BFF', 
+                borderRadius: 8, 
+                boxShadow: '0 4px 16px #0002', 
+                zIndex: 9999, 
+                minWidth: 180,
+                maxWidth: 220,
+                padding: '8px 0'
+              }}>
+                <div style={{ padding: '8px 16px', borderBottom: '1px solid #eee', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#6B5BFF' }}>
+                    {lang === 'zh-TW' ? '法律文件' : 
+                     lang === 'zh-CN' ? '法律文件' : 
+                     lang === 'en' ? 'Legal Documents' : 
+                     lang === 'ja' ? '法的文書' : 
+                     lang === 'ko' ? '법적 문서' : 
+                     lang === 'th' ? 'เอกสารทางกฎหมาย' : 
+                     lang === 'vi' ? 'Tài liệu pháp lý' : 
+                     lang === 'ms' ? 'Dokumen Undang-undang' : 
+                     'Documenta Iuridica'}
+                  </span>
+                </div>
+                {[
+                  { key: 'privacy', title: { 'zh-TW': '隱私權政策', 'zh-CN': '隐私政策', 'en': 'Privacy Policy', 'ja': 'プライバシーポリシー', 'ko': '개인정보보호정책', 'th': 'นโยบายความเป็นส่วนตัว', 'vi': 'Chính sách bảo mật', 'ms': 'Dasar Privasi', 'la': 'Consilium de Privata' }, path: '/privacy-policy' },
+                  { key: 'terms', title: { 'zh-TW': '條款/聲明', 'zh-CN': '条款/声明', 'en': 'Terms/Statement', 'ja': '利用規約/声明', 'ko': '약관/성명', 'th': 'ข้อกำหนด/คำแถลง', 'vi': 'Điều khoản/Tuyên bố', 'ms': 'Terma/Penyata', 'la': 'Termini/Declaratio' }, path: '/terms' },
+                  { key: 'data', title: { 'zh-TW': '資料刪除說明', 'zh-CN': '数据删除说明', 'en': 'Data Deletion', 'ja': 'データ削除について', 'ko': '데이터 삭제 설명', 'th': 'คำอธิบายการลบข้อมูล', 'vi': 'Giải thích xóa dữ liệu', 'ms': 'Penerangan Pemadaman Data', 'la': 'Explicatio Deletionis Datae' }, path: '/data-deletion' },
+                  { key: 'ai', title: { 'zh-TW': 'AI使用聲明', 'zh-CN': 'AI使用声明', 'en': 'AI Usage Statement', 'ja': 'AI利用声明', 'ko': 'AI 사용 성명', 'th': 'คำแถลงการใช้ AI', 'vi': 'Tuyên bố sử dụng AI', 'ms': 'Penyata Penggunaan AI', 'la': 'Declaratio Usus AI' }, path: '/ai-statement' },
+                  { key: 'mental', title: { 'zh-TW': '心理健康免責聲明', 'zh-CN': '心理健康免责声明', 'en': 'Mental Health Disclaimer', 'ja': 'メンタルヘルス免責事項', 'ko': '정신건강 면책조항', 'th': 'ข้อจำกัดความรับผิดชอบด้านสุขภาพจิต', 'vi': 'Tuyên bố miễn trừ sức khỏe tâm thần', 'ms': 'Penafian Kesihatan Mental', 'la': 'Renuntiatio Salutis Mentalis' }, path: '/mental-health-disclaimer' },
+                  { key: 'cookie', title: { 'zh-TW': 'Cookie政策', 'zh-CN': 'Cookie政策', 'en': 'Cookie Policy', 'ja': 'Cookieポリシー', 'ko': '쿠키 정책', 'th': 'นโยบายคุกกี้', 'vi': 'Chính sách Cookie', 'ms': 'Dasar Cookie', 'la': 'Politica Cookie' }, path: '/cookie-policy' },
+                  { key: 'children', title: { 'zh-TW': '兒童隱私保護', 'zh-CN': '儿童隐私保护', 'en': 'Children\'s Privacy', 'ja': '児童プライバシー保護', 'ko': '아동 개인정보 보호', 'th': 'การคุ้มครองความเป็นส่วนตัวของเด็ก', 'vi': 'Bảo vệ quyền riêng tư trẻ em', 'ms': 'Privasi Kanak-kanak', 'la': 'Privata Puerorum' }, path: '/children-privacy' },
+                  { key: 'international', title: { 'zh-TW': '國際用戶聲明', 'zh-CN': '国际用户声明', 'en': 'International Users', 'ja': '国際ユーザー声明', 'ko': '국제 사용자 성명', 'th': 'คำแถลงสำหรับผู้ใช้ระหว่างประเทศ', 'vi': 'Tuyên bố người dùng quốc tế', 'ms': 'Penyata Pengguna Antarabangsa', 'la': 'Declaratio Usuarii Internationalis' }, path: '/international-users' },
+                  { key: 'security', title: { 'zh-TW': '安全聲明', 'zh-CN': '安全声明', 'en': 'Security Statement', 'ja': 'セキュリティ声明', 'ko': '보안 성명', 'th': 'คำแถลงความปลอดภัย', 'vi': 'Tuyên bố bảo mật', 'ms': 'Penyata Keselamatan', 'la': 'Declaratio Securitatis' }, path: '/security-statement' },
+                  { key: 'update', title: { 'zh-TW': '更新通知機制', 'zh-CN': '更新通知机制', 'en': 'Update Notification', 'ja': '更新通知メカニズム', 'ko': '업데이트 알림 메커니즘', 'th': 'กลไกการแจ้งเตือนการอัปเดต', 'vi': 'Cơ chế thông báo cập nhật', 'ms': 'Mekanisme Pemberitahuan Kemas Kini', 'la': 'Mechanismus Notificationis Renovationis' }, path: '/update-notification' }
+                ].map(item => (
+                  <div 
+                    key={item.key}
+                    style={{ 
+                      padding: '8px 12px', 
+                      cursor: 'pointer', 
+                      color: '#232946', 
+                      fontWeight: 500, 
+                      background: '#fff',
+                      fontSize: '11px',
+                      borderBottom: '1px solid #f0f0f0',
+                      transition: 'all 0.2s ease'
+                    }} 
+                    onClick={() => {
+                      navigate(item.path);
+                      setShowLegalMenu(false);
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = '#f3f0ff';
+                      e.currentTarget.style.color = '#6B5BFF';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = '#fff';
+                      e.currentTarget.style.color = '#232946';
+                    }}
+                  >
+                    {item.title[lang] || item.title['zh-TW']}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* 載入指示器 */}
       {!imageLoaded && (
@@ -342,47 +578,7 @@ export default function EmotionRelease() {
         </div>
       )}
 
-      {/* 返回按鈕 - 只在主頁面顯示 */}
-      {!currentGame && (
-        <button 
-          onClick={() => {
-            console.log('返回按鈕被點擊');
-            window.history.back();
-          }}
-          style={{
-            position: 'absolute',
-            top: 'clamp(20px, 4vw, 40px)',
-            left: 'clamp(20px, 4vw, 40px)',
-            zIndex: 9999,
-            background: 'rgba(255,255,255,0.9)',
-            border: 'none',
-            borderRadius: '25px',
-            padding: 'clamp(8px, 2vw, 12px) clamp(16px, 3vw, 24px)',
-            fontSize: 'clamp(14px, 2.5vw, 18px)',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#667eea',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            pointerEvents: 'auto'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#667eea';
-            e.currentTarget.style.color = '#fff';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
-            e.currentTarget.style.color = '#667eea';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          ← {getText('back')}
-        </button>
-      )}
+
       
       {currentGame ? (
         <div style={{ position: 'relative', height: '100vh' }}>
@@ -391,7 +587,7 @@ export default function EmotionRelease() {
       ) : (
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           {/* 標題區域 */}
-          <div style={{ textAlign: 'center', marginBottom: 'clamp(20px, 4vw, 40px)', marginTop: 'clamp(60px, 8vw, 80px)' }}>
+          <div style={{ textAlign: 'center', marginBottom: 'clamp(20px, 4vw, 40px)', marginTop: window.innerWidth <= 768 ? 'clamp(80px, 12vw, 100px)' : 'clamp(60px, 8vw, 80px)' }}>
             <h1 style={{ 
               color: '#fff', 
               fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', 
@@ -403,7 +599,7 @@ export default function EmotionRelease() {
             </h1>
             <p style={{ 
               color: '#fff', 
-              fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
+              fontSize: 'clamp(0.8rem, 2vw, 1rem)',
               opacity: 0.9,
               textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
             }}>
@@ -485,106 +681,7 @@ export default function EmotionRelease() {
         </div>
       )}
       
-      {/* Footer 5個按鈕 - 原封不動複製自 RestartWall */}
-      {currentGame === null && (
-        <>
-          {window.innerWidth <= 768 ? (
-            // 手機版 Footer - 2行排列 + 白色卡片背景
-            <div style={{ 
-              width: '100%', 
-              margin: '0 auto', 
-              marginTop: 24,
-              background: 'rgba(255,255,255,0.95)',
-              borderRadius: 16,
-              padding: '16px',
-              boxShadow: '0 2px 12px #6B5BFF22'
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {/* 第一行：我們是誰、隱私權政策、條款/聲明 */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                  <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>🧬 Restarter™｜我們是誰</span>
-                  <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>隱私權政策</span>
-                  <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>條款/聲明</span>
-                </div>
-                {/* 第二行：資料刪除說明、意見箱 */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                  <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>資料刪除說明</span>
-                  <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>💬 意見箱｜我們想聽你說</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            // 桌面版 Footer
-            <div style={{ 
-              width: '100%', 
-              margin: '0 auto', 
-              marginTop: 24,
-              background: 'rgba(255,255,255,0.95)',
-              borderRadius: 16,
-              padding: '16px',
-              boxShadow: '0 2px 12px #6B5BFF22'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-                <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-                  {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
-                   lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
-                   lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
-                   lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
-                   lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
-                   lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
-                   lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
-                   lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
-                   '🧬 Restarter™｜Quis sumus'}
-                </span>
-                <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-                  {lang === 'zh-TW' ? '隱私權政策' : 
-                   lang === 'zh-CN' ? '隐私政策' : 
-                   lang === 'en' ? 'Privacy Policy' : 
-                   lang === 'ja' ? 'プライバシーポリシー' : 
-                   lang === 'ko' ? '개인정보 처리방침' : 
-                   lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
-                   lang === 'vi' ? 'Chính sách bảo mật' : 
-                   lang === 'ms' ? 'Dasar Privasi' : 
-                   'Consilium de Privata'}
-                </span>
-                <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-                  {lang === 'zh-TW' ? '條款/聲明' : 
-                   lang === 'zh-CN' ? '条款/声明' : 
-                   lang === 'en' ? 'Terms/Statement' : 
-                   lang === 'ja' ? '規約/声明' : 
-                   lang === 'ko' ? '약관/성명' : 
-                   lang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
-                   lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
-                   lang === 'ms' ? 'Terma/Pernyataan' : 
-                   'Termini/Declaratio'}
-                </span>
-                <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-                  {lang === 'zh-TW' ? '資料刪除說明' : 
-                   lang === 'zh-CN' ? '数据删除说明' : 
-                   lang === 'en' ? 'Data Deletion' : 
-                   lang === 'ja' ? 'データ削除について' : 
-                   lang === 'ko' ? '데이터 삭제 안내' : 
-                   lang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
-                   lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
-                   lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
-                   'Explicatio Deletionis Datae'}
-                </span>
-                <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-                  {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
-                   lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
-                   lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
-                   lang === 'ja' ? '💬 ご意見箱｜私たちはあなたの声を聞きたい' : 
-                   lang === 'ko' ? '💬 피드백｜우리는 당신의 말을 듣고 싶습니다' : 
-                   lang === 'th' ? '💬 กล่องความคิดเห็น｜เราอยากได้ยินจากคุณ' : 
-                   lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
-                   lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
-                   '💬 Arca Consilii｜Volumus Audire a Te'}
-                </span>
-              </div>
-            </div>
-          )}
-        </>
-      )}
+
     </div>
   );
 }

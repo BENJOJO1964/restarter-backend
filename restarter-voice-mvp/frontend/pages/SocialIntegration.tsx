@@ -1000,45 +1000,19 @@ export default function SocialIntegration() {
       {/* 頂部導航 */}
       <div style={{
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         marginBottom: '30px'
       }}>
-        <button
-          onClick={() => navigate('/')}
-          style={{
-            background: 'rgba(255,255,255,0.9)',
-            border: 'none',
-            borderRadius: '12px',
-            padding: '12px 20px',
-            fontSize: '16px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-          }}
-        >
-          {t.backToHome}
-        </button>
-        
         <h1 style={{
           color: 'white',
           fontSize: '24px',
           fontWeight: '700',
           margin: 0,
-          textAlign: 'center',
-          position: 'absolute',
-          top: '24px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 1000
+          textAlign: 'center'
         }}>
           📊 {t.title}
         </h1>
-        
-
       </div>
 
       {/* 主要內容 */}
@@ -1055,8 +1029,9 @@ export default function SocialIntegration() {
           background: 'rgba(255,255,255,0.95)',
           borderRadius: '20px',
           padding: '40px',
-          maxWidth: '600px',
-          width: '100%',
+          maxWidth: '500px',
+          width: 'calc(100% - 80px)',
+          margin: '0 40px',
           textAlign: 'center',
           boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
         }}>
@@ -1471,24 +1446,7 @@ export default function SocialIntegration() {
         </div>
       )}
 
-      {/* Footer 5個按鈕 - 一行排列 */}
-      <div style={{ 
-        width: '100%', 
-        margin: '0 auto', 
-        marginTop: 24,
-        background: 'rgba(255,255,255,0.95)',
-        borderRadius: 16,
-        padding: '16px',
-        boxShadow: '0 2px 12px #6B5BFF22'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-          <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>{t.about}</span>
-          <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>{t.privacyPolicy}</span>
-          <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>{t.terms}</span>
-          <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>{t.dataDeletion}</span>
-          <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>{t.feedback}</span>
-        </div>
-      </div>
+
     </div>
   );
 } 

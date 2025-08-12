@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { signOut } from 'firebase/auth';
+import { signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../src/firebaseConfig';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -73,10 +72,18 @@ interface SharedHeaderProps {
 
 export default function SharedHeader({ className, style }: SharedHeaderProps) {
   const navigate = useNavigate();
-  const [user] = useAuthState(auth);
+  const [user, setUser] = useState<User | null>(null);
   const { lang } = useLanguage();
   const [showLegalMenu, setShowLegalMenu] = useState(false);
   const legalMenuRef = useRef<HTMLDivElement>(null);
+
+  // 監聽用戶認證狀態
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // 點擊外部關閉選單
   useEffect(() => {

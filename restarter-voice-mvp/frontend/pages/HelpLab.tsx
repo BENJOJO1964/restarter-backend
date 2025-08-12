@@ -1,10 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { getAuth } from 'firebase/auth';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAuth, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import app from '../src/firebaseConfig';
 import { db } from '../src/firebaseConfig';
 import { doc, getDoc, collection, addDoc, getDocs, Timestamp, query, where, updateDoc, doc as fsDoc } from 'firebase/firestore';
 import { useLanguage } from '../contexts/LanguageContext';
 import Footer from '../components/Footer';
+import SharedHeader from '../components/SharedHeader';
+import { LanguageSelector } from '../components/LanguageSelector';
+import { useTestMode } from '../App';
+import { auth } from '../src/firebaseConfig';
+
+const LOGOUT_TEXT = {
+  'zh-TW': '登出',
+  'zh-CN': '登出',
+  'en': 'Logout',
+  'ja': 'ログアウト',
+  'ko': '로그아웃',
+  'th': 'ออกจากระบบ',
+  'vi': 'Đăng xuất',
+  'ms': 'Log keluar',
+  'la': 'Exire'
+};
 
 // 翻譯系統
 const TRANSLATIONS = {
@@ -923,7 +940,16 @@ const getOptions = (lang: string) => {
 };
 
 function ProvideModal({ open, onClose, userInfo, onSubmit }: { open: boolean, onClose: () => void, userInfo: any, onSubmit: (data: any) => Promise<void> }) {
+  const navigate = useNavigate();
   const { lang } = useLanguage();
+  
+  // 當表格打開時，在手機版添加歷史記錄條目
+  useEffect(() => {
+    if (open && window.innerWidth <= 768) {
+      // 添加一個歷史記錄條目，這樣當用戶點擊返回按鈕時會觸發popstate事件
+      window.history.pushState({ modal: 'provide' }, '', window.location.pathname);
+    }
+  }, [open]);
   const options = getOptions(lang);
   const [exp, setExp] = useState<string[]>([]);
   const [expOther, setExpOther] = useState('');
@@ -965,71 +991,174 @@ function ProvideModal({ open, onClose, userInfo, onSubmit }: { open: boolean, on
   };
   return (
     <div style={{ position: 'fixed', zIndex: 9999, left: 0, top: 0, width: '100vw', height: '100vh', background: 'rgba(40,40,80,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-      <form onSubmit={handleSubmit} style={{ background: '#fff', borderRadius: 24, boxShadow: '0 8px 40px #6B5BFF33', padding: 24, minWidth: 360, width: '100%', maxWidth: '500px', position: 'relative', display: 'flex', flexDirection: 'column', gap: 18, maxHeight: 'calc(100vh - 32px)' }}>
+      <form onSubmit={handleSubmit} style={{ 
+        background: '#fff', 
+        borderRadius: 24, 
+        boxShadow: '0 8px 40px #6B5BFF33', 
+        padding: 24, 
+        minWidth: 360, 
+        width: '100%', 
+        maxWidth: '500px', 
+        position: 'relative', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: 18, 
+        maxHeight: 'calc(100vh - 32px)',
+        '@media (max-width: 768px)': {
+          maxHeight: 'calc(100vh - 16px)',
+          margin: '8px',
+          width: 'calc(100% - 16px)',
+          minWidth: 'auto'
+        }
+      }}>
         {/* X 關閉 */}
-        <button type="button" onClick={onClose} style={{ position: 'absolute', top: 18, right: 18, background: 'none', border: 'none', fontSize: 26, color: '#888', cursor: 'pointer', fontWeight: 700, zIndex: 1 }}>×</button>
-        <div style={{ overflow: 'auto', flex: 1, paddingRight: '8px', paddingBottom: '8px', maxHeight: 'calc(100vh - 120px)' }}>
-        <div style={{ fontWeight: 900, fontSize: 22, color: '#6B5BFF', textAlign: 'center', marginBottom: 2 }}>{TRANSLATIONS[lang]?.modals?.provide?.title || '我可以提供幫助 & 合作'}</div>
-        <div style={{ color: '#888', fontSize: 15, textAlign: 'center', marginBottom: 8 }}>{TRANSLATIONS[lang]?.modals?.provide?.subtitle || '在重啟路上，我的經歷和優勢也許可以幫上忙！'}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
-          <img src={userInfo.avatarUrl} alt="avatar" style={{ width: 54, height: 54, borderRadius: '50%', border: '2px solid #e0e7ff', objectFit: 'cover' }} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <span style={{ color: '#1976d2', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setShowMsg(true)}>{userInfo.nickname}</span>
-            <span style={{ color: '#1976d2', fontWeight: 500, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`mailto:${userInfo.email}`)}>{userInfo.email}</span>
-            <span style={{ color: '#555', fontSize: 14 }}>{userInfo.country}｜{userInfo.gender}｜{userInfo.age}</span>
+        <button type="button" onClick={() => {
+          onClose();
+          // 手機版：點擊X按鈕時回到HelpLab頁面
+          if (window.innerWidth <= 768) {
+            navigate('/HelpLab');
+          }
+        }} style={{ position: 'absolute', top: 18, right: 18, background: 'none', border: 'none', fontSize: 26, color: '#888', cursor: 'pointer', fontWeight: 700, zIndex: 1 }}>×</button>
+        
+        {/* 滾動內容區域 */}
+        <div style={{ 
+          overflow: 'auto', 
+          flex: 1, 
+          paddingRight: '8px', 
+          paddingBottom: '8px', 
+          maxHeight: 'calc(100vh - 120px)', 
+          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'smooth',
+          overscrollBehavior: 'contain'
+        }}>
+          <div style={{ fontWeight: 900, fontSize: 22, color: '#6B5BFF', textAlign: 'center', marginBottom: 2 }}>{TRANSLATIONS[lang]?.modals?.provide?.title || '我可以提供幫助 & 合作'}</div>
+          <div style={{ color: '#888', fontSize: 15, textAlign: 'center', marginBottom: 8 }}>{TRANSLATIONS[lang]?.modals?.provide?.subtitle || '在重啟路上，我的經歷和優勢也許可以幫上忙！'}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
+            <img src={userInfo.avatarUrl} alt="avatar" style={{ width: 54, height: 54, borderRadius: '50%', border: '2px solid #e0e7ff', objectFit: 'cover' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <span style={{ color: '#1976d2', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setShowMsg(true)}>{userInfo.nickname}</span>
+              <span style={{ color: '#1976d2', fontWeight: 500, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`mailto:${userInfo.email}`)}>{userInfo.email}</span>
+              <span style={{ color: '#555', fontSize: 14 }}>{userInfo.country}｜{userInfo.gender}｜{userInfo.age}</span>
+            </div>
           </div>
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.experience || '我的經歷（可複選）：'}</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
-          {options.experience.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="checkbox" checked={exp.includes(opt)} onChange={() => handleCheckbox(exp, setExp, opt)} />{opt}
-            </label>
-          ))}
-          <input placeholder={TRANSLATIONS[lang]?.modals?.provide?.other || "其他..."} value={expOther} onChange={e => setExpOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.current || '我的現狀(可複選)：'}</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
-          {options.advantage.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="checkbox" checked={adv.includes(opt)} onChange={() => handleCheckbox(adv, setAdv, opt)} />{opt}
-            </label>
-          ))}
-          <input placeholder={TRANSLATIONS[lang]?.modals?.provide?.other || "其他..."} value={advOther} onChange={e => setAdvOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.target || '我想優先幫助的對象（可複選）：'}</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
-          {options.target.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="checkbox" checked={target.includes(opt)} onChange={() => handleCheckbox(target, setTarget, opt)} />{opt}
-            </label>
-          ))}
-          <input placeholder={TRANSLATIONS[lang]?.modals?.provide?.other || "其他..."} value={targetOther} onChange={e => setTargetOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.helpType || '我可以提供幫助形式：'}</div>
-        <div style={{ display: 'flex', gap: 16, fontSize: 14 }}>
-          {options.helpType.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="radio" name="helptype" checked={helpType===opt} onChange={() => setHelpType(opt)} />{opt}
-            </label>
-          ))}
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.statement || '我的特別聲明（50字內）：'}</div>
-        <input maxLength={50} value={statement} onChange={e => setStatement(e.target.value)} placeholder={TRANSLATIONS[lang]?.modals?.provide?.enterPlaceholder || "請輸入..."} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '4px 10px', fontSize: 14 }} />
-        <div style={{ color: '#888', fontSize: 13, textAlign: 'right', marginTop: -8 }}>{statement.length}/50</div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.frequency || '我可幫助的頻率：'}</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontSize: 14 }}>
-          {options.frequency.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500, marginRight: 12 }}>
-              <input type="radio" name="freq" checked={freq===opt} onChange={() => setFreq(opt)} />{opt}
-            </label>
-          ))}
-          <input placeholder={TRANSLATIONS[lang]?.modals?.provide?.other || "其他..."} value={freqOther} onChange={e => setFreqOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
-        </div>
-        <div style={{ display: 'flex', gap: 18, marginTop: 18, justifyContent: 'center', padding: '8px 0', minHeight: '44px', background: '#fff', zIndex: 10, borderTop: '1px solid #f0f0f0' }}>
-          <button type="button" onClick={onClose} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 18, padding: '8px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', minHeight: '44px', touchAction: 'manipulation', flex: 1, maxWidth: '120px' }}>{TRANSLATIONS[lang]?.modals?.provide?.cancel || '取消'}</button>
-          <button type="submit" style={{ background: 'linear-gradient(90deg, #6e8efb, #a777e3)', color: '#fff', border: 'none', borderRadius: 18, padding: '8px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #a777e355', minHeight: '44px', touchAction: 'manipulation', flex: 1, maxWidth: '120px' }}>{TRANSLATIONS[lang]?.modals?.provide?.submit || '送出'}</button>
-        </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.experience || '我的經歷（可複選）：'}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
+            {options.experience.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                <input type="checkbox" checked={exp.includes(opt)} onChange={() => handleCheckbox(exp, setExp, opt)} />{opt}
+              </label>
+            ))}
+            <input placeholder={TRANSLATIONS[lang]?.modals?.provide?.other || "其他..."} value={expOther} onChange={e => setExpOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
+          </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.current || '我的現狀(可複選)：'}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
+            {options.advantage.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                <input type="checkbox" checked={adv.includes(opt)} onChange={() => handleCheckbox(adv, setAdv, opt)} />{opt}
+              </label>
+            ))}
+            <input placeholder={TRANSLATIONS[lang]?.modals?.provide?.other || "其他..."} value={advOther} onChange={e => setAdvOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
+          </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.target || '我想優先幫助的對象（可複選）：'}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
+            {options.target.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                <input type="checkbox" checked={target.includes(opt)} onChange={() => handleCheckbox(target, setTarget, opt)} />{opt}
+              </label>
+            ))}
+            <input placeholder={TRANSLATIONS[lang]?.modals?.provide?.other || "其他..."} value={targetOther} onChange={e => setTargetOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
+          </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.helpType || '我可以提供幫助形式：'}</div>
+          <div style={{ display: 'flex', gap: 16, fontSize: 14 }}>
+            {options.helpType.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                <input type="radio" name="helptype" checked={helpType===opt} onChange={() => setHelpType(opt)} />{opt}
+              </label>
+            ))}
+          </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.statement || '我的特別聲明（50字內）：'}</div>
+          <input maxLength={50} value={statement} onChange={e => setStatement(e.target.value)} placeholder={TRANSLATIONS[lang]?.modals?.provide?.enterPlaceholder || "請輸入..."} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '4px 10px', fontSize: 14 }} />
+          <div style={{ color: '#888', fontSize: 13, textAlign: 'right', marginTop: -8 }}>{statement.length}/50</div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>{TRANSLATIONS[lang]?.modals?.provide?.frequency || '我可幫助的頻率：'}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontSize: 14 }}>
+            {options.frequency.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500, marginRight: 12 }}>
+                <input type="radio" name="freq" checked={freq===opt} onChange={() => setFreq(opt)} />{opt}
+              </label>
+            ))}
+            <input placeholder={TRANSLATIONS[lang]?.modals?.provide?.other || "其他..."} value={freqOther} onChange={e => setFreqOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
+          </div>
+          
+          {/* 按鈕區域 - 在滾動容器內部 */}
+          <div style={{ 
+            display: 'flex', 
+            gap: 18, 
+            marginTop: 18, 
+            justifyContent: 'center', 
+            padding: '8px 0', 
+            minHeight: '44px', 
+            background: '#fff', 
+            zIndex: 10, 
+            borderTop: '1px solid #f0f0f0',
+            position: 'relative'
+          }}>
+            <button 
+              type="button" 
+              onClick={() => {
+                onClose();
+                // 手機版：點擊取消按鈕時回到HelpLab頁面
+                if (window.innerWidth <= 768) {
+                  navigate('/HelpLab');
+                }
+              }} 
+              style={{ 
+                background: '#eee', 
+                color: '#555', 
+                border: 'none', 
+                borderRadius: 18, 
+                padding: '8px 28px', 
+                fontWeight: 700, 
+                fontSize: 16, 
+                cursor: 'pointer', 
+                minHeight: '44px', 
+                touchAction: 'manipulation', 
+                flex: 1, 
+                maxWidth: '120px',
+                userSelect: 'none'
+              }}
+            >
+              {TRANSLATIONS[lang]?.modals?.provide?.cancel || '取消'}
+            </button>
+            <button 
+              type="submit" 
+              style={{ 
+                background: 'linear-gradient(90deg, #6e8efb, #a777e3)', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: 18, 
+                padding: '8px 28px', 
+                fontWeight: 700, 
+                fontSize: 16, 
+                cursor: 'pointer', 
+                boxShadow: '0 2px 8px #a777e355', 
+                minHeight: '44px', 
+                touchAction: 'manipulation', 
+                flex: 1, 
+                maxWidth: '120px',
+                userSelect: 'none'
+              }}
+            >
+              {TRANSLATIONS[lang]?.modals?.provide?.submit || '送出'}
+            </button>
+          </div>
+          
+          {/* 額外空白區域 - 防止鍵盤彈出時按鈕被隱藏 */}
+          <div style={{ 
+            height: '120px', 
+            width: '100%', 
+            background: 'transparent',
+            flexShrink: 0
+          }}></div>
         </div>
         {/* 留言小視窗 */}
         {showMsg && (
@@ -1074,8 +1203,17 @@ function ProvideModal({ open, onClose, userInfo, onSubmit }: { open: boolean, on
 }
 
 function NeedHelpModal({ open, onClose, userInfo, onSubmit, showMsgSent }: { open: boolean, onClose: () => void, userInfo: any, onSubmit: (data: any) => Promise<void>, showMsgSent: boolean }) {
+  const navigate = useNavigate();
   const { lang } = useLanguage();
   const options = getOptions(lang);
+  
+  // 當表格打開時，在手機版添加歷史記錄條目
+  useEffect(() => {
+    if (open && window.innerWidth <= 768) {
+      // 添加一個歷史記錄條目，這樣當用戶點擊返回按鈕時會觸發popstate事件
+      window.history.pushState({ modal: 'need' }, '', window.location.pathname);
+    }
+  }, [open]);
   const [exp, setExp] = useState<string[]>([]);
   const [expOther, setExpOther] = useState('');
   const [adv, setAdv] = useState<string[]>([]);
@@ -1116,71 +1254,162 @@ function NeedHelpModal({ open, onClose, userInfo, onSubmit, showMsgSent }: { ope
   };
   return (
     <div style={{ position: 'fixed', zIndex: 9999, left: 0, top: 0, width: '100vw', height: '100vh', background: 'rgba(40,40,80,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-      <form onSubmit={handleSubmit} style={{ background: '#fff', borderRadius: 24, boxShadow: '0 8px 40px #6B5BFF33', padding: 24, minWidth: 360, width: '100%', maxWidth: '500px', position: 'relative', display: 'flex', flexDirection: 'column', gap: 18, maxHeight: 'calc(100vh - 32px)' }}>
+      <form onSubmit={handleSubmit} style={{ 
+        background: '#fff', 
+        borderRadius: 24, 
+        boxShadow: '0 8px 40px #6B5BFF33', 
+        padding: 24, 
+        minWidth: 360, 
+        width: '100%', 
+        maxWidth: '500px', 
+        position: 'relative', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: 18, 
+        maxHeight: 'calc(100vh - 32px)',
+        '@media (max-width: 768px)': {
+          maxHeight: 'calc(100vh - 16px)',
+          margin: '8px',
+          width: 'calc(100% - 16px)',
+          minWidth: 'auto'
+        }
+      }}>
         {/* X 關閉 */}
         <button type="button" onClick={onClose} style={{ position: 'absolute', top: 18, right: 18, background: 'none', border: 'none', fontSize: 26, color: '#888', cursor: 'pointer', fontWeight: 700, zIndex: 1 }}>×</button>
-        <div style={{ overflow: 'auto', flex: 1, paddingRight: '8px', paddingBottom: '8px', maxHeight: 'calc(100vh - 120px)' }}>
-        <div style={{ fontWeight: 900, fontSize: 22, color: '#ff4d4f', textAlign: 'center', marginBottom: 2 }}>我需要幫助</div>
-        <div style={{ color: '#888', fontSize: 15, textAlign: 'center', marginBottom: 8 }}>請描述你遇到的困難或需要協助的地方，讓社群夥伴能更好幫助你！</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
-          <img src={userInfo.avatarUrl} alt="avatar" style={{ width: 54, height: 54, borderRadius: '50%', border: '2px solid #e0e7ff', objectFit: 'cover' }} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <span style={{ color: '#1976d2', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setShowMsg(true)}>{userInfo.nickname}</span>
-            <span style={{ color: '#1976d2', fontWeight: 500, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`mailto:${userInfo.email}`)}>{userInfo.email}</span>
-            <span style={{ color: '#555', fontSize: 14 }}>{userInfo.country}｜{userInfo.gender}｜{userInfo.age}</span>
+        
+        {/* 滾動內容區域 */}
+        <div style={{ 
+          overflow: 'auto', 
+          flex: 1, 
+          paddingRight: '8px', 
+          paddingBottom: '8px', 
+          maxHeight: 'calc(100vh - 120px)', 
+          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'smooth',
+          overscrollBehavior: 'contain'
+        }}>
+          <div style={{ fontWeight: 900, fontSize: 22, color: '#ff4d4f', textAlign: 'center', marginBottom: 2 }}>我需要幫助</div>
+          <div style={{ color: '#888', fontSize: 15, textAlign: 'center', marginBottom: 8 }}>請描述你遇到的困難或需要協助的地方，讓社群夥伴能更好幫助你！</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
+            <img src={userInfo.avatarUrl} alt="avatar" style={{ width: 54, height: 54, borderRadius: '50%', border: '2px solid #e0e7ff', objectFit: 'cover' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <span style={{ color: '#1976d2', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => setShowMsg(true)}>{userInfo.nickname}</span>
+              <span style={{ color: '#1976d2', fontWeight: 500, cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`mailto:${userInfo.email}`)}>{userInfo.email}</span>
+              <span style={{ color: '#555', fontSize: 14 }}>{userInfo.country}｜{userInfo.gender}｜{userInfo.age}</span>
+            </div>
           </div>
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>我的經歷（可複選）：</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
-          {options.experience.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="checkbox" checked={exp.includes(opt)} onChange={() => handleCheckbox(exp, setExp, opt)} />{opt}
-            </label>
-          ))}
-          <input placeholder="其他..." value={expOther} onChange={e => setExpOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>我的現狀(可複選)：</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
-          {options.advantage.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="checkbox" checked={adv.includes(opt)} onChange={() => handleCheckbox(adv, setAdv, opt)} />{opt}
-            </label>
-          ))}
-          <input placeholder="其他..." value={advOther} onChange={e => setAdvOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>我遇到的困難/需求（可複選）：</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
-          {options.target.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="checkbox" checked={target.includes(opt)} onChange={() => handleCheckbox(target, setTarget, opt)} />{opt}
-            </label>
-          ))}
-          <input placeholder="其他..." value={targetOther} onChange={e => setTargetOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>希望獲得協助形式：</div>
-        <div style={{ display: 'flex', gap: 16, fontSize: 14 }}>
-          {options.helpType.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
-              <input type="radio" name="helptype" checked={helpType===opt} onChange={() => setHelpType(opt)} />{opt}
-            </label>
-          ))}
-        </div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>補充說明（50字內）：</div>
-        <input maxLength={50} value={statement} onChange={e => setStatement(e.target.value)} placeholder="請輸入..." style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '4px 10px', fontSize: 14 }} />
-        <div style={{ color: '#888', fontSize: 13, textAlign: 'right', marginTop: -8 }}>{statement.length}/50</div>
-        <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>希望獲得協助頻率：</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontSize: 14 }}>
-          {options.frequency.map((opt: string) => (
-            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500, marginRight: 12 }}>
-              <input type="radio" name="freq" checked={freq===opt} onChange={() => setFreq(opt)} />{opt}
-            </label>
-          ))}
-          <input placeholder="其他..." value={freqOther} onChange={e => setFreqOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
-        </div>
-        <div style={{ display: 'flex', gap: 18, marginTop: 18, justifyContent: 'center', padding: '8px 0', minHeight: '44px', background: '#fff', zIndex: 10, borderTop: '1px solid #f0f0f0' }}>
-          <button type="button" onClick={onClose} style={{ background: '#eee', color: '#555', border: 'none', borderRadius: 18, padding: '8px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', minHeight: '44px', touchAction: 'manipulation', flex: 1, maxWidth: '120px' }}>取消</button>
-          <button type="submit" style={{ background: 'linear-gradient(90deg, #6e8efb, #a777e3)', color: '#fff', border: 'none', borderRadius: 18, padding: '8px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #a777e355', minHeight: '44px', touchAction: 'manipulation', flex: 1, maxWidth: '120px' }}>送出</button>
-        </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>我的經歷（可複選）：</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
+            {options.experience.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                <input type="checkbox" checked={exp.includes(opt)} onChange={() => handleCheckbox(exp, setExp, opt)} />{opt}
+              </label>
+            ))}
+            <input placeholder="其他..." value={expOther} onChange={e => setExpOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
+          </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>我的現狀(可複選)：</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
+            {options.advantage.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                <input type="checkbox" checked={adv.includes(opt)} onChange={() => handleCheckbox(adv, setAdv, opt)} />{opt}
+              </label>
+            ))}
+            <input placeholder="其他..." value={advOther} onChange={e => setAdvOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
+          </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>我遇到的困難/需求（可複選）：</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 14 }}>
+            {options.target.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                <input type="checkbox" checked={target.includes(opt)} onChange={() => handleCheckbox(target, setTarget, opt)} />{opt}
+              </label>
+            ))}
+            <input placeholder="其他..." value={targetOther} onChange={e => setTargetOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
+          </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>希望獲得協助形式：</div>
+          <div style={{ display: 'flex', gap: 16, fontSize: 14 }}>
+            {options.helpType.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+                <input type="radio" name="helptype" checked={helpType===opt} onChange={() => setHelpType(opt)} />{opt}
+              </label>
+            ))}
+          </div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>補充說明（50字內）：</div>
+          <input maxLength={50} value={statement} onChange={e => setStatement(e.target.value)} placeholder="請輸入..." style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '4px 10px', fontSize: 14 }} />
+          <div style={{ color: '#888', fontSize: 13, textAlign: 'right', marginTop: -8 }}>{statement.length}/50</div>
+          <div style={{ fontWeight: 700, marginTop: 8, fontSize: 15 }}>希望獲得協助頻率：</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontSize: 14 }}>
+            {options.frequency.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500, marginRight: 12 }}>
+                <input type="radio" name="freq" checked={freq===opt} onChange={() => setFreq(opt)} />{opt}
+              </label>
+            ))}
+            <input placeholder="其他..." value={freqOther} onChange={e => setFreqOther(e.target.value)} style={{ border: '1px solid #e0e7ff', borderRadius: 8, padding: '2px 8px', minWidth: 60, fontSize: 14 }} />
+          </div>
+          
+          {/* 按鈕區域 - 在滾動容器內部 */}
+          <div style={{ 
+            display: 'flex', 
+            gap: 18, 
+            marginTop: 18, 
+            justifyContent: 'center', 
+            padding: '8px 0', 
+            minHeight: '44px', 
+            background: '#fff', 
+            zIndex: 10, 
+            borderTop: '1px solid #f0f0f0',
+            position: 'relative'
+          }}>
+            <button 
+              type="button" 
+              onClick={onClose} 
+              style={{ 
+                background: '#eee', 
+                color: '#555', 
+                border: 'none', 
+                borderRadius: 18, 
+                padding: '8px 28px', 
+                fontWeight: 700, 
+                fontSize: 16, 
+                cursor: 'pointer', 
+                minHeight: '44px', 
+                touchAction: 'manipulation', 
+                flex: 1, 
+                maxWidth: '120px',
+                userSelect: 'none'
+              }}
+            >
+              取消
+            </button>
+            <button 
+              type="submit" 
+              style={{ 
+                background: 'linear-gradient(90deg, #6e8efb, #a777e3)', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: 18, 
+                padding: '8px 28px', 
+                fontWeight: 700, 
+                fontSize: 16, 
+                cursor: 'pointer', 
+                boxShadow: '0 2px 8px #a777e355', 
+                minHeight: '44px', 
+                touchAction: 'manipulation', 
+                flex: 1, 
+                maxWidth: '120px',
+                userSelect: 'none'
+              }}
+            >
+              送出
+            </button>
+          </div>
+          
+          {/* 額外空白區域 - 防止鍵盤彈出時按鈕被隱藏 */}
+          <div style={{ 
+            height: '120px', 
+            width: '100%', 
+            background: 'transparent',
+            flexShrink: 0
+          }}></div>
         </div>
         {/* 留言小視窗 */}
         {showMsg && (
@@ -1225,8 +1454,58 @@ function NeedHelpModal({ open, onClose, userInfo, onSubmit, showMsgSent }: { ope
 }
 
 export default function HelpLab() {
-  const { lang } = useLanguage();
+  const { lang, setLang } = useLanguage();
+  const navigate = useNavigate();
   const sections = getSections(lang);
+  const [user, setUser] = useState<User | null>(null);
+  const [showLegalMenu, setShowLegalMenu] = useState(false);
+  const [showLangBox, setShowLangBox] = useState(false);
+  const legalMenuRef = useRef<HTMLDivElement>(null);
+  const langBoxRef = useRef<HTMLDivElement>(null);
+  const { isTestMode } = useTestMode();
+  
+  // 監聽用戶認證狀態
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 監聽瀏覽器返回按鈕 - 手機版時導航到HelpLab頁面
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // 手機版：當用戶點擊瀏覽器返回按鈕時，導航到HelpLab頁面
+      if (window.innerWidth <= 768) {
+        navigate('/HelpLab');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [navigate]);
+
+  // 點擊外部關閉選單
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (legalMenuRef.current && !legalMenuRef.current.contains(event.target as Node)) {
+        setShowLegalMenu(false);
+      }
+      if (langBoxRef.current && !langBoxRef.current.contains(event.target as Node)) {
+        setShowLangBox(false);
+      }
+    };
+
+    if (showLegalMenu || showLangBox) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showLegalMenu, showLangBox]);
   
   // 簡化的翻譯系統
   const getText = (key: string) => {
@@ -1445,7 +1724,6 @@ export default function HelpLab() {
   const [supplyList, setSupplyList] = useState<any[]>([]);
   const [expandedIdx, setExpandedIdx] = useState<number|null>(null);
   const auth = getAuth(app);
-  const user = auth.currentUser;
   const [toast, setToast] = useState('');
   const [showMsgModal, setShowMsgModal] = useState(false);
   const [msgTo, setMsgTo] = useState<any>(null);
@@ -1695,7 +1973,17 @@ export default function HelpLab() {
   // 進入互助房 tab 時自動 fetch
   useEffect(()=>{ if(tab==='room') fetchHelpNeedsList(); },[tab]);
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%)', padding: '0 0 48px 0', position:'relative' }}>
+    <div style={{ width: '100vw', height: '100vh', overflow: 'auto', position: 'relative' }}>
+      {/* 手機適配：檢測螢幕寬度 */}
+      {window.innerWidth <= 768 ? (
+        // 手機版佈局
+        <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%)' }}>
+          {/* 手機版共用頁頭 */}
+          <SharedHeader />
+          
+          {/* 手機版主內容區 */}
+          <div style={{ marginTop: 60, padding: '16px', flex: 1, overflowY: 'auto', minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%)', paddingBottom: '48px', position:'relative' }}>
+    
       {/* 訊息彈窗 */}
       {showInbox && (
         <>
@@ -1754,7 +2042,7 @@ export default function HelpLab() {
                     <div style={{ color:'#232946', marginBottom:8, lineHeight:'1.5' }}>{msg.content}</div>
                     <div style={{ color:'#888', fontSize:13, marginBottom:8 }}>{msg.timestamp?.toDate?.().toLocaleString?.()}</div>
                     <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-                      <span href={`mailto:${msg.fromEmail}`} style={{ color:'#6B5BFF', fontWeight:700, textDecoration:'underline', fontSize:13 }}>{TRANSLATIONS[lang]?.messages?.contactUser || '聯絡對方'}</span>
+                      <span onClick={() => window.open(`mailto:${msg.fromEmail}`)} style={{ color:'#6B5BFF', fontWeight:700, textDecoration:'underline', fontSize:13, cursor: 'pointer' }}>{TRANSLATIONS[lang]?.messages?.contactUser || '聯絡對方'}</span>
                       <button 
                         onClick={(e) => {
                           e.stopPropagation(); // 防止觸發父元素的點擊事件
@@ -1793,28 +2081,6 @@ export default function HelpLab() {
           {toast}
         </div>
       )}
-      {/* 返回按鈕 - 頁面左上角 */}
-      <button
-          onClick={() => window.location.href = '/'}
-          style={{
-              position: 'absolute',
-              top: '20px',
-              left: '20px',
-              zIndex: 1000,
-              fontWeight: 700,
-              fontSize: 16,
-              padding: '8px 16px',
-              borderRadius: 8,
-              border: '1.5px solid #6B5BFF',
-              background: '#fff',
-              color: '#6B5BFF',
-              cursor: 'pointer',
-              minWidth: 80,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          }}
-      >
-          {getText('back')}
-      </button>
       
       {/* Top Bar 獨立卡片 - 調整佈局，主標題和🔔居中 */}
       <div
@@ -1922,7 +2188,13 @@ export default function HelpLab() {
             <div style={{ textAlign: 'center', color: '#888', fontSize: 15, marginTop: 40 }}>
               {getText('rule')}
             </div>
-            <ProvideModal open={showProvide} onClose={()=>setShowProvide(false)} userInfo={userInfo} onSubmit={handleProvideSubmit} />
+            <ProvideModal open={showProvide} onClose={()=>{
+              setShowProvide(false);
+              // 手機版：點擊取消按鈕時回到HelpLab頁面
+              if (window.innerWidth <= 768) {
+                navigate('/HelpLab');
+              }
+            }} userInfo={userInfo} onSubmit={handleProvideSubmit} />
           </>
         )}
         {tab==='supply' && (
@@ -1968,7 +2240,7 @@ export default function HelpLab() {
                           <div style={{ marginBottom:8 }}><b>特別聲明：</b>{item.statement}</div>
                           <div style={{ marginBottom:8 }}><b>幫助頻率：</b>{item.freq}{item.freqOther?`、${item.freqOther}`:''}</div>
                           <div style={{ marginTop:12 }}>
-                            <span href={`mailto:${item.email}`} style={{ color:'#6B5BFF', textDecoration:'underline', marginLeft:12 }}>{item.email}</span>
+                            <span onClick={() => window.open(`mailto:${item.email}`)} style={{ color:'#6B5BFF', textDecoration:'underline', marginLeft:12, cursor: 'pointer' }}>{item.email}</span>
                           </div>
                         </td>
                       </tr>
@@ -2025,7 +2297,7 @@ export default function HelpLab() {
                           <div style={{ marginBottom:8 }}><b>補充說明：</b>{item.statement}</div>
                           <div style={{ marginBottom:8 }}><b>協助頻率：</b>{item.freq}{item.freqOther?`、${item.freqOther}`:''}</div>
                           <div style={{ marginTop:12 }}>
-                            <span href={`mailto:${item.email}`} style={{ color:'#ff4d4f', textDecoration:'underline', marginLeft:12 }}>{item.email}</span>
+                            <span onClick={() => window.open(`mailto:${item.email}`)} style={{ color:'#ff4d4f', textDecoration:'underline', marginLeft:12, cursor: 'pointer' }}>{item.email}</span>
                           </div>
                         </td>
                       </tr>
@@ -2051,76 +2323,553 @@ export default function HelpLab() {
           </div>
         </div>
       )}
-
-      
-      {/* Footer 5個按鈕 - 一行排列 */}
-      <div style={{ 
-        width: '100%', 
-        margin: '0 auto', 
-        marginTop: 24,
-        background: 'rgba(255,255,255,0.95)',
-        borderRadius: 16,
-        padding: '16px',
-        boxShadow: '0 2px 12px #6B5BFF22'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-          <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
-             lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
-             lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
-             lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
-             lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
-             lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
-             lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
-             lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
-             '🧬 Restarter™｜Quis sumus'}
-          </span>
-          <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '隱私權政策' : 
-             lang === 'zh-CN' ? '隐私政策' : 
-             lang === 'en' ? 'Privacy Policy' : 
-             lang === 'ja' ? 'プライバシーポリシー' : 
-             lang === 'ko' ? '개인정보 처리방침' : 
-             lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
-             lang === 'vi' ? 'Chính sách bảo mật' : 
-             lang === 'ms' ? 'Dasar Privasi' : 
-             'Consilium de Privata'}
-          </span>
-          <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '條款/聲明' : 
-             lang === 'zh-CN' ? '条款/声明' : 
-             lang === 'en' ? 'Terms/Statement' : 
-             lang === 'ja' ? '規約/声明' : 
-             lang === 'ko' ? '약관/성명' : 
-             lang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
-             lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
-             lang === 'ms' ? 'Terma/Pernyataan' : 
-             'Termini/Declaratio'}
-          </span>
-          <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '資料刪除說明' : 
-             lang === 'zh-CN' ? '数据删除说明' : 
-             lang === 'en' ? 'Data Deletion' : 
-             lang === 'ja' ? 'データ削除について' : 
-             lang === 'ko' ? '데이터 삭제 안내' : 
-             lang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
-             lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
-             lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
-             'Explicatio Deletionis Datae'}
-          </span>
-          <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
-             lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
-             lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
-             lang === 'ja' ? '💬 ご意見箱｜私たちはあなたの声を聞きたい' : 
-             lang === 'ko' ? '💬 피드백｜우리는 당신의 말을 듣고 싶습니다' : 
-             lang === 'th' ? '💬 กล่องความคิดเห็น｜เราอยากได้ยินจากคุณ' : 
-             lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
-             lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
-             '💬 Arca Consilii｜Volumus Audire a Te'}
-          </span>
+          
+          </div>
         </div>
-      </div>
+      ) : (
+        // 桌面版佈局
+        <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%)', padding: '0 0 48px 0', position:'relative', overflow: 'auto' }}>
+          {/* 桌面版頂部導航 - 完整複製首頁的頁頭 */}
+          <div style={{ position: 'fixed', top: 8, right: 36, zIndex: 9999, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18, pointerEvents: 'auto', width: '100%', justifyContent: 'flex-end' }}>
+            {/* 左側：LOGO */}
+            <div style={{ position: 'fixed', top: 16, left: 42, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 10000, paddingTop: 0, marginTop: 0 }}>
+              <img src="/ctx-logo.png" style={{ marginBottom: 0, width: 182, height: 182, cursor: 'pointer', marginTop: '-40px' }} onClick={() => setTab('provide')} />
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'row', gap: 18, marginRight: 24 }}>
+              <button 
+                className="topbar-btn" 
+                onClick={() => navigate('/about')} 
+                style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 80 }}
+                aria-label={lang==='zh-TW'?'了解 Restarter 平台':'zh-CN'===lang?'了解 Restarter 平台':'en'===lang?'Learn about Restarter platform':'ja'===lang?'Restarter プラットフォームについて':'ko'===lang?'Restarter 플랫폼에 대해 알아보기':'th'===lang?'เรียนรู้เกี่ยวกับแพลตฟอร์ม Restarter':'vi'===lang?'Tìm hiểu về nền tảng Restarter':'ms'===lang?'Ketahui tentang platform Restarter':'Cognosce de suggestum Restarter'}
+                role="button"
+              >
+                {lang==='zh-TW'?'🧬 Restarter™｜我們是誰':'zh-CN'===lang?'🧬 Restarter™｜我们是谁':'en'===lang?'🧬 Restarter™｜Who We Are':'ja'===lang?'🧬 Restarter™｜私たちについて':'ko'===lang?'🧬 Restarter™｜우리는 누구인가':'th'===lang?'🧬 Restarter™｜เราเป็นใคร':'vi'===lang?'🧬 Restarter™｜Chúng tôi là ai':'ms'===lang?'🧬 Restarter™｜Siapa Kami':'🧬 Restarter™｜Quis sumus'}
+              </button>
+              <button 
+                className="topbar-btn" 
+                onClick={() => navigate('/feedback')} 
+                style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 100 }}
+                aria-label={lang==='zh-TW'?'提供意見和建議':'zh-CN'===lang?'提供意见和建议':'en'===lang?'Provide feedback and suggestions':'ja'===lang?'ご意見やご提案を提供':'ko'===lang?'의견과 제안 제공':'th'===lang?'ให้ข้อเสนอแนะและคำแนะนำ':'vi'===lang?'Cung cấp phản hồi và đề xuất':'ms'===lang?'Berikan maklum balas dan cadangan':'Praebe consilia et suggestiones'}
+                role="button"
+              >
+                {lang==='zh-TW'?'💬 意見箱｜我們想聽你說':'zh-CN'===lang?'💬 意见箱｜我们想听你说':'en'===lang?'💬 Feedback｜We Want to Hear You':'ja'===lang?'💬 ご意見箱｜あなたの声を聞かせて':'ko'===lang?'💬 피드백｜여러분의 의견을 듣고 싶어요':'th'===lang?'💬 กล่องความคิดเห็น｜เราอยากฟังคุณ':'vi'===lang?'💬 Hộp góp ý｜Chúng tôi muốn lắng nghe bạn':'ms'===lang?'💬 Kotak Maklum Balas｜Kami ingin mendengar anda':'💬 Arca Consilii｜Te audire volumus'}
+              </button>
+
+              {user ? (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <img src={user.photoURL || '/ctx-logo.png'} alt="avatar" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid #90caf9' }} />
+                    <span style={{ color: '#1976d2', fontWeight: 700, fontSize: 16 }}>{user.displayName || user.email || '用戶'}</span>
+                    <button className="topbar-btn" onClick={async () => { await signOut(auth); }} style={{ background: '#fff', color: '#ff6347', border: '2px solid #ffb4a2', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 14px', marginLeft: 6 }}>{LOGOUT_TEXT[lang]}</button>
+                  </div>
+                </>
+              ) : (
+                <button className="topbar-btn" onClick={() => navigate('/register')} style={{ background: '#fff', color: '#1976d2', border: '2px solid #90caf9', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 10px', minWidth: 90 }}>{lang==='zh-TW'?'註冊/登入':'zh-CN'===lang?'注册/登录':'en'===lang?'Register / Login':'ja'===lang?'登録/ログイン':'ko'===lang?'가입/로그인':'th'===lang?'สมัคร/เข้าสู่ระบบ':'vi'===lang?'Đăng ký/Đăng nhập':'ms'===lang?'Daftar / Log Masuk':'Registrare / Login'}</button>
+              )}
+            </div>
+            {/* 語言選擇按鈕，靠右且寬度縮短，點擊彈出小框 */}
+            <div ref={langBoxRef} style={{ position: 'relative', display: 'inline-block' }} className="language-selector">
+              <button
+                className="topbar-btn"
+                style={{
+                  background: '#6B5BFF',
+                  color: '#fff',
+                  border: '2px solid #6B5BFF',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  fontSize: 16,
+                  padding: '8px 10px',
+                  minWidth: 90,
+                  maxWidth: 120,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+                onClick={() => setShowLangBox(v => !v)}
+              >
+                {lang === 'zh-TW' ? '繁中' : lang === 'zh-CN' ? '简中' : lang === 'en' ? 'English' : lang === 'ja' ? '日本語' : lang === 'ko' ? '한국어' : lang === 'th' ? 'ไทย' : lang === 'vi' ? 'Tiếng Việt' : lang === 'ms' ? 'Bahasa Melayu' : 'Latin'}
+                <span style={{ marginLeft: 6 }}>▼</span>
+              </button>
+              {showLangBox && (
+                <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', border: '1.5px solid #6B5BFF', borderRadius: 8, boxShadow: '0 4px 16px #0002', zIndex: 9999, minWidth: 120 }}>
+                  {['zh-TW', 'zh-CN', 'en', 'ja', 'ko', 'th', 'vi', 'ms', 'la'].map(l => (
+                    <div key={l} style={{ padding: '10px 18px', cursor: 'pointer', color: l === lang ? '#6B5BFF' : '#232946', fontWeight: l === lang ? 700 : 500, background: l === lang ? '#f3f0ff' : '#fff' }} onClick={() => { setLang(l as any); setShowLangBox(false); }}>
+                      {l === 'zh-TW' ? '繁中' : l === 'zh-CN' ? '简中' : l === 'en' ? 'English' : l === 'ja' ? '日本語' : l === 'ko' ? '한국어' : l === 'th' ? 'ไทย' : l === 'vi' ? 'Tiếng Việt' : l === 'ms' ? 'Bahasa Melayu' : 'Latin'}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* 漢堡選單 - 法律文件 */}
+            <div ref={legalMenuRef} style={{ position: 'relative', display: 'inline-block' }} className="legal-menu">
+              <button
+                className="topbar-btn"
+                style={{
+                  background: '#fff',
+                  color: '#6B5BFF',
+                  border: '2px solid #6B5BFF',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  fontSize: 16,
+                  padding: '8px 10px',
+                  minWidth: 44,
+                  height: '44px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.3s ease'
+                }}
+                onClick={() => setShowLegalMenu(v => !v)}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#f3f0ff';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = '#fff';
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                  <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                  <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                </div>
+              </button>
+              {showLegalMenu && (
+                <div style={{ 
+                  position: 'absolute', 
+                  right: 0, 
+                  top: '110%', 
+                  background: '#fff', 
+                  border: '1.5px solid #6B5BFF', 
+                  borderRadius: 8, 
+                  boxShadow: '0 4px 16px #0002', 
+                  zIndex: 9999, 
+                  minWidth: 180,
+                  maxWidth: 220,
+                  padding: '8px 0'
+                }}>
+                  <div style={{ padding: '8px 16px', borderBottom: '1px solid #eee', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#6B5BFF' }}>
+                      {lang === 'zh-TW' ? '法律文件' : 
+                       lang === 'zh-CN' ? '法律文件' : 
+                       lang === 'en' ? 'Legal Documents' : 
+                       lang === 'ja' ? '法的文書' : 
+                       lang === 'ko' ? '법적 문서' : 
+                       lang === 'th' ? 'เอกสารทางกฎหมาย' : 
+                       lang === 'vi' ? 'Tài liệu pháp lý' : 
+                       lang === 'ms' ? 'Dokumen Undang-undang' : 
+                       'Documenta Iuridica'}
+                    </span>
+                  </div>
+                  {[
+                    { key: 'privacy', title: { 'zh-TW': '隱私權政策', 'zh-CN': '隐私政策', 'en': 'Privacy Policy', 'ja': 'プライバシーポリシー', 'ko': '개인정보보호정책', 'th': 'นโยบายความเป็นส่วนตัว', 'vi': 'Chính sách bảo mật', 'ms': 'Dasar Privasi', 'la': 'Consilium de Privata' }, path: '/privacy-policy' },
+                    { key: 'terms', title: { 'zh-TW': '條款/聲明', 'zh-CN': '条款/声明', 'en': 'Terms/Statement', 'ja': '利用規約/声明', 'ko': '약관/성명', 'th': 'ข้อกำหนด/คำแถลง', 'vi': 'Điều khoản/Tuyên bố', 'ms': 'Terma/Penyata', 'la': 'Termini/Declaratio' }, path: '/terms' },
+                    { key: 'data', title: { 'zh-TW': '資料刪除說明', 'zh-CN': '数据删除说明', 'en': 'Data Deletion', 'ja': 'データ削除について', 'ko': '데이터 삭제 설명', 'th': 'คำอธิบายการลบข้อมูล', 'vi': 'Giải thích xóa dữ liệu', 'ms': 'Penerangan Pemadaman Data', 'la': 'Explicatio Deletionis Datae' }, path: '/data-deletion' },
+                    { key: 'ai', title: { 'zh-TW': 'AI使用聲明', 'zh-CN': 'AI使用声明', 'en': 'AI Usage Statement', 'ja': 'AI利用声明', 'ko': 'AI 사용 성명', 'th': 'คำแถลงการใช้ AI', 'vi': 'Tuyên bố sử dụng AI', 'ms': 'Penyata Penggunaan AI', 'la': 'Declaratio Usus AI' }, path: '/ai-statement' },
+                    { key: 'mental', title: { 'zh-TW': '心理健康免責聲明', 'zh-CN': '心理健康免责声明', 'en': 'Mental Health Disclaimer', 'ja': 'メンタルヘルス免責事項', 'ko': '정신건강 면책조항', 'th': 'ข้อจำกัดความรับผิดชอบด้านสุขภาพจิต', 'vi': 'Tuyên bố miễn trừ sức khỏe tâm thần', 'ms': 'Penafian Kesihatan Mental', 'la': 'Renuntiatio Salutis Mentalis' }, path: '/mental-health-disclaimer' },
+                    { key: 'cookie', title: { 'zh-TW': 'Cookie政策', 'zh-CN': 'Cookie政策', 'en': 'Cookie Policy', 'ja': 'Cookieポリシー', 'ko': '쿠키 정책', 'th': 'นโยบายคุกกี้', 'vi': 'Chính sách Cookie', 'ms': 'Dasar Cookie', 'la': 'Politica Cookie' }, path: '/cookie-policy' },
+                    { key: 'children', title: { 'zh-TW': '兒童隱私保護', 'zh-CN': '儿童隐私保护', 'en': 'Children\'s Privacy', 'ja': '児童プライバシー保護', 'ko': '아동 개인정보 보호', 'th': 'การคุ้มครองความเป็นส่วนตัวของเด็ก', 'vi': 'Bảo vệ quyền riêng tư trẻ em', 'ms': 'Privasi Kanak-kanak', 'la': 'Privata Puerorum' }, path: '/children-privacy' },
+                    { key: 'international', title: { 'zh-TW': '國際用戶聲明', 'zh-CN': '国际用户声明', 'en': 'International Users', 'ja': '国際ユーザー声明', 'ko': '국제 사용자 성명', 'th': 'คำแถลงสำหรับผู้ใช้ระหว่างประเทศ', 'vi': 'Tuyên bố người dùng quốc tế', 'ms': 'Penyata Pengguna Antarabangsa', 'la': 'Declaratio Usuarii Internationalis' }, path: '/international-users' },
+                    { key: 'security', title: { 'zh-TW': '安全聲明', 'zh-CN': '安全声明', 'en': 'Security Statement', 'ja': 'セキュリティ声明', 'ko': '보안 성명', 'th': 'คำแถลงความปลอดภัย', 'vi': 'Tuyên bố bảo mật', 'ms': 'Penyata Keselamatan', 'la': 'Declaratio Securitatis' }, path: '/security-statement' },
+                    { key: 'update', title: { 'zh-TW': '更新通知機制', 'zh-CN': '更新通知机制', 'en': 'Update Notification', 'ja': '更新通知メカニズム', 'ko': '업데이트 알림 메커니즘', 'th': 'กลไกการแจ้งเตือนการอัปเดต', 'vi': 'Cơ chế thông báo cập nhật', 'ms': 'Mekanisme Pemberitahuan Kemas Kini', 'la': 'Mechanismus Notificationis Renovationis' }, path: '/update-notification' }
+                  ].map(item => (
+                    <div 
+                      key={item.key}
+                      style={{ 
+                        padding: '8px 12px', 
+                        cursor: 'pointer', 
+                        color: '#232946', 
+                        fontWeight: 500, 
+                        background: '#fff',
+                        fontSize: '11px',
+                        borderBottom: '1px solid #f0f0f0',
+                        transition: 'all 0.2s ease'
+                      }} 
+                      onClick={() => {
+                        navigate(item.path);
+                        setShowLegalMenu(false);
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = '#f3f0ff';
+                        e.currentTarget.style.color = '#6B5BFF';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.color = '#232946';
+                      }}
+                    >
+                      {item.title[lang] || item.title['zh-TW']}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* 測試模式按鈕 */}
+          <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 10001 }}>
+            <button
+              style={{
+                background: isTestMode ? '#ff4d4f' : '#52c41a',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                padding: '6px 12px',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}
+            >
+              測試模式 {isTestMode ? 'ON' : 'OFF'}
+            </button>
+          </div>
+          
+          {/* 桌面版主內容區 */}
+          <div style={{ padding: '120px 20px 20px 20px', maxWidth: 1200, margin: '0 auto' }}>
+            {/* 訊息彈窗 */}
+            {showInbox && (
+              <>
+                {/* 背景遮罩 */}
+                <div 
+                  style={{ 
+                    position: 'fixed', 
+                    top: 0, 
+                    left: 0, 
+                    right: 0, 
+                    bottom: 0, 
+                    background: 'rgba(0,0,0,0.3)', 
+                    zIndex: 10000 
+                  }}
+                  onClick={() => setShowInbox(false)}
+                />
+                {/* 跳窗內容 */}
+                <div 
+                  style={{ 
+                    position:'fixed', 
+                    top:70, 
+                    right:36, 
+                    background:'#fff', 
+                    borderRadius:18, 
+                    boxShadow:'0 4px 24px #6B5BFF33', 
+                    padding:24, 
+                    minWidth:320, 
+                    zIndex:10001 
+                  }}
+                >
+                  <div style={{ fontWeight:900, fontSize:20, color:'#6B5BFF', marginBottom:12 }}>{TRANSLATIONS[lang]?.messages?.inboxTitle || '站內訊息'}</div>
+                  {unreadMsgs.length===0 && <div style={{ color:'#888', fontSize:15 }}>{TRANSLATIONS[lang]?.messages?.noMessages || '目前沒有新訊息'}</div>}
+                  {unreadMsgs.map(msg=>(
+                    <div key={msg.id} style={{ background:'#f7f7ff', borderRadius:12, padding:12, marginBottom:12, boxShadow:'0 2px 8px #6B5BFF11', cursor:'pointer' }}
+                         onClick={() => {
+                           // 切換訊息的展開狀態
+                           setExpandedMessages(prev => ({
+                             ...prev,
+                             [msg.id]: !prev[msg.id]
+                           }));
+                         }}>
+                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
+                        <div style={{ fontWeight:700, color:'#1976d2' }}>{msg.fromNickname} {TRANSLATIONS[lang]?.messages?.messageFrom || '給你的留言：'}</div>
+                        <span style={{ fontSize:12, color:'#888' }}>{expandedMessages[msg.id] ? '收起' : '展開'}</span>
+                      </div>
+                      
+                      {/* 展開的詳細內容 */}
+                      {expandedMessages[msg.id] && (
+                        <div style={{ 
+                          background:'rgba(255,255,255,0.8)', 
+                          borderRadius:8, 
+                          padding:12, 
+                          marginBottom:8,
+                          border:'1px solid #e0e7ff'
+                        }}>
+                          <div style={{ color:'#232946', marginBottom:8, lineHeight:'1.5' }}>{msg.content}</div>
+                          <div style={{ color:'#888', fontSize:13, marginBottom:8 }}>{msg.timestamp?.toDate?.().toLocaleString?.()}</div>
+                          <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                            <span onClick={() => window.open(`mailto:${msg.fromEmail}`)} style={{ color:'#6B5BFF', fontWeight:700, textDecoration:'underline', fontSize:13, cursor: 'pointer' }}>{TRANSLATIONS[lang]?.messages?.contactUser || '聯絡對方'}</span>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation(); // 防止觸發父元素的點擊事件
+                                markMsgRead(msg.id);
+                              }} 
+                              style={{ 
+                                background:'#eee', 
+                                color:'#6B5BFF', 
+                                border:'none', 
+                                borderRadius:6, 
+                                padding:'4px 12px', 
+                                fontWeight:700, 
+                                fontSize:13, 
+                                cursor:'pointer' 
+                              }}
+                            >
+                              {TRANSLATIONS[lang]?.messages?.markRead || '標記已讀'}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* 未展開時顯示的預覽 */}
+                      {!expandedMessages[msg.id] && (
+                        <div style={{ color:'#666', fontSize:14, fontStyle:'italic' }}>
+                          {msg.content.length > 30 ? `${msg.content.substring(0, 30)}...` : msg.content}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            {toast && (
+              <div style={{ position:'fixed', top:40, left:'50%', transform:'translateX(-50%)', background:'#fff', color:'#6B5BFF', fontWeight:700, fontSize:18, borderRadius:16, boxShadow:'0 4px 24px #6B5BFF22', padding:'18px 36px', zIndex:99999, textAlign:'center', letterSpacing:1 }}>
+                {toast}
+              </div>
+            )}
+            
+            {/* Top Bar 獨立卡片 - 調整佈局，主標題和🔔居中，縮短卡片寬度 */}
+            <div
+                style={{
+                    width: 'fit-content',
+                    margin: '20px auto 20px auto',
+                    padding: '12px 20px',
+                    background: 'rgba(255,255,255,0.95)',
+                    borderRadius: 16,
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative',
+                }}
+            >
+                <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 8,
+                    justifyContent: 'center',
+                }}>
+                    <h1 style={{ 
+                        fontWeight: 900, 
+                        fontSize: 18, 
+                        color: '#6B5BFF', 
+                        margin: 0, 
+                        lineHeight: 1,
+                        textShadow: '0 2px 8px #6B5BFF88',
+                        textAlign: 'center',
+                    }}>
+                        <span role="img" aria-label="helplab">🧪</span> {getText('title')}
+                    </h1>
+                    <button
+                        onClick={() => setShowInbox(v => !v)}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            position: 'relative',
+                            padding: '8px',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginLeft: 8,
+                        }}
+                    >
+                        <span style={{ fontSize: 24, color: '#6B5BFF' }}>🔔</span>
+                        {unreadMsgs.length > 0 && (
+                            <span style={{
+                                position: 'absolute',
+                                top: 0,
+                                right: 0,
+                                minWidth: 18,
+                                height: 18,
+                                background: '#ff4d4f',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '2px solid #fff',
+                                color: '#fff',
+                                fontWeight: 900,
+                                fontSize: 13,
+                                padding: '0 5px',
+                                boxShadow: '0 2px 8px #ff4d4f88',
+                                zIndex: 1
+                            }}>{unreadMsgs.length}</span>
+                        )}
+                    </button>
+                </div>
+            </div>
+            <div style={{ maxWidth: 600, margin: '0 auto', padding: '20px 16px 0 16px', background: '#fff', borderRadius: 32, boxShadow: '0 8px 40px #b6b6f633, 0 1.5px 8px #6B5BFF22', border: '1.5px solid #e0e7ff' }}>
+              <div style={{ display:'flex', justifyContent:'center', gap:24, marginBottom:24 }}>
+                <button onClick={()=>setTab('provide')} style={{ fontWeight:900, fontSize:18, color:tab==='provide'?'#6B5BFF':'#888', background:'#fff', border:tab==='provide'?'3px solid #6B5BFF':'2px solid #e0e7ff', borderRadius:16, boxShadow:'0 2px 8px #b6b6f633', padding:'8px 24px', cursor:'pointer', marginBottom:2 }}>{getText('provide')}</button>
+                <button onClick={()=>setTab('supply')} style={{ fontWeight:900, fontSize:18, color:tab==='supply'?'#6B5BFF':'#888', background:'#fff', border:tab==='supply'?'3px solid #6B5BFF':'2px solid #e0e7ff', borderRadius:16, boxShadow:'0 2px 8px #b6b6f633', padding:'8px 24px', cursor:'pointer', marginBottom:2 }}>{getText('supply')}</button>
+                <button onClick={()=>setTab('need')} style={{ fontWeight:900, fontSize:18, color:tab==='need'?'#ff4d4f':'#888', background:'#fff', border:tab==='need'?'3px solid #ff4d4f':'2px solid #e0e7ff', borderRadius:16, boxShadow:'0 2px 8px #ffb74d55', padding:'8px 24px', cursor:'pointer', marginBottom:2 }}>{getText('need')}</button>
+                <button onClick={()=>setTab('room')} style={{ fontWeight:900, fontSize:18, color:tab==='room'?'#ff4d4f':'#888', background:'#fff', border:tab==='room'?'3px solid #ff4d4f':'2px solid #e0e7ff', borderRadius:16, boxShadow:'0 2px 8px #ffb74d55', padding:'8px 24px', cursor:'pointer', marginBottom:2 }}>{getText('room')}</button>
+              </div>
+              {tab==='provide' && (
+                <>
+                  <p style={{ textAlign: 'center', color: '#555', fontSize: 18, marginBottom: 36 }}>
+                    {getText('intro')}
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, justifyContent: 'center' }}>
+                    {sections.map((sec, i) => (
+                      <div key={i} style={{ background: sec.color, borderRadius: 20, boxShadow: '0 4px 24px #0001', padding: '32px 28px', minWidth: 260, maxWidth: 320, flex: '1 1 260px', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 12 }}>
+                        <div style={{ fontSize: 48, marginBottom: 12 }}>{sec.emoji}</div>
+                        <div style={{ fontWeight: 800, fontSize: 22, marginBottom: 8, color: '#333', letterSpacing: 1 }}>{sec.title}</div>
+                        <div style={{ color: '#666', fontSize: 15, marginBottom: 18, textAlign: 'center', minHeight: 44 }}>{sec.desc}</div>
+                        {i===0 ? (
+                          <button onClick={()=>{setTab('provide'); setShowProvide(true);}} style={{ background: 'linear-gradient(90deg, #6e8efb, #a777e3)', color: '#fff', border: 'none', borderRadius: 24, padding: '10px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #a777e355', marginTop: 'auto', transition: 'background 0.2s' }}>{sec.btn}</button>
+                        ) : i===1 ? (
+                          <button onClick={()=>{setTab('need'); setShowNeedHelp(true);}} style={{ background: 'linear-gradient(90deg, #ff4d4f, #ffb74d)', color: '#fff', border: 'none', borderRadius: 24, padding: '10px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #ffb74d55', marginTop: 'auto', transition: 'background 0.2s' }}>{sec.btn}</button>
+                        ) : i===2 ? (
+                          <button onClick={()=>setTab('supply')} style={{ background: 'linear-gradient(90deg, #6e8efb, #a777e3)', color: '#fff', border: 'none', borderRadius: 24, padding: '10px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #a777e355', marginTop: 'auto', transition: 'background 0.2s' }}>{sec.btn}</button>
+                        ) : (
+                          <button onClick={()=>setTab('room')} style={{ background: 'linear-gradient(90deg, #ff4d4f, #ffb74d)', color: '#fff', border: 'none', borderRadius: 24, padding: '10px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #ffb74d55', marginTop: 'auto', transition: 'background 0.2s' }}>{sec.btn}</button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ textAlign: 'center', color: '#888', fontSize: 15, marginTop: 40 }}>
+                    {getText('rule')}
+                  </div>
+                  <ProvideModal open={showProvide} onClose={()=>{
+                    setShowProvide(false);
+                    // 手機版：點擊取消按鈕時回到HelpLab頁面
+                    if (window.innerWidth <= 768) {
+                      navigate('/HelpLab');
+                    }
+                  }} userInfo={userInfo} onSubmit={handleProvideSubmit} />
+                </>
+              )}
+              {tab==='supply' && (
+                <div style={{ marginTop:24 }}>
+                  <table style={{ width:'100%', borderCollapse:'collapse', fontSize:15, tableLayout:'fixed' }}>
+                    <colgroup>
+                      <col style={{width:'28%'}} />
+                      <col style={{width:'14%'}} />
+                      <col style={{width:'22%'}} />
+                      <col style={{width:'12%'}} />
+                      <col style={{width:'12%'}} />
+                      <col style={{width:'12%'}} />
+                    </colgroup>
+                    <thead>
+                      <tr style={{ background:'#f3f3ff', color:'#6B5BFF' }}>
+                        <th style={{ padding:'8px 4px', textAlign:'left' }}>{getText('date')}</th>
+                        <th style={{ textAlign:'center' }}>{getText('avatar')}</th>
+                        <th style={{ textAlign:'left' }}>{getText('name')}</th>
+                        <th style={{ textAlign:'center' }}>{getText('gender')}</th>
+                        <th style={{ textAlign:'center' }}>{getText('age')}</th>
+                        <th style={{ textAlign:'center' }}>{getText('country')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {supplyList.map((item,i)=>(
+                        <React.Fragment key={item.id}>
+                          <tr style={{ cursor:'pointer', borderBottom:'1px solid #eee' }} onClick={()=>setExpandedIdx(expandedIdx===i?null:i)}>
+                            <td>{item.createdAt?.toDate?.()?.toLocaleString?.()||''}</td>
+                            <td><img src={item.avatarUrl||'/ctx-logo.png'} alt="avatar" style={{ width:36, height:36, borderRadius:'50%' }} /></td>
+                            <td style={{ color:'#1976d2', fontWeight:700, textDecoration:'underline', cursor:'pointer' }} onClick={()=>{ setMsgTo(item); setShowMsgModal(true); }}>{item.nickname}</td>
+                            <td>{item.gender}</td>
+                            <td>{item.age}</td>
+                            <td>{item.country}</td>
+                          </tr>
+                          {expandedIdx===i && (
+                            <tr>
+                              <td colSpan={6} style={{ background:'#f8f8ff', padding:18 }}>
+                                <div style={{ fontWeight:700, color:'#6B5BFF', marginBottom:8 }}>【你的困難也是我們的困難，讓我們一起面對並解決】</div>
+                                <div style={{ marginBottom:8 }}><b>經歷：</b>{(item.exp||[]).join('、')}{item.expOther?`、${item.expOther}`:''}</div>
+                                <div style={{ marginBottom:8 }}><b>優勢：</b>{(item.adv||[]).join('、')}{item.advOther?`、${item.advOther}`:''}</div>
+                                <div style={{ marginBottom:8 }}><b>優先幫助對象：</b>{(item.target||[]).join('、')}{item.targetOther?`、${item.targetOther}`:''}</div>
+                                <div style={{ marginBottom:8 }}><b>幫助形式：</b>{item.helpType}</div>
+                                <div style={{ marginBottom:8 }}><b>特別聲明：</b>{item.statement}</div>
+                                <div style={{ marginBottom:8 }}><b>幫助頻率：</b>{item.freq}{item.freqOther?`、${item.freqOther}`:''}</div>
+                                <div style={{ marginTop:12 }}>
+                                  <span onClick={() => window.open(`mailto:${item.email}`)} style={{ color:'#6B5BFF', textDecoration:'underline', marginLeft:12, cursor: 'pointer' }}>{item.email}</span>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {tab==='need' && (
+                <>
+                  <p style={{ textAlign: 'center', color: '#555', fontSize: 18, marginBottom: 36 }}>
+                    {getText('introNeed')}
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, justifyContent: 'center' }}>
+                    <button onClick={()=>setShowNeedHelp(true)} style={{ background: 'linear-gradient(90deg, #ff4d4f, #ffb74d)', color: '#fff', border: 'none', borderRadius: 24, padding: '10px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px #ffb74d55', marginTop: 'auto', transition: 'background 0.2s' }}>{getText('needBtn')}</button>
+                  </div>
+                  <NeedHelpModal open={showNeedHelp} onClose={()=>setShowNeedHelp(false)} userInfo={userInfo} onSubmit={handleNeedHelpSubmit} showMsgSent={showMsgSent} />
+                </>
+              )}
+              {tab==='room' && (
+                <div style={{ marginTop:24 }}>
+                  <table style={{ width:'100%', borderCollapse:'collapse', fontSize:15 }}>
+                    <thead>
+                      <tr style={{ background:'#fff3e0', color:'#ff4d4f' }}>
+                        <th style={{ padding:'8px 4px', textAlign:'left' }}>{getText('date')}</th>
+                        <th style={{ textAlign:'center' }}>{getText('avatar')}</th>
+                        <th style={{ textAlign:'left' }}>{getText('name')}</th>
+                        <th style={{ textAlign:'center' }}>{getText('gender')}</th>
+                        <th style={{ textAlign:'center' }}>{getText('age')}</th>
+                        <th style={{ textAlign:'center' }}>{getText('country')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {helpNeedsList.map((item,i)=>(
+                        <React.Fragment key={item.id}>
+                          <tr style={{ cursor:'pointer', borderBottom:'1px solid #eee' }} onClick={()=>setExpandedIdx(expandedIdx===i?null:i)}>
+                            <td>{item.createdAt?.toDate?.()?.toLocaleString?.()||''}</td>
+                            <td><img src={item.avatarUrl||'/ctx-logo.png'} alt="avatar" style={{ width:36, height:36, borderRadius:'50%' }} /></td>
+                            <td style={{ color:'#ff4d4f', fontWeight:700, textDecoration:'underline', cursor:'pointer' }} onClick={()=>{ setMsgTo(item); setShowMsgModal(true); }}>{item.nickname}</td>
+                            <td>{item.gender}</td>
+                            <td>{item.age}</td>
+                            <td>{item.country}</td>
+                          </tr>
+                          {expandedIdx===i && (
+                            <tr>
+                              <td colSpan={6} style={{ background:'#fff8f0', padding:18 }}>
+                                <div style={{ fontWeight:700, color:'#ff4d4f', marginBottom:8 }}>【你的困難我們一起面對，社群夥伴會主動協助你】</div>
+                                <div style={{ marginBottom:8 }}><b>經歷：</b>{(item.exp||[]).join('、')}{item.expOther?`、${item.expOther}`:''}</div>
+                                <div style={{ marginBottom:8 }}><b>優勢：</b>{(item.adv||[]).join('、')}{item.advOther?`、${item.advOther}`:''}</div>
+                                <div style={{ marginBottom:8 }}><b>困難/需求：</b>{(item.target||[]).join('、')}{item.targetOther?`、${item.targetOther}`:''}</div>
+                                <div style={{ marginBottom:8 }}><b>協助形式：</b>{item.helpType}</div>
+                                <div style={{ marginBottom:8 }}><b>補充說明：</b>{item.statement}</div>
+                                <div style={{ marginBottom:8 }}><b>協助頻率：</b>{item.freq}{item.freqOther?`、${item.freqOther}`:''}</div>
+                                <div style={{ marginTop:12 }}>
+                                  <span onClick={() => window.open(`mailto:${item.email}`)} style={{ color:'#ff4d4f', textDecoration:'underline', marginLeft:12, cursor: 'pointer' }}>{item.email}</span>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* 供應圈列表名稱可點擊留言 */}
+            {showMsgModal && msgTo && (
+              <div style={{ position:'fixed', left:0, top:0, width:'100vw', height:'100vh', background:'rgba(40,40,80,0.18)', zIndex: 10000, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <div style={{ background:'#fff', borderRadius:18, boxShadow:'0 4px 24px #6B5BFF33', padding:28, minWidth:280, maxWidth:340, width:'90vw', position:'relative', display:'flex', flexDirection:'column', gap:12 }}>
+                  <button type="button" onClick={()=>setShowMsgModal(false)} style={{ position:'absolute', top:10, right:12, background:'none', border:'none', fontSize:22, color:'#888', cursor:'pointer', fontWeight:700 }}>×</button>
+                  <div style={{ fontWeight:800, fontSize:18, color:'#6B5BFF', textAlign:'center', marginBottom:2 }}>{getText('msgTo')}{msgTo.nickname}</div>
+                  <textarea value={msgContent} onChange={e=>setMsgContent(e.target.value)} rows={3} maxLength={100} placeholder={getText('msgPlaceholder')} style={{ border:'1px solid #e0e7ff', borderRadius:8, padding:'6px 10px', fontSize:15, resize:'none' }} />
+                  {msgError && <div style={{ color:'#ff4d4f', fontWeight:700, textAlign:'center', marginTop:4 }}>{msgError}</div>}
+                  <button onClick={()=>sendMessage(msgTo, msgContent)} disabled={!msgContent.trim()||msgLoading} style={{ background:'linear-gradient(90deg, #6e8efb, #a777e3)', color:'#fff', border:'none', borderRadius:14, padding:'6px 18px', fontWeight:700, fontSize:15, cursor:!msgContent.trim()||msgLoading?'not-allowed':'pointer', alignSelf:'center', opacity:!msgContent.trim()||msgLoading?0.6:1 }}>{msgLoading?'送出中...':'送出留言'}</button>
+                  {msgSent && <div style={{ color:'#6B5BFF', fontWeight:700, textAlign:'center', marginTop:8 }}>{getText('msgSent')}</div>}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import { getAuth, signOut } from 'firebase/auth';
 import { useLanguage } from '../contexts/LanguageContext';
+import SharedHeader from '../components/SharedHeader';
 import { LanguageSelector } from '../components/LanguageSelector';
 type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'th' | 'vi' | 'ms' | 'la';
 
@@ -22,7 +23,7 @@ const UI_TEXT = {
       backToHome: { 'zh-TW': '返回', 'zh-CN': '返回', 'ja': '戻る', 'en': 'Back', 'ko': '뒤로', 'th': 'กลับ', 'vi': 'Quay lại', 'ms': 'Kembali', 'la': 'Redire' },
   logout: { 'zh-TW': '登出', 'zh-CN': '登出', 'ja': 'ログアウト', 'en': 'Logout', 'ko': '로그아웃', 'th': 'ออกจากระบบ', 'vi': 'Đăng xuất', 'ms': 'Log keluar', 'la': 'Exire' },
   pageTitle: { 'zh-TW': '心情解鎖盒', 'zh-CN': '心情解锁盒', 'ja': '気持ちアンロックボックス', 'en': 'Mood Unlock Box', 'ko': '감정 언락 박스', 'th': 'กล่องปลดล็อกอารมณ์', 'vi': 'Hộp Mở Khóa Cảm Xúc', 'ms': 'Kotak Buka Kunci Emosi', 'la': 'Arca Unlock Affectus' },
-  subtitle: { 'zh-TW': '每天自我反思，抒發心情，追蹤情緒，照顧自己', 'zh-CN': '每天自我反思，抒發心情，追蹤情緒，照顧自己', 'ja': '毎日自分を見つめ、気持ちを表現し、感情を追いかけ、自分を大切に', 'en': 'Daily self-reflection, express your feelings, track emotions, take care of yourself', 'ko': '매일 자기 성찰, 감정 표현, 감정 추적, 자신을 돌보기', 'th': 'สะท้อนตนเองทุกวัน ระบายความรู้สึก ติดตามอารมณ์ ดูแลตัวเอง', 'vi': 'Tự phản ánh mỗi ngày, bày tỏ cảm xúc, theo dõi cảm xúc, chăm sóc bản thân', 'ms': 'Refleksi diri setiap hari, luahkan perasaan, jejak emosi, jaga diri', 'la': 'Cotidie te ipsum considera, affectus exprime, motus tuos persequere, te ipsum cura' },
+  subtitle: { 'zh-TW': '每天自我反思，抒發心情，一天一片追蹤情緒，照顧自己', 'zh-CN': '每天自我反思，抒發心情，一天一片追蹤情緒，照顧自己', 'ja': '毎日自分を見つめ、気持ちを表現し、感情を追いかけ、自分を大切に', 'en': 'Daily self-reflection, express your feelings, track emotions, take care of yourself', 'ko': '매일 자기 성찰, 감정 표현, 감정 추적, 자신을 돌보기', 'th': 'สะท้อนตนเองทุกวัน ระบายความรู้สึก ติดตามอารมณ์ ดูแลตัวเอง', 'vi': 'Tự phản ánh mỗi ngày, bày tỏ cảm xúc, theo dõi cảm xúc, chăm sóc bản thân', 'ms': 'Refleksi diri setiap hari, luahkan perasaan, jejak emosi, jaga diri', 'la': 'Cotidie te ipsum considera, affectus exprime, motus tuos persequere, te ipsum cura' },
   inputPrompt: { 'zh-TW': '今天，你想記錄什麼樣的心情？', 'zh-CN': '今天，你想记录什么样的心情？', 'ja': '今日、どんな気持ちを記録したいですか？', 'en': 'What kind of mood do you want to record today?', 'ko': '오늘 어떤 기분을 기록하고 싶으신가요?', 'th': 'วันนี้คุณอยากจะบันทึกอารมณ์แบบไหน?', 'vi': 'Hôm nay bạn muốn ghi lại tâm trạng gì?', 'ms': 'Apakah perasaan yang ingin anda catat hari ini?', 'la': 'Qualem animum hodie inscribere vis?' },
   inputPlaceholder: {
     'zh-TW': '請寫下你的心情...(30字內)',
@@ -152,8 +153,36 @@ export default function Journal() {
     // 在組件最上方加一個 useState 控制浮窗
     const [showToast, setShowToast] = useState(false);
     const [toastMsg, setToastMsg] = useState('');
+    const [showLegalMenu, setShowLegalMenu] = useState(false);
+    const [showLangBox, setShowLangBox] = useState(false);
+    const legalMenuRef = useRef<HTMLDivElement>(null);
+    const langBoxRef = useRef<HTMLDivElement>(null);
     // 全域 today 變數
     const today = new Date().toISOString().slice(0, 10);
+
+    // 語言選擇器點擊外部隱藏
+    useEffect(() => {
+        if (!showLangBox) return;
+        const handleClick = (e: MouseEvent) => {
+            if (langBoxRef.current && !langBoxRef.current.contains(e.target as Node)) {
+                setShowLangBox(false);
+            }
+        };
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
+    }, [showLangBox]);
+
+    // 漢堡選單點擊外部隱藏
+    useEffect(() => {
+        if (!showLegalMenu) return;
+        const handleClick = (e: MouseEvent) => {
+            if (legalMenuRef.current && !legalMenuRef.current.contains(e.target as Node)) {
+                setShowLegalMenu(false);
+            }
+        };
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
+    }, [showLegalMenu]);
 
     // 取得花園
     useEffect(() => {
@@ -520,39 +549,222 @@ export default function Journal() {
                     {toastMsg}
             </div>
             )}
-            {/* Top Bar 獨立卡片 */}
+            {/* 桌面版使用首頁頁頭 */}
+            {window.innerWidth > 768 && (
+                <>
+                    {/* LOGO */}
+                    <div className="fixed-logo-box" style={{ position: 'fixed', top: 16, left: 42, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 10000, paddingTop: 0, marginTop: 0 }}>
+                        <img src="/ctx-logo.png" className="fixed-logo-img" style={{ marginBottom: 0, width: 182, height: 182, cursor: 'pointer', marginTop: '-40px' }} onClick={() => navigate('/')} />
+                    </div>
+                    
+                    {/* 右側導航按鈕 */}
+                    <div style={{ position: 'fixed', top: 8, right: 36, zIndex: 9999, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18, pointerEvents: 'auto', width: '100%', justifyContent: 'flex-end' }}>
+                        <div style={{ display: 'flex', flexDirection: 'row', gap: 18, marginRight: 24 }}>
+                            <button 
+                                className="topbar-btn" 
+                                onClick={() => navigate('/about')} 
+                                style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 80 }}
+                                aria-label={lang==='zh-TW'?'了解 Restarter 平台':'zh-CN'===lang?'了解 Restarter 平台':'en'===lang?'Learn about Restarter platform':'ja'===lang?'Restarter プラットフォームについて':'ko'===lang?'Restarter 플랫폼에 대해 알아보기':'th'===lang?'เรียนรู้เกี่ยวกับแพลตฟอร์ม Restarter':'vi'===lang?'Tìm hiểu về nền tảng Restarter':'ms'===lang?'Ketahui tentang platform Restarter':'Cognosce de suggestum Restarter'}
+                                role="button"
+                            >
+                                {lang==='zh-TW'?'🧬 Restarter™｜我們是誰':'zh-CN'===lang?'🧬 Restarter™｜我们是谁':'en'===lang?'🧬 Restarter™｜Who We Are':'ja'===lang?'🧬 Restarter™｜私たちについて':'ko'===lang?'🧬 Restarter™｜우리는 누구인가':'th'===lang?'🧬 Restarter™｜เราเป็นใคร':'vi'===lang?'🧬 Restarter™｜Chúng tôi là ai':'ms'===lang?'🧬 Restarter™｜Siapa Kami':'🧬 Restarter™｜Quis sumus'}
+                            </button>
+                            <button 
+                                className="topbar-btn" 
+                                onClick={() => navigate('/feedback')} 
+                                style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 100 }}
+                                aria-label={lang==='zh-TW'?'提供意見回饋':'zh-CN'===lang?'提供意见反馈':'en'===lang?'Provide feedback':'ja'===lang?'フィードバックを提供':'ko'===lang?'피드백 제공':'th'===lang?'ให้ข้อเสนอแนะ':'vi'===lang?'Cung cấp phản hồi':'ms'===lang?'Beri maklum balas':'Praebe consilium'}
+                                role="button"
+                            >
+                                {lang==='zh-TW'?'💬 意見箱｜我們想聽你說':'zh-CN'===lang?'💬 意见箱｜我们想听你说':'en'===lang?'💬 Feedback｜We Want to Hear You':'ja'===lang?'💬 ご意見箱｜あなたの声を聞かせて':'ko'===lang?'💬 피드백｜여러분의 의견을 듣고 싶어요':'th'===lang?'💬 กล่องความคิดเห็น｜เราอยากฟังคุณ':'vi'===lang?'💬 Hộp góp ý｜Chúng tôi muốn lắng nghe bạn':'ms'===lang?'💬 Kotak Maklum Balas｜Kami ingin mendengar anda':'💬 Arca Consilii｜Te audire volumus'}
+                            </button>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <img src={getAuth().currentUser?.photoURL || '/ctx-logo.png'} alt="avatar" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', border: '2px solid #6B5BFF' }} />
+                                <span style={{ color: '#6B5BFF', fontWeight: 600, fontSize: 12, maxWidth: 60, overflow: 'hidden', textOverflow: 'ellipsis' }}>{getAuth().currentUser?.displayName || getAuth().currentUser?.email || '用戶'}</span>
+                                <button 
+                                    className="topbar-btn" 
+                                    onClick={async () => { const auth = getAuth(); await auth.signOut(); navigate('/'); }} 
+                                    style={{ 
+                                        width: '80px', 
+                                        fontSize: 14, 
+                                        padding: '6px 10px', 
+                                        height: '28px',
+                                        borderRadius: 4,
+                                        fontWeight: 600,
+                                        border: '1px solid #ff6347',
+                                        color: '#ff6347',
+                                        background: '#fff',
+                                        cursor: 'pointer',
+                                        transition: 'background 0.18s, color 0.18s, border 0.18s'
+                                    }}
+                                >
+                                    {UI_TEXT.logout[lang]}
+                                </button>
+                            </div>
+                        </div>
+                        {/* 語言選擇按鈕，靠右且寬度縮短，點擊彈出小框 */}
+                        <div style={{ position: 'relative', display: 'inline-block' }} ref={langBoxRef}>
+                            <button
+                                className="topbar-btn"
+                                style={{
+                                    background: '#6B5BFF',
+                                    color: '#fff',
+                                    border: '2px solid #6B5BFF',
+                                    borderRadius: 8,
+                                    fontWeight: 700,
+                                    fontSize: 16,
+                                    padding: '8px 10px',
+                                    minWidth: 90,
+                                    maxWidth: 120,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}
+                                onClick={() => setShowLangBox(v => !v)}
+                            >
+                                {lang === 'zh-TW' ? '繁中' : lang === 'zh-CN' ? '简中' : lang === 'en' ? 'English' : lang === 'ja' ? '日本語' : lang === 'ko' ? '한국어' : lang === 'th' ? 'ไทย' : lang === 'vi' ? 'Tiếng Việt' : lang === 'ms' ? 'Bahasa Melayu' : 'Latin'}
+                                <span style={{ marginLeft: 6 }}>▼</span>
+                            </button>
+                            {showLangBox && (
+                                <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', border: '1.5px solid #6B5BFF', borderRadius: 8, boxShadow: '0 4px 16px #0002', zIndex: 9999, minWidth: 120 }}>
+                                    {['zh-TW', 'zh-CN', 'en', 'ja', 'ko', 'th', 'vi', 'ms', 'la'].map(l => (
+                                        <div key={l} style={{ padding: '10px 18px', cursor: 'pointer', color: l === lang ? '#6B5BFF' : '#232946', fontWeight: l === lang ? 700 : 500, background: l === lang ? '#f3f0ff' : '#fff' }} onClick={() => { setLang(l as LanguageCode); setShowLangBox(false); }}>
+                                            {l === 'zh-TW' ? '繁中' : l === 'zh-CN' ? '简中' : l === 'en' ? 'English' : l === 'ja' ? '日本語' : l === 'ko' ? '한국어' : l === 'th' ? 'ไทย' : l === 'vi' ? 'Tiếng Việt' : l === 'ms' ? 'Bahasa Melayu' : 'Latin'}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        
+                        {/* 漢堡選單 - 法律文件 */}
+                        <div style={{ position: 'relative', display: 'inline-block' }} ref={legalMenuRef}>
+                            <button
+                                className="topbar-btn"
+                                style={{
+                                    background: '#fff',
+                                    color: '#6B5BFF',
+                                    border: '2px solid #6B5BFF',
+                                    borderRadius: 8,
+                                    fontWeight: 700,
+                                    fontSize: 16,
+                                    padding: '8px 12px',
+                                    minWidth: 50,
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onClick={() => setShowLegalMenu(v => !v)}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.background = '#6B5BFF';
+                                    e.currentTarget.style.color = '#fff';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.background = '#fff';
+                                    e.currentTarget.style.color = '#6B5BFF';
+                                }}
+                            >
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                    <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                                    <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                                    <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                                </div>
+                            </button>
+                            {showLegalMenu && (
+                                <div style={{ 
+                                    position: 'absolute', 
+                                    right: 0, 
+                                    top: '110%', 
+                                    background: '#fff', 
+                                    border: '1.5px solid #6B5BFF', 
+                                    borderRadius: 8, 
+                                    boxShadow: '0 4px 16px #0002', 
+                                    zIndex: 9999, 
+                                    minWidth: 200,
+                                    maxWidth: 250,
+                                    padding: '8px 0'
+                                }}>
+                                    <div style={{ padding: '8px 16px', borderBottom: '1px solid #eee', marginBottom: '4px' }}>
+                                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#6B5BFF' }}>
+                                            {lang === 'zh-TW' ? '法律文件' : 
+                                             lang === 'zh-CN' ? '法律文件' : 
+                                             lang === 'en' ? 'Legal Documents' : 
+                                             lang === 'ja' ? '法的文書' : 
+                                             lang === 'ko' ? '법적 문서' : 
+                                             lang === 'th' ? 'เอกสารทางกฎหมาย' : 
+                                             lang === 'vi' ? 'Tài liệu pháp lý' : 
+                                             lang === 'ms' ? 'Dokumen Undang-undang' : 
+                                             'Documenta Iuridica'}
+                                        </span>
+                                    </div>
+                                    {[
+                                        { key: 'privacy', title: '隱私政策', path: '/privacy-policy' },
+                                        { key: 'terms', title: '使用條款', path: '/terms' },
+                                        { key: 'data', title: '資料刪除', path: '/data-deletion' },
+                                        { key: 'ai', title: 'AI使用聲明', path: '/ai-statement' },
+                                        { key: 'mental', title: '心理健康免責聲明', path: '/mental-health-disclaimer' },
+                                        { key: 'cookie', title: 'Cookie政策', path: '/cookie-policy' },
+                                        { key: 'children', title: '兒童隱私保護', path: '/children-privacy' },
+                                        { key: 'international', title: '國際用戶聲明', path: '/international-users' },
+                                        { key: 'security', title: '安全聲明', path: '/security-statement' },
+                                        { key: 'update', title: '更新通知機制', path: '/update-notification' }
+                                    ].map(item => (
+                                        <div 
+                                            key={item.key}
+                                            style={{ 
+                                                padding: '10px 16px', 
+                                                cursor: 'pointer', 
+                                                color: '#232946', 
+                                                fontWeight: 500, 
+                                                background: '#fff',
+                                                fontSize: '13px',
+                                                borderBottom: '1px solid #f0f0f0',
+                                                transition: 'all 0.2s ease'
+                                            }} 
+                                            onClick={() => {
+                                                navigate(item.path);
+                                                setShowLegalMenu(false);
+                                            }}
+                                            onMouseOver={(e) => {
+                                                e.currentTarget.style.background = '#f3f0ff';
+                                                e.currentTarget.style.color = '#6B5BFF';
+                                            }}
+                                            onMouseOut={(e) => {
+                                                e.currentTarget.style.background = '#fff';
+                                                e.currentTarget.style.color = '#232946';
+                                            }}
+                                        >
+                                            {item.title}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </>
+            )}
+            
+            {/* 手機版頁頭 */}
+            {window.innerWidth <= 768 && <SharedHeader />}
+            
+            {/* 主標題卡片 - 縮短並調整高度 */}
             <div
                 style={{
                     width: '100%',
-                    maxWidth: 700,
-                    margin: '20px auto 20px auto',
-                    padding: '16px 24px',
+                    maxWidth: window.innerWidth <= 768 ? 280 : 400,
+                    margin: window.innerWidth <= 768 ? '100px auto 20px auto' : '120px auto 20px auto',
+                    padding: window.innerWidth <= 768 ? '8px 20px' : '12px 20px',
                     background: 'rgba(255,255,255,0.95)',
                     borderRadius: 16,
                     boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
+                    justifyContent: 'center',
                     position: 'relative',
                 }}
             >
-                <button
-                    className="topbar-btn"
-                    onClick={() => navigate('/')}
-                    style={{
-                        fontWeight: 700,
-                        fontSize: 16,
-                        padding: '8px 16px',
-                        borderRadius: 8,
-                        border: '1.5px solid #6B5BFF',
-                        background: '#fff',
-                        color: '#6B5BFF',
-                        cursor: 'pointer',
-                        minWidth: 80,
-                    }}
-                >
-                    {UI_TEXT.backToHome[lang]}
-                </button>
                 <h1 style={{ 
                     fontWeight: 900, 
                     fontSize: 18, 
@@ -561,49 +773,16 @@ export default function Journal() {
                     lineHeight: 1,
                     textShadow: '0 2px 8px #6B5BFF88',
                     textAlign: 'center',
-                    flex: 1,
                 }}>
                     <span role="img" aria-label="mood">🌱</span> {UI_TEXT.pageTitle[lang]}
-              </h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <button
-                        className="topbar-btn"
-                        onClick={async () => { await signOut(auth); localStorage.clear(); window.location.href = '/'; }}
-                        style={{
-                            fontWeight: 700,
-                            fontSize: 16,
-                            padding: '8px 16px',
-                            borderRadius: 8,
-                            border: '1.5px solid #6B5BFF',
-                            background: '#fff',
-                            color: '#6B5BFF',
-                            cursor: 'pointer',
-                            minWidth: 80,
-                        }}
-                    >
-                        {UI_TEXT.logout[lang]}
-                    </button>
-                    <LanguageSelector style={{ 
-                        width: 80,
-                        height: 'auto',
-                        padding: '8px 16px',
-                        fontSize: 16,
-                        fontWeight: 700,
-                        borderRadius: 8,
-                        border: '1.5px solid #6B5BFF',
-                        background: '#fff',
-                        color: '#6B5BFF',
-                        cursor: 'pointer',
-                        minWidth: 80,
-                    }} />
-              </div>
+                </h1>
             </div>
             
             {/* 主要內容區塊 */}
             <div style={{
                 maxWidth: 700,
-                margin: '0 auto 0 auto',
-                padding: '1.2rem 2vw 0 2vw', // 左右加大padding
+                margin: window.innerWidth <= 768 ? '0 auto 0 auto' : '20px auto 0 auto',
+                padding: window.innerWidth <= 768 ? '2.5rem 2vw 0 2vw' : '1.2rem 2vw 0 2vw', // 手機版增加頂部padding
                 background: 'rgba(255,255,255,0.92)',
                 borderRadius: 24,
                 boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
@@ -845,75 +1024,25 @@ export default function Journal() {
           </button>
         </div>
       </div>
-
-      {/* Footer 5個按鈕 - 一行排列 */}
-      <div style={{ 
-        width: '100%', 
-        margin: '0 auto', 
-        marginTop: 24,
-        background: 'rgba(255,255,255,0.95)',
-        borderRadius: 16,
-        padding: '16px',
-        boxShadow: '0 2px 12px #6B5BFF22'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-          <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
-             lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
-             lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
-             lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
-             lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
-             lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
-             lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
-             lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
-             '🧬 Restarter™｜Quis sumus'}
-          </span>
-          <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '隱私權政策' : 
-             lang === 'zh-CN' ? '隐私政策' : 
-             lang === 'en' ? 'Privacy Policy' : 
-             lang === 'ja' ? 'プライバシーポリシー' : 
-             lang === 'ko' ? '개인정보 처리방침' : 
-             lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
-             lang === 'vi' ? 'Chính sách bảo mật' : 
-             lang === 'ms' ? 'Dasar Privasi' : 
-             'Consilium de Privata'}
-          </span>
-          <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '條款/聲明' : 
-             lang === 'zh-CN' ? '条款/声明' : 
-             lang === 'en' ? 'Terms/Statement' : 
-             lang === 'ja' ? '規約/声明' : 
-             lang === 'ko' ? '약관/성명' : 
-             lang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
-             lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
-             lang === 'ms' ? 'Terma/Pernyataan' : 
-             'Termini/Declaratio'}
-          </span>
-          <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '資料刪除說明' : 
-             lang === 'zh-CN' ? '数据删除说明' : 
-             lang === 'en' ? 'Data Deletion' : 
-             lang === 'ja' ? 'データ削除について' : 
-             lang === 'ko' ? '데이터 삭제 안내' : 
-             lang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
-             lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
-             lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
-             'Explicatio Deletionis Datae'}
-          </span>
-          <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-            {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
-             lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
-             lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
-             lang === 'ja' ? '💬 ご意見箱｜私たちはあなたの声を聞きたい' : 
-             lang === 'ko' ? '💬 피드백｜우리는 당신의 말을 듣고 싶습니다' : 
-             lang === 'th' ? '💬 กล่องความคิดเห็น｜เราอยากได้ยินจากคุณ' : 
-             lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
-             lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
-             '💬 Arca Consilii｜Volumus Audire a Te'}
-          </span>
-        </div>
-      </div>
+      
+      <style>{`
+        @media (min-width: 768px) {
+          .mobile-shared-header {
+            display: none !important;
+          }
+          .desktop-header {
+            display: flex !important;
+          }
+        }
+        @media (max-width: 767px) {
+          .mobile-shared-header {
+            display: block !important;
+          }
+          .desktop-header {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

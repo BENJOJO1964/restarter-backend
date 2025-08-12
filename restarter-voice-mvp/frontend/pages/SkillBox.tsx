@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import { getAuth, signOut } from 'firebase/auth';
@@ -6,6 +6,7 @@ import { useVideoReaction } from '../components/VideoReactionContext';
 import { VideoReactionType } from '../components/VideoReactionPlayer';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LanguageSelector } from '../components/LanguageSelector';
+import SharedHeader from '../components/SharedHeader';
 type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'th' | 'vi' | 'ms' | 'la';
 
 const LANGS: { code: LanguageCode; label: string }[] = [
@@ -136,6 +137,22 @@ export default function SkillBox() {
   const [loading, setLoading] = useState<boolean>(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
+  const [showLegalMenu, setShowLegalMenu] = useState(false);
+  
+  const legalMenuRef = useRef<HTMLDivElement>(null);
+  
+  // 登出文字常數
+  const LOGOUT_TEXT = {
+    'zh-TW': '登出',
+    'zh-CN': '登出',
+    'en': 'Logout',
+    'ja': 'ログアウト',
+    'ko': '로그아웃',
+    'th': 'ออกจากระบบ',
+    'vi': 'Đăng xuất',
+    'ms': 'Log keluar',
+    'la': 'Exire'
+  };
 
   useEffect(() => {
     const fetchScenarios = async () => {
@@ -156,6 +173,18 @@ export default function SkillBox() {
     };
     fetchScenarios();
   }, [lang]);
+
+  // Handle clicking outside legal menu
+  useEffect(() => {
+    if (!showLegalMenu) return;
+    const handleClick = (e: MouseEvent) => {
+      if (legalMenuRef.current && !legalMenuRef.current.contains(e.target as Node)) {
+        setShowLegalMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showLegalMenu]);
 
   const handleScenarioClick = (scenario: Scenario) => {
     setSelectedScenario(scenario);
@@ -183,89 +212,222 @@ export default function SkillBox() {
 
   return (
     <div className="modern-bg" style={{ background: `url('/plains.png') center center / cover no-repeat fixed`, minHeight: '100vh', width:'100vw', overflow:'hidden', position:'relative' }}>
-      {/* Top Bar 獨立卡片 - 與挑戰任務相同格式 */}
-      <div
-          style={{
-              width: '100%',
-              maxWidth: 700,
-              margin: '20px auto 20px auto',
-              padding: '16px 24px',
-              background: 'rgba(255,255,255,0.95)',
-              borderRadius: 16,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              position: 'relative',
-          }}
-      >
-          <button
-              onClick={() => navigate('/')}
-              style={{
-                  fontWeight: 700,
-                  fontSize: 16,
-                  padding: '8px 16px',
-                  borderRadius: 8,
-                  border: '1.5px solid #6B5BFF',
+      {/* 手機版共用頁頭 */}
+      <div className="mobile-shared-header">
+        <SharedHeader />
+      </div>
+      
+      {/* 桌面版頁頭 - 複製ChatCompanion格式 */}
+      {window.innerWidth > 768 ? (
+        <div className="desktop-topbar">
+          {/* LOGO */}
+          <div className="fixed-logo-box" style={{ position: 'fixed', top: 16, left: 42, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 10000, paddingTop: 0, marginTop: 0 }}>
+            <img src="/ctx-logo.png" className="fixed-logo-img" style={{ marginBottom: 0, width: 182, height: 182, cursor: 'pointer', marginTop: '-40px' }} onClick={() => navigate('/')} />
+          </div>
+          
+          {/* 右側導航按鈕 */}
+          <div style={{ position: 'fixed', top: 8, right: 36, zIndex: 9999, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18, pointerEvents: 'auto', width: '100%', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: 18, marginRight: 24 }}>
+              <button 
+                className="topbar-btn" 
+                onClick={() => navigate('/about')} 
+                style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 80 }}
+              >
+                {lang==='zh-TW'?'🧬 Restarter™｜我們是誰':'zh-CN'===lang?'🧬 Restarter™｜我们是谁':'en'===lang?'🧬 Restarter™｜Who We Are':'ja'===lang?'🧬 Restarter™｜私たちについて':'ko'===lang?'🧬 Restarter™｜우리는 누구인가':'th'===lang?'🧬 Restarter™｜เราเป็นใคร':'vi'===lang?'🧬 Restarter™｜Chúng tôi là ai':'ms'===lang?'🧬 Restarter™｜Siapa Kami':'🧬 Restarter™｜Quis sumus'}
+              </button>
+              <button 
+                className="topbar-btn" 
+                onClick={() => navigate('/feedback')} 
+                style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 100 }}
+              >
+                {lang==='zh-TW'?'💬 意見箱｜我們想聽你說':'zh-CN'===lang?'💬 意见箱｜我们想听你说':'en'===lang?'💬 Feedback｜We Want to Hear You':'ja'===lang?'💬 ご意見箱｜あなたの声を聞かせて':'ko'===lang?'💬 피드백｜여러분의 의견을 듣고 싶어요':'th'===lang?'💬 กล่องความคิดเห็น｜เราอยากฟังคุณ':'vi'===lang?'💬 Hộp góp ý｜Chúng tôi muốn lắng nghe bạn':'ms'===lang?'💬 Kotak Maklum Balas｜Kami ingin mendengar anda':'💬 Arca Consilii｜Te audire volumus'}
+              </button>
+
+              {getAuth().currentUser ? (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <img src={getAuth().currentUser?.photoURL || '/ctx-logo.png'} alt="avatar" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid #90caf9' }} />
+                    <span style={{ color: '#1976d2', fontWeight: 700, fontSize: 16 }}>{getAuth().currentUser?.displayName || getAuth().currentUser?.email || '用戶'}</span>
+                    <button className="topbar-btn" onClick={async () => { const auth = getAuth(); await auth.signOut(); }} style={{ background: '#fff', color: '#ff6347', border: '2px solid #ffb4a2', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 14px', marginLeft: 6 }}>{LOGOUT_TEXT[lang]}</button>
+                  </div>
+                </>
+              ) : (
+                <button className="topbar-btn" onClick={() => navigate('/register')} style={{ background: '#fff', color: '#1976d2', border: '2px solid #90caf9', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 10px', minWidth: 90 }}>{lang==='zh-TW'?'註冊/登入':'zh-CN'===lang?'注册/登录':'en'===lang?'Register / Login':'ja'===lang?'登録/ログイン':'ko'===lang?'가입/로그인':'th'===lang?'สมัคร/เข้าสู่ระบบ':'vi'===lang?'Đăng ký/Đăng nhập':'ms'===lang?'Daftar / Log Masuk':'Registrare / Login'}</button>
+              )}
+            </div>
+            {/* 法律文件漢堡選單 */}
+            <div style={{ position: 'relative', display: 'inline-block' }} ref={legalMenuRef}>
+              <button
+                className="topbar-btn"
+                style={{
                   background: '#fff',
                   color: '#6B5BFF',
+                  border: '2px solid #6B5BFF',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  fontSize: 16,
+                  padding: '8px 12px',
+                  minWidth: 50,
                   cursor: 'pointer',
-                  minWidth: 80,
-              }}
-          >
-              {UI_TEXT.backToHome[lang]}
-          </button>
-          <h1 style={{ 
-              fontWeight: 900, 
-              fontSize: 18, 
-              color: '#6B5BFF', 
-              margin: 0, 
-              lineHeight: 1,
-              textShadow: '0 2px 8px #6B5BFF88',
-              textAlign: 'center',
-              flex: 1,
-          }}>
-              <span role="img" aria-label="skillbox">🛠️</span> {UI_TEXT.pageTitle[lang]}
-          </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button
-                  onClick={async () => { await signOut(auth); localStorage.clear(); window.location.href = '/'; }}
-                  style={{
-                      fontWeight: 700,
-                      fontSize: 16,
-                      padding: '8px 16px',
-                      borderRadius: 8,
-                      border: '1.5px solid #6B5BFF',
-                      background: '#fff',
-                      color: '#6B5BFF',
-                      cursor: 'pointer',
-                      minWidth: 80,
-                  }}
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.3s ease'
+                }}
+                onClick={() => setShowLegalMenu(v => !v)}
               >
-                  {UI_TEXT.logout[lang]}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                  <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                  <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                </div>
               </button>
-              <div style={{ width: 80 }}>
-                  <LanguageSelector style={{ width: '100%' }} />
-              </div>
+              {showLegalMenu && (
+                <div style={{ 
+                  position: 'absolute', 
+                  right: 0, 
+                  top: '110%', 
+                  background: '#fff', 
+                  border: '1.5px solid #6B5BFF', 
+                  borderRadius: 8, 
+                  boxShadow: '0 4px 16px #0002', 
+                  zIndex: 9999, 
+                  minWidth: 200,
+                  maxWidth: 250,
+                  padding: '8px 0'
+                }}>
+                  <div style={{ padding: '8px 16px', borderBottom: '1px solid #eee', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#6B5BFF' }}>法律文件</span>
+                  </div>
+                  {[
+                    { key: 'privacy', title: '隱私政策', path: '/privacy-policy' },
+                    { key: 'terms', title: '使用條款', path: '/terms' },
+                    { key: 'data', title: '數據刪除', path: '/data-deletion' },
+                    { key: 'ai', title: 'AI使用聲明', path: '/ai-statement' },
+                    { key: 'mental', title: '心理健康免責聲明', path: '/mental-health-disclaimer' },
+                    { key: 'cookie', title: 'Cookie政策', path: '/cookie-policy' },
+                    { key: 'children', title: '兒童隱私保護', path: '/children-privacy' },
+                    { key: 'international', title: '國際用戶聲明', path: '/international-users' },
+                    { key: 'security', title: '安全聲明', path: '/security-statement' },
+                    { key: 'update', title: '更新通知機制', path: '/update-notification' }
+                  ].map(item => (
+                    <div 
+                      key={item.key}
+                      style={{ 
+                        padding: '8px 16px', 
+                        cursor: 'pointer', 
+                        color: '#232946', 
+                        fontSize: '13px',
+                        transition: 'all 0.2s ease',
+                        borderRadius: '4px',
+                        margin: '2px 8px'
+                      }} 
+                      onClick={() => { 
+                        navigate(item.path); 
+                        setShowLegalMenu(false); 
+                      }}
+                    >
+                      {item.title}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-      </div>
+        </div>
+      ) : null}
+      
+      {/* 桌面版白色卡片 - 縮短並只包含標題 */}
+      {window.innerWidth > 768 ? (
+        <div
+          style={{
+            width: '100%',
+            maxWidth: 500, // 縮短白色卡片
+            margin: '120px auto 0 auto', // 增加頂部margin讓它往下移動，與副標題交接
+            padding: '16px 24px',
+            background: 'rgba(255,255,255,0.95)',
+            borderRadius: 16,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+          }}
+        >
+          <h1 style={{ 
+            fontWeight: 900, 
+            fontSize: 18, 
+            color: '#6B5BFF', 
+            margin: 0, 
+            lineHeight: 1,
+            textShadow: '0 2px 8px #6B5BFF88',
+            textAlign: 'center',
+          }}>
+            <span role="img" aria-label="skillbox">🛠️</span> {UI_TEXT.pageTitle[lang]}
+          </h1>
+        </div>
+      ) : null}
+      
       {/* 內容區塊可捲動，並自動下移不被頂部按鈕遮住 */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', padding: '24px', marginTop: 20, minHeight:'calc(100vh - 120px)', overflowY:'auto' }}>
-        <div style={{ fontSize: 18, color: '#4A4A4A', fontWeight: 500, marginBottom: 24, textAlign:'center', background:'rgba(255,255,255,0.7)', padding:'8px 16px', borderRadius:8 }}>{UI_TEXT.subtitle[lang]}</div>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'flex-start', 
+        width: '100%', 
+        padding: window.innerWidth <= 768 ? '16px' : '24px', 
+        marginTop: window.innerWidth <= 768 ? 80 : 20, 
+        minHeight:'calc(100vh - 120px)', 
+        overflowY:'auto' 
+      }}>
+        {/* 手機版：主標題 */}
+        {window.innerWidth <= 768 && (
+          <h1 style={{ 
+            fontSize: 22, 
+            fontWeight: 900, 
+            color: '#6B5BFF', 
+            marginBottom: 12, 
+            textAlign:'center', 
+            background:'rgba(255,255,255,0.95)', 
+            padding:'12px 20px', 
+            borderRadius:16,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+          }}>
+            <span role="img" aria-label="skillbox">🛠️</span> 情境模擬室 SkillBox
+          </h1>
+        )}
         
-        <div style={{ maxWidth: 800, width: '100%', background: '#fff', borderRadius: 16, padding: '24px 32px', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ fontSize: 16, color: '#4A4A4A', fontWeight: 500, marginBottom: 20, textAlign:'center', background:'rgba(255,255,255,0.7)', padding:'8px 16px', borderRadius:8 }}>{UI_TEXT.subtitle[lang]}</div>
+        
+        <div style={{ 
+          maxWidth: 800, 
+          width: window.innerWidth <= 768 ? '95%' : '90%', 
+          background: '#fff', 
+          borderRadius: 16, 
+          padding: window.innerWidth <= 768 ? '20px 16px' : '24px 32px', 
+          boxShadow: '0 4px 24px #0002', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center',
+          margin: window.innerWidth <= 768 ? '0 8px' : '0'
+        }}>
           <h3 style={{ fontSize: 24, fontWeight: 700, color: '#6B5BFF', marginBottom: 24 }}>{UI_TEXT.selectScenario[lang]}</h3>
           
-          <div style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px' }}>
+          <div style={{ 
+            width: '100%', 
+            display: 'grid', 
+            gridTemplateColumns: window.innerWidth <= 768 ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(200px, 1fr))', 
+            gap: window.innerWidth <= 768 ? '16px' : '24px' 
+          }}>
             {scenarios.map(scenario => (
               <div 
                 key={scenario.id}
                 onClick={() => handleScenarioClick(scenario)}
                 style={{ 
-                  background: selectedScenarioId === scenario.id ? 'linear-gradient(135deg, #6B5BFF 0%, #4D8FFF 100%)' : '#f7f7ff', 
-                  color: selectedScenarioId === scenario.id ? '#fff' : '#4A4A4A',
+                  background: selectedScenarioId === scenario.id ? 'linear-gradient(135deg, #6B5BFF 0%, #4D8FFF 100%)' : '#e8e6ff', 
+                  color: selectedScenarioId === scenario.id ? '#fff' : '#2D2D2D',
                   borderRadius: 12, 
-                  padding: 20, 
+                  padding: window.innerWidth <= 768 ? 16 : 20, 
                   boxShadow: selectedScenarioId === scenario.id ? '0 8px 24px #6B5BFF66' : '0 4px 12px #0000001a', 
                   cursor: 'pointer', 
                   transition: 'all 0.3s ease',
@@ -277,9 +439,9 @@ export default function SkillBox() {
                   textAlign: 'center'
                 }}
               >
-                <div style={{ fontSize: 48, marginBottom: 12 }}>{scenario.emoji}</div>
-                <h4 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 8px 0' }}>{scenario.title}</h4>
-                <p style={{ fontSize: 14, margin: '0 0 12px 0', opacity: 0.8, minHeight: '40px' }}>{scenario.description}</p>
+                <div style={{ fontSize: window.innerWidth <= 768 ? 36 : 48, marginBottom: window.innerWidth <= 768 ? 8 : 12 }}>{scenario.emoji}</div>
+                <h4 style={{ fontSize: window.innerWidth <= 768 ? 16 : 18, fontWeight: 700, margin: '0 0 8px 0' }}>{scenario.title}</h4>
+                <p style={{ fontSize: window.innerWidth <= 768 ? 12 : 14, margin: '0 0 12px 0', opacity: 0.8, minHeight: window.innerWidth <= 768 ? '32px' : '40px' }}>{scenario.description}</p>
                 <div style={{ fontWeight: 600, fontSize: 14, padding: '4px 12px', borderRadius: 16, background: selectedScenarioId === scenario.id ? 'rgba(255,255,255,0.2)' : 'rgba(107, 91, 255, 0.1)', color: selectedScenarioId === scenario.id ? '#fff' : '#6B5BFF' }}>
                     {UI_TEXT.scenarioDifficulty[lang]}: {scenario.difficulty}
                 </div>
@@ -392,24 +554,20 @@ export default function SkillBox() {
         </div>
       )}
       
-      {/* Footer 5個按鈕 - 一行排列 */}
-      <div style={{ 
-        width: '100%', 
-        margin: '0 auto', 
-        marginTop: 24,
-        background: 'rgba(255,255,255,0.95)',
-        borderRadius: 16,
-        padding: '16px',
-        boxShadow: '0 2px 12px #6B5BFF22'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-          <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>隱私權政策</span>
-          <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>條款/聲明</span>
-          <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>資料刪除說明</span>
-          <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>🧬 Restarter™｜我們是誰</span>
-          <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>💬 意見箱｜我們想聽你說</span>
-        </div>
-      </div>
+
+      
+      <style>{`
+        @media (min-width: 768px) {
+          .mobile-shared-header {
+            display: none !important;
+          }
+        }
+        @media (max-width: 767px) {
+          .mobile-shared-header {
+            display: block !important;
+          }
+        }
+      `}</style>
     </div>
   );
 } 

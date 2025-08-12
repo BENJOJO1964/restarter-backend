@@ -32,6 +32,15 @@ export default defineConfig({
         },
       },
     },
+    // 啟用代碼分割和壓縮
+    chunkSizeWarningLimit: 1000,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
   },
   // 優化依賴預構建
   optimizeDeps: {

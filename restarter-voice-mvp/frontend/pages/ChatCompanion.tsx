@@ -4,7 +4,7 @@ import VirtualAvatar from '../components/VirtualAvatar';
 import { generateResponse } from '../lib/ai/generateResponse';
 import { speak } from '../lib/ai/speak';
 import { generateTalkingFace } from '../lib/ai/talkingFace';
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LanguageSelector } from '../components/LanguageSelector';
 import Footer from '../components/Footer';
@@ -13,6 +13,7 @@ import { UpgradeModal } from '../components/UpgradeModal';
 import { usePermission } from '../hooks/usePermission';
 import { useTestMode } from '../App';
 import SharedHeader from '../components/SharedHeader';
+import app from '../src/firebaseConfig';
 
 interface ChatMsg {
   id: string;
@@ -240,6 +241,19 @@ const BACK_TEXT = {
   'ms': 'Kembali',
   'la': 'Redi',
 };
+
+const LOGOUT_TEXT = {
+  'zh-TW': '登出',
+  'zh-CN': '登出',
+  'en': 'Logout',
+  'ja': 'ログアウト',
+  'ko': '로그아웃',
+  'th': 'ออกจากระบบ',
+  'vi': 'Đăng xuất',
+  'ms': 'Log keluar',
+  'la': 'Exire'
+};
+
 const CHANGE_AVATAR_TEXT = {
   'zh-TW': '更換頭像',
   'zh-CN': '更换头像',
@@ -294,11 +308,137 @@ export default function ChatCompanion() {
   const [recognizing, setRecognizing] = useState(false);
   const [speechError, setSpeechError] = useState('');
   const [lastTranscript, setLastTranscript] = useState('');
+  const [showLangBox, setShowLangBox] = useState(false);
+  const [showLegalMenu, setShowLegalMenu] = useState(false);
   
   const { lang, setLang } = useLanguage();
   const t = TEXTS[lang] || TEXTS['zh-TW'];
+  
+  const langBoxRef = useRef<HTMLDivElement>(null);
+  const legalMenuRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const { isTestMode } = useTestMode();
+  
+  // 新增：響應式螢幕寬度判斷
+  const [isMobile, setIsMobile] = useState(() => {
+    // 在伺服器端渲染時，window 可能不存在
+    if (typeof window !== 'undefined') {
+      return window.innerWidth <= 768;
+    }
+    return false;
+  });
+  
+  // 新增：用戶認證相關
+  const auth = getAuth(app);
+  const [user, setUser] = useState(auth.currentUser);
+  const [authChecked, setAuthChecked] = useState(false);
+  
+  // 新增：登出文字
+  const LOGOUT_TEXT = {
+    'zh-TW': '登出',
+    'zh-CN': '登出',
+    'en': 'Logout',
+    'ja': 'ログアウト',
+    'ko': '로그아웃',
+    'th': 'ออกจากระบบ',
+    'vi': 'Đăng xuất',
+    'ms': 'Log Keluar',
+    'la': 'Exire'
+  };
+  
+  // 新增：Footer文字
+  const FOOTER_TEXT = {
+    'zh-TW': {
+      privacy: '隱私政策',
+      terms: '使用條款',
+      deletion: '資料刪除'
+    },
+    'zh-CN': {
+      privacy: '隐私政策',
+      terms: '使用条款',
+      deletion: '资料删除'
+    },
+    'en': {
+      privacy: 'Privacy Policy',
+      terms: 'Terms of Service',
+      deletion: 'Data Deletion'
+    },
+    'ja': {
+      privacy: 'プライバシーポリシー',
+      terms: '利用規約',
+      deletion: 'データ削除'
+    },
+    'ko': {
+      privacy: '개인정보 처리방침',
+      terms: '이용약관',
+      deletion: '데이터 삭제'
+    },
+    'th': {
+      privacy: 'นโยบายความเป็นส่วนตัว',
+      terms: 'เงื่อนไขการใช้งาน',
+      deletion: 'การลบข้อมูล'
+    },
+    'vi': {
+      privacy: 'Chính sách bảo mật',
+      terms: 'Điều khoản sử dụng',
+      deletion: 'Xóa dữ liệu'
+    },
+    'ms': {
+      privacy: 'Dasar Privasi',
+      terms: 'Terma Perkhidmatan',
+      deletion: 'Pemadaman Data'
+    },
+    'la': {
+      privacy: 'Politica Privata',
+      terms: 'Termini Servitii',
+      deletion: 'Deletio Datorum'
+    }
+  };
+
+  // 新增：響應式螢幕寬度檢查
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+  
+  // 新增：用戶認證檢查
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setAuthChecked(true);
+    });
+    
+    return () => unsubscribe();
+  }, [auth]);
+
+  // Handle clicking outside language box
+  useEffect(() => {
+    if (!showLangBox) return;
+    const handleClick = (e: MouseEvent) => {
+      if (langBoxRef.current && !langBoxRef.current.contains(e.target as Node)) {
+        setShowLangBox(false);
+      }
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [showLangBox]);
+
+  // Handle clicking outside legal menu
+  useEffect(() => {
+    if (!showLegalMenu) return;
+    const handleClick = (e: MouseEvent) => {
+      if (legalMenuRef.current && !legalMenuRef.current.contains(e.target as Node)) {
+        setShowLegalMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showLegalMenu]);
 
   // 新增：語音自動循環控制
   const [autoVoiceLoop, setAutoVoiceLoop] = useState(false);
@@ -711,27 +851,200 @@ export default function ChatCompanion() {
     setPermissionResult(null);
   };
 
+  if (!authChecked) {
+    return <div style={{textAlign:'center',marginTop:'30vh',fontSize:24}}>載入中...</div>;
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f0f2f5' }}>
-      {/* 手機版共用頁頭 */}
-      <div className="mobile-shared-header" style={{ display: 'none' }}>
-        <SharedHeader />
-      </div>
+
       
-      {/* 上緣：AI名稱、主標題、使用者名稱 */}
-      <header className="desktop-header" style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#fff', borderBottom: '1px solid #ddd', position: 'relative', padding: 0 }}>
-                  <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px 0 20px', position: 'relative' }}>
-            {/* 返回按鈕 */}
-            <button onClick={() => navigate(-1)} style={{ position: 'absolute', left: 20, background: '#6B5BFF', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 700, fontSize: 16, cursor: 'pointer' }}>{BACK_TEXT[lang]}</button>
-            {/* AI名稱、主標題、使用者名稱 */}
-            <span className="ai-name-desktop" style={{ fontWeight: 700, color: '#ff9800', fontSize: 18, marginRight: 12, minWidth: 50, textAlign: 'right', maxWidth: 70, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getAvatarName(aiAvatar) || t.whoAmI}</span>
-            <div style={{ fontSize: 20, fontWeight: 700, textAlign: 'center', flexShrink: 0 }}>💬 聊天了吧</div>
-            <span style={{ fontWeight: 700, color: '#1976d2', fontSize: 18, marginLeft: 12, minWidth: 50, textAlign: 'left', maxWidth: 70, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getAuth().currentUser?.displayName || getAuth().currentUser?.email || '用戶'}</span>
+      {/* 響應式適配：根據 isMobile 狀態切換 */}
+      {isMobile ? (
+        // 手機版使用共用頁頭
+        <SharedHeader />
+      ) : (
+        // 桌面版頂部導航
+        <div style={{ position: 'fixed', top: 8, right: 36, zIndex: 9999, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 18, pointerEvents: 'auto', width: '100%', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 18, marginRight: 24 }}>
+            <button 
+              className="topbar-btn" 
+              onClick={() => navigate('/about')} 
+              style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 80 }}
+              aria-label={lang==='zh-TW'?'了解 Restarter 平台':'zh-CN'===lang?'了解 Restarter 平台':'en'===lang?'Learn about Restarter platform':'ja'===lang?'Restarter プラットフォームについて':'ko'===lang?'Restarter 플랫폼에 대해 알아보기':'th'===lang?'เรียนรู้เกี่ยวกับแพลตฟอร์ม Restarter':'vi'===lang?'Tìm hiểu về nền tảng Restarter':'ms'===lang?'Ketahui tentang platform Restarter':'Cognosce de suggestum Restarter'}
+              role="button"
+            >
+              {lang==='zh-TW'?'🧬 Restarter™｜我們是誰':'zh-CN'===lang?'🧬 Restarter™｜我们是谁':'en'===lang?'🧬 Restarter™｜Who We Are':'ja'===lang?'🧬 Restarter™｜私たちについて':'ko'===lang?'🧬 Restarter™｜우리는 누구인가':'th'===lang?'🧬 Restarter™｜เราเป็นใคร':'vi'===lang?'🧬 Restarter™｜Chúng tôi là ai':'ms'===lang?'🧬 Restarter™｜Siapa Kami':'🧬 Restarter™｜Quis sumus'}
+            </button>
+            <button 
+              className="topbar-btn" 
+              onClick={() => navigate('/feedback')} 
+              style={{ background: '#fff', color: '#6B5BFF', border: '2px solid #6B5BFF', borderRadius: 6, fontWeight: 700, fontSize: 12, padding: '4px 8px', minWidth: 100 }}
+              aria-label={lang==='zh-TW'?'提供意見和建議':'zh-CN'===lang?'提供意见和建议':'en'===lang?'Provide feedback and suggestions':'ja'===lang?'ご意見やご提案を提供':'ko'===lang?'의견과 제안 제공':'th'===lang?'ให้ข้อเสนอแนะและคำแนะนำ':'vi'===lang?'Cung cấp phản hồiและ đề xuất':'ms'===lang?'Berikan maklum balas dan cadangan':'Praebe consilia et suggestiones'}
+              role="button"
+            >
+              {lang==='zh-TW'?'💬 意見箱｜我們想聽你說':'zh-CN'===lang?'💬 意见箱｜我们想听你说':'en'===lang?'💬 Feedback｜We Want to Hear You':'ja'===lang?'💬 ご意見箱｜あなたの声を聞かせて':'ko'===lang?'💬 피드백｜여러분의 의견을 듣고 싶어요':'th'===lang?'💬 กล่องความคิดเห็น｜เราอยากฟังคุณ':'vi'===lang?'💬 Hộp góp ý｜Chúng tôi muốn lắng nghe bạn':'ms'===lang?'💬 Kotak Maklum Balas｜Kami ingin mendengar anda':'💬 Arca Consilii｜Te audire volumus'}
+            </button>
+
+            {user ? (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <img src={user.photoURL || '/ctx-logo.png'} alt="avatar" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid #90caf9' }} />
+                  <span style={{ color: '#1976d2', fontWeight: 700, fontSize: 16 }}>{user.displayName || user.email || '用戶'}</span>
+                  <button className="topbar-btn" onClick={async () => { await signOut(auth); }} style={{ background: '#fff', color: '#ff6347', border: '2px solid #ffb4a2', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 14px', marginLeft: 6 }}>{LOGOUT_TEXT[lang]}</button>
+
+                </div>
+              </>
+            ) : (
+              <button className="topbar-btn" onClick={() => navigate('/register')} style={{ background: '#fff', color: '#1976d2', border: '2px solid #90caf9', borderRadius: 8, fontWeight: 700, fontSize: 16, padding: '8px 10px', minWidth: 90 }}>{lang==='zh-TW'?'註冊/登入':'zh-CN'===lang?'注册/登录':'en'===lang?'Register / Login':'ja'===lang?'登録/ログイン':'ko'===lang?'가입/로그인':'th'===lang?'สมัคร/เข้าสู่ระบบ':'vi'===lang?'Đăng ký/Đăng nhập':'ms'===lang?'Daftar / Log Masuk':'Registrare / Login'}</button>
+            )}
           </div>
-          <div style={{ textAlign: 'center', marginTop: 4 }}>
-            <div style={{ fontSize: 16, color: '#888' }}>在這裡你可以盡情,暢快,放開地聊😊</div>
+          {/* 語言選擇按鈕，靠右且寬度縮短，點擊彈出小框 */}
+          <div style={{ position: 'relative', display: 'inline-block' }} ref={langBoxRef}>
+            <button
+              className="topbar-btn"
+              style={{
+                background: '#6B5BFF',
+                color: '#fff',
+                border: '2px solid #6B5BFF',
+                borderRadius: 8,
+                fontWeight: 700,
+                fontSize: 16,
+                padding: '8px 10px',
+                minWidth: 90,
+                maxWidth: 120,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+              onClick={() => setShowLangBox(v => !v)}
+            >
+              {lang === 'zh-TW' ? '繁中' : lang === 'zh-CN' ? '简中' : lang === 'en' ? 'English' : lang === 'ja' ? '日本語' : lang === 'ko' ? '한국어' : lang === 'th' ? 'ไทย' : lang === 'vi' ? 'Tiếng Việt' : lang === 'ms' ? 'Bahasa Melayu' : 'Latin'}
+              <span style={{ marginLeft: 6 }}>▼</span>
+            </button>
+            {showLangBox && (
+              <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', border: '1.5px solid #6B5BFF', borderRadius: 8, boxShadow: '0 4px 16px #0002', zIndex: 9999, minWidth: 120 }}>
+                {['zh-TW', 'zh-CN', 'en', 'ja', 'ko', 'th', 'vi', 'ms', 'la'].map(l => (
+                  <div key={l} style={{ padding: '10px 18px', cursor: 'pointer', color: l === lang ? '#6B5BFF' : '#232946', fontWeight: l === lang ? 700 : 500, background: l === lang ? '#f3f0ff' : '#fff' }} onClick={() => { setLang(l as LanguageCode); setShowLangBox(false); }}>
+                    {l === 'zh-TW' ? '繁中' : l === 'zh-CN' ? '简中' : l === 'en' ? 'English' : l === 'ja' ? '日本語' : l === 'ko' ? '한국어' : l === 'th' ? 'ไทย' : l === 'vi' ? 'Tiếng Việt' : l === 'ms' ? 'Bahasa Melayu' : 'Latin'}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-      </header>
+          
+          {/* 漢堡選單 - 法律文件 */}
+          <div style={{ position: 'relative', display: 'inline-block' }} ref={legalMenuRef}>
+            <button
+              className="topbar-btn"
+              style={{
+                background: '#fff',
+                color: '#6B5BFF',
+                border: '2px solid #6B5BFF',
+                borderRadius: 8,
+                fontWeight: 700,
+                fontSize: 16,
+                padding: '8px 12px',
+                minWidth: 50,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease'
+              }}
+              onClick={() => setShowLegalMenu(v => !v)}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = '#6B5BFF';
+                e.currentTarget.style.color = '#fff';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = '#fff';
+                e.currentTarget.style.color = '#6B5BFF';
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+                <div style={{ width: '16px', height: '2px', background: 'currentColor', borderRadius: '1px' }}></div>
+              </div>
+            </button>
+            {showLegalMenu && (
+              <div style={{ 
+                position: 'absolute', 
+                right: 0, 
+                top: '110%', 
+                background: '#fff', 
+                border: '1.5px solid #6B5BFF', 
+                borderRadius: 8, 
+                boxShadow: '0 4px 16px #0002', 
+                zIndex: 9999, 
+                minWidth: 200,
+                maxWidth: 250,
+                padding: '8px 0'
+              }}>
+                <div style={{ padding: '8px 16px', borderBottom: '1px solid #eee', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#6B5BFF' }}>
+                    {lang === 'zh-TW' ? '法律文件' : 
+                     lang === 'zh-CN' ? '法律文件' : 
+                     lang === 'en' ? 'Legal Documents' : 
+                     lang === 'ja' ? '法的文書' : 
+                     lang === 'ko' ? '법적 문서' : 
+                     lang === 'th' ? 'เอกสารทางกฎหมาย' : 
+                     lang === 'vi' ? 'Tài liệu pháp lý' : 
+                     lang === 'ms' ? 'Dokumen Undang-undang' : 
+                     'Documenta Iuridica'}
+                  </span>
+                </div>
+                {[
+                  // Footer原有的法律文件 (優先使用footer的路徑和文字)
+                  { key: 'privacy', title: FOOTER_TEXT, titleKey: 'privacy', path: '/privacy-policy' },
+                  { key: 'terms', title: FOOTER_TEXT, titleKey: 'terms', path: '/terms' },
+                  { key: 'data', title: FOOTER_TEXT, titleKey: 'deletion', path: '/data-deletion' },
+                  // 漢堡選單原有的其他法律文件 - 改為React路由
+                  { key: 'ai', title: { 'zh-TW': 'AI使用聲明', 'zh-CN': 'AI使用声明', 'en': 'AI Usage Statement', 'ja': 'AI利用声明', 'ko': 'AI 사용 성명', 'th': 'คำแถลงการใช้ AI', 'vi': 'Tuyên bố sử dụng AI', 'ms': 'Penyata Penggunaan AI', 'la': 'Declaratio Usus AI' }, path: '/ai-statement' },
+                  { key: 'mental', title: { 'zh-TW': '心理健康免責聲明', 'zh-CN': '心理健康免责声明', 'en': 'Mental Health Disclaimer', 'ja': 'メンタルヘルス免責事項', 'ko': '정신건강 면책조항', 'th': 'ข้อจำกัดความรับผิดชอบด้านสุขภาพจิต', 'vi': 'Tuyên bố miễn trừ sức khỏe tâm thần', 'ms': 'Penafian Kesihatan Mental', 'la': 'Renuntiatio Salutis Mentalis' }, path: '/mental-health-disclaimer' },
+                  { key: 'cookie', title: { 'zh-TW': 'Cookie政策', 'zh-CN': 'Cookie政策', 'en': 'Cookie Policy', 'ja': 'Cookieポリシー', 'ko': '쿠키 정책', 'th': 'นโยบายคุกกี้', 'vi': 'Chính sách Cookie', 'ms': 'Dasar Cookie', 'la': 'Politica Cookie' }, path: '/cookie-policy' },
+                  { key: 'children', title: { 'zh-TW': '兒童隱私保護', 'zh-CN': '儿童隐私保护', 'en': 'Children\'s Privacy', 'ja': '児童プライバシー保護', 'ko': '아동 개인정보 보호', 'th': 'การคุ้มครองความเป็นส่วนตัวของเด็ก', 'vi': 'Bảo vệ quyền riêng tư trẻ em', 'ms': 'Privasi Kanak-kanak', 'la': 'Privata Puerorum' }, path: '/children-privacy' },
+                  { key: 'international', title: { 'zh-TW': '國際用戶聲明', 'zh-CN': '国际用户声明', 'en': 'International Users', 'ja': '国際ユーザー声明', 'ko': '국제 사용자 성명', 'th': 'คำแถลงสำหรับผู้ใช้ระหว่างประเทศ', 'vi': 'Tuyên bố người dùng quốc tế', 'ms': 'Penyata Pengguna Antarabangsa', 'la': 'Declaratio Usuarii Internationalis' }, path: '/international-users' },
+                  { key: 'security', title: { 'zh-TW': '安全聲明', 'zh-CN': '安全声明', 'en': 'Security Statement', 'ja': 'セキュリティ声明', 'ko': '보안 성명', 'th': 'คำแถลงความปลอดภัย', 'vi': 'Tuyên bố bảo mật', 'ms': 'Penyata Keselamatan', 'la': 'Declaratio Securitatis' }, path: '/security-statement' },
+                  { key: 'update', title: { 'zh-TW': '更新通知機制', 'zh-CN': '更新通知机制', 'en': 'Update Notification', 'ja': '更新通知メカニズム', 'ko': '업데이트 알림 메커니즘', 'th': 'กลไกการแจ้งเตือนการอัปเดต', 'vi': 'Cơ chế thông báo cập nhật', 'ms': 'Mekanisme Pemberitahuan Kemas Kini', 'la': 'Mechanismus Notificationis Renovationis' }, path: '/update-notification' }
+                ].map(item => (
+                  <div 
+                    key={item.key}
+                    style={{ 
+                      padding: '8px 12px', 
+                      cursor: 'pointer', 
+                      color: '#232946', 
+                      fontWeight: 500, 
+                      background: '#fff',
+                      fontSize: '11px',
+                      borderBottom: '1px solid #f0f0f0',
+                      transition: 'all 0.2s ease'
+                    }} 
+                    onClick={() => {
+                      // 所有法律文件都使用React路由
+                      navigate(item.path);
+                      setShowLegalMenu(false);
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = '#f3f0ff';
+                      e.currentTarget.style.color = '#6B5BFF';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = '#fff';
+                      e.currentTarget.style.color = '#232946';
+                    }}
+                  >
+                    {item.titleKey ? (item.title[lang]?.[item.titleKey] || item.title['zh-TW'][item.titleKey]) : (item.title[lang] || item.title['zh-TW'])}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+
 
       {showAvatarSelect && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100 }}>
@@ -803,45 +1116,52 @@ export default function ChatCompanion() {
       {aiAvatar && (
         <main 
           ref={chatContainerRef}
+          className="chat-main-container"
           style={{ 
             flex: 1, 
             overflowY: 'auto', 
             padding: '20px',
+            paddingLeft: '20px', // 移除額外的左側padding，讓內容真正居中
+            paddingTop: '200px', // 桌面版增加頂部間距，讓對話框在LOGO下方
             maxHeight: 'calc(100vh - 240px)', // 調整高度計算，為固定footer預留空間
             scrollBehavior: 'smooth',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column-reverse' // 讓最新訊息顯示在上面
           }}
         >
-          <div style={{ maxWidth: 800, margin: '0 auto', minHeight: '100%' }}>
-            {messages.length === 0 && (
-              <div style={{ textAlign: 'center', color: '#888', marginTop: 40 }}>
-                <p style={{ fontSize: 18 }}>{t.welcomeChat(getAvatarName(aiAvatar), nickname)}</p>
-              </div>
-            )}
-            {messages.map((msg) => (
+          <div style={{ maxWidth: '1200px', margin: '0 auto', minHeight: '100%', display: 'flex', flexDirection: 'column-reverse' }}>
+            {/* 確保最後一條訊息後有足夠空間 */}
+            <div style={{ height: '20px' }}></div>
+            {messages.slice().reverse().map((msg) => (
               <div key={msg.id} style={{ 
                 display: 'flex', 
-                justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start', 
-                margin: '10px 0',
-                wordWrap: 'break-word'
+                justifyContent: msg.sender === 'user' ? 'flex-end' : 'center', // 用戶訊息靠右，AI訊息居中
+                margin: '15px 0', // 增加上下間距，讓左右訊息不會平行
+                wordWrap: 'break-word',
+                width: '100%'
               }}>
                 <div style={{
                   backgroundColor: msg.sender === 'user' ? '#0084ff' : '#e4e6eb',
                   color: msg.sender === 'user' ? '#fff' : '#000',
-                  padding: '12px 16px',
+                  padding: '10px 14px',
                   borderRadius: 18,
-                  maxWidth: '70%',
+                  maxWidth: '60%', // 統一最大寬度
                   wordBreak: 'break-word',
                   whiteSpace: 'pre-wrap',
-                  lineHeight: '1.4'
+                  lineHeight: '1.3',
+                  fontSize: '14px' // 統一文字大小
                 }}>
                   {msg.text}
                   {msg.status === 'streaming' && '...'}
                 </div>
               </div>
             ))}
-            {/* 確保最後一條訊息後有足夠空間 */}
-            <div style={{ height: '20px' }}></div>
+            {messages.length === 0 && (
+              <div style={{ textAlign: 'center', color: '#888', marginTop: 40 }}>
+                <p style={{ fontSize: 18 }}>{t.welcomeChat(getAvatarName(aiAvatar), nickname)}</p>
+              </div>
+            )}
           </div>
         </main>
       )}
@@ -946,153 +1266,7 @@ export default function ChatCompanion() {
         </footer>
       )}
       
-      {/* Footer */}
-      {window.innerWidth <= 768 ? (
-        // 手機版 Footer - 複製自我的里程碑頁面
-        <footer style={{ 
-          textAlign: 'center', 
-          fontSize: 12, 
-          color: '#888', 
-          marginTop: 20, 
-          padding: 12,
-          background: 'rgba(255,255,255,0.95)',
-          borderTop: '1px solid #eee',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8
-        }}>
-          {/* 第一行：我們是誰、隱私權政策、條款/聲明 */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-                          <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11, cursor: 'pointer' }}>
-              {lang === 'zh-TW' ? '🧬 我們是誰' : 
-               lang === 'zh-CN' ? '🧬 我们是谁' : 
-               lang === 'en' ? '🧬 Who We Are' : 
-               lang === 'ja' ? '🧬 私たちについて' : 
-               lang === 'ko' ? '🧬 우리는 누구인가' : 
-               lang === 'th' ? '🧬 เราเป็นใคร' : 
-               lang === 'vi' ? '🧬 Chúng tôi là ai' : 
-               lang === 'ms' ? '🧬 Siapa Kami' : 
-               '🧬 Quis sumus'}
-            </span>
-                          <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11, cursor: 'pointer' }}>
-              {lang === 'zh-TW' ? '隱私權政策' : 
-               lang === 'zh-CN' ? '隐私政策' : 
-               lang === 'en' ? 'Privacy Policy' : 
-               lang === 'ja' ? 'プライバシーポリシー' : 
-               lang === 'ko' ? '개인정보 처리방침' : 
-               lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
-               lang === 'vi' ? 'Chính sách bảo mật' : 
-               lang === 'ms' ? 'Dasar Privasi' : 
-               'Consilium de Privata'}
-            </span>
-            <span onClick={() => navigate("/terms")} style={{ color: "#6B5BFF", textDecoration: "underline", padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
-              {lang === 'zh-TW' ? '條款/聲明' : 
-               lang === 'zh-CN' ? '条款/声明' : 
-               lang === 'en' ? 'Terms/Statement' : 
-               lang === 'ja' ? '規約/声明' : 
-               lang === 'ko' ? '약관/성명' : 
-               lang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
-               lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
-               lang === 'ms' ? 'Terma/Pernyataan' : 
-               'Termini/Declaratio'}
-            </span>
-          </div>
-          {/* 第二行：資料刪除說明、意見箱 */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-            <span onClick={() => navigate("/data-deletion")} style={{ color: "#6B5BFF", textDecoration: "underline", padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontSize: 11 }}>
-              {lang === 'zh-TW' ? '資料刪除說明' : 
-               lang === 'zh-CN' ? '数据删除说明' : 
-               lang === 'en' ? 'Data Deletion' : 
-               lang === 'ja' ? 'データ削除について' : 
-               lang === 'ko' ? '데이터 삭제 안내' : 
-               lang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
-               lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
-               lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
-               'Explicatio Deletionis Datae'}
-            </span>
-            <span onClick={() => navigate("/feedback")} style={{ color: "#6B5BFF", textDecoration: "underline", fontWeight: 700, padding: "4px 8px", fontSize: 12, cursor: "pointer" }} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 600, fontSize: 11 }}>
-              {lang === 'zh-TW' ? '💬 意見箱' : 
-               lang === 'zh-CN' ? '💬 意见箱' : 
-               lang === 'en' ? '💬 Feedback' : 
-               lang === 'ja' ? '💬 ご意見箱' : 
-               lang === 'ko' ? '💬 피드백' : 
-               lang === 'th' ? '💬 กล่องความคิดเห็น' : 
-               lang === 'vi' ? '💬 Hộp góp ý' : 
-               lang === 'ms' ? '💬 Kotak Maklum Balas' : 
-               '💬 Arca Consilii'}
-            </span>
-          </div>
-        </footer>
-      ) : (
-        // 桌面版 Footer
-        <div style={{ 
-          width: '100%', 
-          margin: '0 auto', 
-          marginTop: 24,
-          background: 'rgba(255,255,255,0.95)',
-          borderRadius: 16,
-          padding: '16px',
-          boxShadow: '0 2px 12px #6B5BFF22'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-            <span onClick={() => navigate("/about")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-              {lang === 'zh-TW' ? '🧬 Restarter™｜我們是誰' : 
-               lang === 'zh-CN' ? '🧬 Restarter™｜我们是谁' : 
-               lang === 'en' ? '🧬 Restarter™｜Who We Are' : 
-               lang === 'ja' ? '🧬 Restarter™｜私たちについて' : 
-               lang === 'ko' ? '🧬 Restarter™｜우리는 누구인가' : 
-               lang === 'th' ? '🧬 Restarter™｜เราเป็นใคร' : 
-               lang === 'vi' ? '🧬 Restarter™｜Chúng tôi là ai' : 
-               lang === 'ms' ? '🧬 Restarter™｜Siapa Kami' : 
-               '🧬 Restarter™｜Quis sumus'}
-            </span>
-            <span onClick={() => navigate("/privacy-policy")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-              {lang === 'zh-TW' ? '隱私權政策' : 
-               lang === 'zh-CN' ? '隐私政策' : 
-               lang === 'en' ? 'Privacy Policy' : 
-               lang === 'ja' ? 'プライバシーポリシー' : 
-               lang === 'ko' ? '개인정보 처리방침' : 
-               lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 
-               lang === 'vi' ? 'Chính sách bảo mật' : 
-               lang === 'ms' ? 'Dasar Privasi' : 
-               'Consilium de Privata'}
-            </span>
-            <span onClick={() => navigate("/terms")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-              {lang === 'zh-TW' ? '條款/聲明' : 
-               lang === 'zh-CN' ? '条款/声明' : 
-               lang === 'en' ? 'Terms/Statement' : 
-               lang === 'ja' ? '規約/声明' : 
-               lang === 'ko' ? '약관/성명' : 
-               lang === 'th' ? 'ข้อกำหนด/แถลงการณ์' : 
-               lang === 'vi' ? 'Điều khoản/Tuyên bố' : 
-               lang === 'ms' ? 'Terma/Pernyataan' : 
-               'Termini/Declaratio'}
-            </span>
-            <span onClick={() => navigate("/data-deletion")} style={{ color: '#6B5BFF', textDecoration: 'underline', padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-              {lang === 'zh-TW' ? '資料刪除說明' : 
-               lang === 'zh-CN' ? '数据删除说明' : 
-               lang === 'en' ? 'Data Deletion' : 
-               lang === 'ja' ? 'データ削除について' : 
-               lang === 'ko' ? '데이터 삭제 안내' : 
-               lang === 'th' ? 'คำอธิบายการลบข้อมูล' : 
-               lang === 'vi' ? 'Giải thích xóa dữ liệu' : 
-               lang === 'ms' ? 'Penjelasan Penghapusan Data' : 
-               'Explicatio Deletionis Datae'}
-            </span>
-            <span onClick={() => navigate("/feedback")} style={{ color: '#6B5BFF', textDecoration: 'underline', fontWeight: 700, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}>
-              {lang === 'zh-TW' ? '💬 意見箱｜我們想聽你說' : 
-               lang === 'zh-CN' ? '💬 意见箱｜我们想听你说' : 
-               lang === 'en' ? '💬 Feedback Box｜We Want to Hear From You' : 
-               lang === 'ja' ? '💬 ご意見箱｜私たちはあなたの声を聞きたい' : 
-               lang === 'ko' ? '💬 피드백｜우리는 당신의 말을 듣고 싶습니다' : 
-               lang === 'th' ? '💬 กล่องความคิดเห็น｜เราอยากได้ยินจากคุณ' : 
-               lang === 'vi' ? '💬 Hộp góp ý｜Chúng tôi muốn nghe từ bạn' : 
-               lang === 'ms' ? '💬 Kotak Maklum Balas｜Kami Ingin Mendengar Dari Anda' : 
-               '💬 Arca Consilii｜Volumus Audire a Te'}
-            </span>
-          </div>
-        </div>
-      )}
+
       
       {/* Token 續購彈窗 */}
       {showRenewalModal && permissionResult && (
@@ -1123,8 +1297,12 @@ export default function ChatCompanion() {
     .mobile-shared-header {
       display: none !important;
     }
-    .desktop-header {
+    .desktop-topbar {
       display: flex !important;
+    }
+    .chat-main-container {
+      padding-top: 200px !important;
+      padding-left: 20px !important;
     }
     .emotion-phrase-left {
       position: fixed;
@@ -1167,8 +1345,19 @@ export default function ChatCompanion() {
     .mobile-shared-header {
       display: block !important;
     }
-    .desktop-header {
+    .desktop-topbar {
       display: none !important;
+    }
+    /* 手機版顯示SharedHeader頁頭 */
+    .fixed-logo-box {
+      display: none !important;
+    }
+    .chat-main-container {
+      padding: 20px !important;
+      padding-top: 20px !important;
+    }
+    .chat-main-container > div {
+      max-width: 800px !important;
     }
     .emotion-phrase-left, .emotion-phrase-right {
       display: none;

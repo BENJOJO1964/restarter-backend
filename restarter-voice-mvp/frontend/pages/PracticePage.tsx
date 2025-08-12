@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAuth, signOut } from 'firebase/auth';
-import AudioRecorder from '../components/AudioRecorder';
 import { Scenario } from './SkillBox';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { usePermission } from '../hooks/usePermission';
 import { TokenRenewalModal } from '../components/TokenRenewalModal';
 import { useTestMode } from '../App';
+import { generateResponse } from '../lib/ai/generateResponse';
 type LanguageCode = 'zh-TW' | 'zh-CN' | 'en' | 'ja' | 'ko' | 'th' | 'vi' | 'ms' | 'la';
 
 const LANGS: { code: LanguageCode; label: string }[] = [
@@ -79,6 +79,16 @@ export default function PracticePage() {
         setTimeout(() => setToast(''), 1800);
     };
 
+    // 語音辨識相關狀態
+    const [recording, setRecording] = useState(false);
+    const [recognizing, setRecognizing] = useState(false);
+    const [speechError, setSpeechError] = useState('');
+    const [lastTranscript, setLastTranscript] = useState('');
+    const recognitionRef = useRef<any>(null);
+    
+    // AI流式回覆狀態
+    const [aiStreaming, setAIStreaming] = useState(false);
+
     // 新增：權限檢查
     const { checkPermission, recordUsage } = usePermission();
     const [showRenewalModal, setShowRenewalModal] = useState(false);
@@ -90,6 +100,73 @@ export default function PracticePage() {
         if (!input || input.trim().length < 12) return false;
         return true;
     }
+
+    // 語音辨識初始化
+    useEffect(() => {
+        if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+            const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+            recognitionRef.current = new SpeechRecognition();
+            recognitionRef.current.continuous = true;
+            recognitionRef.current.interimResults = true;
+            recognitionRef.current.lang = lang === 'zh-TW' ? 'zh-TW' : lang === 'zh-CN' ? 'zh-CN' : lang === 'en' ? 'en-US' : lang === 'ja' ? 'ja-JP' : lang === 'ko' ? 'ko-KR' : 'zh-TW';
+
+            recognitionRef.current.onresult = (event: any) => {
+                let finalTranscript = '';
+                let interimTranscript = '';
+                
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+                
+                if (finalTranscript) {
+                    const transcript = finalTranscript.trim();
+                    setUserText(transcript);
+                    setLastTranscript(transcript);
+                    // 停止語音辨識
+                    recognitionRef.current.stop();
+                    // 自動發送辨識結果
+                    setTimeout(() => {
+                        if (transcript && transcript.length >= 2) {
+                            // 直接調用發送邏輯，避免依賴handleSendText中的userText狀態
+                            sendMessage(transcript);
+                        }
+                    }, 300);
+                } else if (interimTranscript) {
+                    setUserText(interimTranscript.trim());
+                }
+            };
+
+            recognitionRef.current.onerror = (event: any) => {
+                console.error('Speech recognition error', event.error);
+                let errorMsg = '';
+                switch (event.error) {
+                    case 'no-speech':
+                        errorMsg = '未檢測到語音，請重試';
+                        break;
+                    case 'audio-capture':
+                    case 'network':
+                        errorMsg = '語音辨識失敗，請重試';
+                        break;
+                    default:
+                        errorMsg = '';
+                }
+                if (errorMsg) setSpeechError(errorMsg);
+                setRecognizing(false);
+                setRecording(false);
+            };
+
+            recognitionRef.current.onend = () => {
+                setRecognizing(false);
+                setRecording(false);
+            };
+        } else {
+            setSpeechError('此瀏覽器不支援語音辨識，請使用Chrome/Edge');
+        }
+    }, [lang]);
 
     useEffect(() => {
         const fetchScenarioDetails = async () => {
@@ -121,17 +198,7 @@ export default function PracticePage() {
         }
     }, [scenarioId, lang]);
 
-    const callApi = async (url: string, body: any, options: any = {}) => {
-        console.log('[callApi] url:', url, 'body:', body);
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-            ...options
-        });
-        if (!res.ok) throw new Error('API call failed');
-        return res;
-    };
+
 
     const handleAudio = async (audioBlob: Blob) => {
         setIsLoading(true);
@@ -182,14 +249,20 @@ export default function PracticePage() {
             console.log('[handleAudio] end, isLoading:', false);
         }
     };
-    
-    const handleSendText = async () => {
-        if (!userText.trim()) {
+
+    const sendMessage = async (text: string) => {
+        if (!text.trim()) {
             showToast('請先輸入內容再送出');
             return;
         }
-        if (!isMeaningfulInput(userText)) {
+        if (!isMeaningfulInput(text)) {
             showToast('請輸入至少12個字訓練表達能力');
+            return;
+        }
+
+        // 防止並發請求
+        if (aiStreaming || isLoading) {
+            showToast('AI正在回覆中，請稍候');
             return;
         }
 
@@ -207,60 +280,99 @@ export default function PracticePage() {
                 setPermissionResult(permission);
                 setShowRenewalModal(true);
             } else {
-                showToast('需要訂閱才能使用 AI 聊天功能');
+                setPermissionResult(permission);
+                setShowRenewalModal(true);
             }
             return;
         }
 
-        const msg = userText;
-        setMessages(prev => {
-            const newMessages = [...prev, { sender: 'user', text: msg }];
-            getAIResponse(newMessages);
-            return newMessages;
-        });
+        const msg = text;
+        setMessages(prev => [...prev, { sender: 'user', text: msg, id: `user-${Date.now()}` }]);
         setUserText('');
+        
+        // 調用AI回覆
+        await getAIResponse(msg);
     };
 
-    const getAIResponse = async (currentMessages: any[]) => {
-        setIsLoading(true);
-        console.log('[getAIResponse] called, currentMessages:', currentMessages);
-        try {
-            // 修正: 過濾空訊息，並確保格式正確
-            const filteredMessages = currentMessages.filter(m => m && m.text && m.text.trim()).map(m => ({
-                sender: m.sender,
-                text: m.text.trim()
-            }));
-            // 新增：傳遞情境主題與指令
-            const scenarioInfo = scenario ? {
-                system_prompt: scenario.system_prompt || '',
-                title: scenario.title || '',
-                description: scenario.description || ''
-            } : {};
-            
-            const user = auth.currentUser;
-            const res = await callApi('/api/gpt', { 
-                messages: filteredMessages, 
-                ...scenarioInfo,
-                userId: user?.uid // 添加用戶ID
-            });
-            // 修正: 正確解析 reply 欄位
-            const data = await res.json();
-            const aiReply = data.reply || data.message || 'AI 無回應';
-            setMessages(prev => [...prev, { sender: 'ai', text: aiReply }]);
-            console.log('[getAIResponse] AI message:', aiReply);
-            // TTS
-            const ttsRes = await callApi('/api/tts', { text: aiReply }, { responseType: 'blob' });
-            const audioBlob = await ttsRes.blob();
-            if (audioRef.current) {
-                audioRef.current.src = URL.createObjectURL(audioBlob);
-                audioRef.current.play();
+    const handleRecordVoice = async () => {
+        if (!recognitionRef.current) return;
+        
+        if (recording || recognizing) {
+            recognitionRef.current.stop();
+            setRecording(false);
+            setRecognizing(false);
+        } else {
+            // 檢查語音權限
+            const permission = await checkPermission('aiChat');
+            if (!permission.allowed) {
+                if (isTestMode) {
+                    // 測試模式下直接執行，不檢查權限
+                    setLastTranscript('');
+                    setUserText('');
+                    recognitionRef.current.start();
+                    setRecording(true);
+                    setRecognizing(true);
+                    setSpeechError('');
+                    return;
+                }
+                if (permission.canRenew) {
+                    setPermissionResult(permission);
+                    setShowRenewalModal(true);
+                } else {
+                    setPermissionResult(permission);
+                    setShowRenewalModal(true);
+                }
+                return;
             }
+
+            setLastTranscript('');
+            setUserText('');
+            recognitionRef.current.start();
+            setRecording(true);
+            setRecognizing(true);
+            setSpeechError('');
+        }
+    };
+    
+    const handleSendText = async () => {
+        await sendMessage(userText);
+    };
+
+    const getAIResponse = async (text: string) => {
+        setIsLoading(true);
+        setAIStreaming(true);
+        console.log('[getAIResponse] called with text:', text);
+        
+        const newMsgId = `ai-${Date.now()}`;
+        setMessages(prev => [...prev, { sender: 'ai', text: '', id: newMsgId, status: 'streaming' }]);
+        
+        try {
+            // 構建系統提示詞
+            const systemPrompt = scenario ? 
+                `${scenario.system_prompt || '你是一個友善的助手，幫助用戶進行情境模擬練習。'}\n\n情境：${scenario.title || ''}\n描述：${scenario.description || ''}` : 
+                '你是一個友善的助手，幫助用戶進行情境模擬練習。';
+            
+            const stream = await generateResponse(text, lang, systemPrompt, isTestMode);
+            let fullReply = '';
+            
+            for await (const chunk of stream) {
+                fullReply += chunk;
+                setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: fullReply } : m));
+            }
+            
+            setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, status: 'done' } : m));
+            console.log('[getAIResponse] AI response completed:', fullReply);
+            
+            // 記錄使用量
+            await recordUsage('aiChat', 2);
         } catch (error) {
             console.error('[getAIResponse] Error getting AI response:', error);
-            setMessages(prev => [...prev, { sender: 'ai', text: '抱歉，我現在遇到一些問題，請稍後再試。' }]);
+            const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+            setMessages(prev => prev.map(m => m.id === newMsgId ? { ...m, text: `API錯誤：${errorMessage}`, status: 'done' } : m));
         } finally {
             setIsLoading(false);
-            console.log('[getAIResponse] end, isLoading:', false);
+            setAIStreaming(false);
+            console.log('[getAIResponse] end');
         }
     };
 
@@ -270,7 +382,7 @@ export default function PracticePage() {
     // }
 
     if (!scenario) {
-        return <div style={{textAlign:'center',marginTop:80}}><div style={{fontSize:22,marginBottom:16}}>⚠️ Scenario not found.</div><button onClick={() => navigate('/skillbox')} style={{padding:'10px 28px',borderRadius:8,background:'#6B5BFF',color:'#fff',fontWeight:700,fontSize:16,border:'none',cursor:'pointer'}}>Go back</button></div>;
+        return <div style={{textAlign:'center',marginTop:80}}><div style={{fontSize:22,marginBottom:16}}>⚠️ Scenario not found.</div><button onClick={() => navigate('/')} style={{padding:'10px 28px',borderRadius:8,background:'#6B5BFF',color:'#fff',fontWeight:700,fontSize:16,border:'none',cursor:'pointer'}}>返回首頁</button></div>;
     }
 
     const handleRenewalModalClose = () => {
@@ -283,26 +395,73 @@ export default function PracticePage() {
             <audio ref={audioRef} hidden />
             {/* 固定頂部的三個按鈕區塊 */}
             <div style={{position:'fixed',top:0,left:0,right:0,zIndex:200,display:'flex',justifyContent:'flex-start',alignItems:'center',padding:'18px 32px 0 32px',background:'transparent',width:'100vw',pointerEvents:'auto'}}>
-                <button className="topbar-btn" onClick={() => navigate('/skillbox')} style={{ fontWeight: 700, fontSize: 18, padding: '6px 16px', borderRadius: 8, border: '1.5px solid #6B5BFF', background: '#fff', color: '#6B5BFF', cursor: 'pointer' }}>{UI_TEXT.backToScenarios[lang]}</button>
+                <button className="topbar-btn" onClick={() => navigate('/skillbox', { replace: true })} style={{ fontWeight: 700, fontSize: 18, padding: '6px 16px', borderRadius: 8, border: '1.5px solid #6B5BFF', background: '#fff', color: '#6B5BFF', cursor: 'pointer' }}>
+                  {UI_TEXT.backToScenarios[lang]}
+                </button>
             </div>
             {/* 內容區塊可捲動，並自動下移不被頂部按鈕遮住 */}
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 80, overflowY:'auto', maxHeight:'calc(100vh - 80px)', padding: '24px' }}>
+            <div style={{ 
+              width: '100%', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'flex-start', 
+              marginTop: window.innerWidth <= 768 ? 60 : 80, 
+              overflowY:'auto', 
+              maxHeight: window.innerWidth <= 768 ? 'calc(100vh - 60px)' : 'calc(100vh - 80px)', 
+              padding: window.innerWidth <= 768 ? '12px 6px' : '24px' 
+            }}>
                 {/* Scenario Header - 移除麥克風按鈕 */}
-                <div style={{ width: '100%', maxWidth: 700, background: 'rgba(255,255,255,0.97)', borderRadius: 16, padding: '32px 32px 18px 32px', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 0, position: 'relative' }}>
-                    <div style={{ fontSize: 54, marginBottom: 8 }}>{scenario.emoji}</div>
-                    <h2 style={{ color: '#6B5BFF', fontWeight: 900, fontSize: 28, marginBottom: 24, textAlign: 'center' }}>{scenario.title}</h2>
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 8 }}>
-                      <span style={{ fontWeight: 600, fontSize: 14, padding: '4px 12px', borderRadius: 16, background: '#6B5BFF22', color: '#6B5BFF' }}>{SCENARIO_TEXT.category[lang]}: {scenario.category}</span>
-                      <span style={{ fontWeight: 600, fontSize: 14, padding: '4px 12px', borderRadius: 16, background: '#23c6e622', color: '#23c6e6' }}>{SCENARIO_TEXT.difficulty[lang]}: {DIFFICULTY_MAP[scenario.difficulty]?.[lang] || scenario.difficulty}</span>
+                <div style={{ 
+                  width: window.innerWidth <= 768 ? '88%' : '90%', 
+                  maxWidth: 700, 
+                  background: 'rgba(255,255,255,0.97)', 
+                  borderRadius: 16, 
+                  padding: window.innerWidth <= 768 ? '12px 10px 10px 10px' : '32px 32px 18px 32px', 
+                  boxShadow: '0 4px 24px #0002', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  marginBottom: window.innerWidth <= 768 ? 8 : 0, 
+                  position: 'relative' 
+                }}>
+                    <div style={{ fontSize: window.innerWidth <= 768 ? 40 : 54, marginBottom: window.innerWidth <= 768 ? 6 : 8 }}>{scenario.emoji}</div>
+                    <h2 style={{ color: '#6B5BFF', fontWeight: 900, fontSize: window.innerWidth <= 768 ? 20 : 28, marginBottom: window.innerWidth <= 768 ? 12 : 24, textAlign: 'center' }}>{scenario.title}</h2>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: window.innerWidth <= 768 ? 8 : 12, marginBottom: window.innerWidth <= 768 ? 6 : 8 }}>
+                      <span style={{ fontWeight: 600, fontSize: window.innerWidth <= 768 ? 12 : 14, padding: window.innerWidth <= 768 ? '3px 8px' : '4px 12px', borderRadius: 16, background: '#6B5BFF22', color: '#6B5BFF' }}>{SCENARIO_TEXT.category[lang]}: {scenario.category}</span>
+                      <span style={{ fontWeight: 600, fontSize: window.innerWidth <= 768 ? 12 : 14, padding: window.innerWidth <= 768 ? '3px 8px' : '4px 12px', borderRadius: 16, background: '#23c6e622', color: '#23c6e6' }}>{SCENARIO_TEXT.difficulty[lang]}: {DIFFICULTY_MAP[scenario.difficulty]?.[lang] || scenario.difficulty}</span>
                     </div>
-                    <p style={{ fontSize: 16, color: '#4A4A4A', textAlign: 'center', margin: '0 0 8px 0', lineHeight:1.6 }}>{scenario.description}</p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 16 }}>
-                      {scenario.tags?.map(tag => <span key={tag} style={{ fontSize: 13, background: '#f7f7ff', color: '#6B5BFF', borderRadius: 12, padding: '2px 10px' }}>{tag}</span>)}
+                    <p style={{ fontSize: window.innerWidth <= 768 ? 14 : 16, color: '#4A4A4A', textAlign: 'center', margin: window.innerWidth <= 768 ? '0 0 6px 0' : '0 0 8px 0', lineHeight:1.5 }}>{scenario.description}</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: window.innerWidth <= 768 ? 6 : 8, marginBottom: window.innerWidth <= 768 ? 10 : 16 }}>
+                      {scenario.tags?.map(tag => <span key={tag} style={{ fontSize: window.innerWidth <= 768 ? 11 : 13, background: '#f7f7ff', color: '#6B5BFF', borderRadius: 12, padding: window.innerWidth <= 768 ? '2px 8px' : '2px 10px' }}>{tag}</span>)}
                     </div>
                 </div>
                 {/* Chat Area */}
-                <div style={{ width: '100%', maxWidth: 700, background: 'rgba(255,255,255,0.93)', borderRadius: 16, padding: '18px 32px 24px 32px', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column', marginTop: 0 }}>
-                    <div style={{ minHeight: '32vh', maxHeight: '44vh', overflowY: 'auto', background: '#f6f7fa', borderRadius: 12, padding: 16, marginBottom: 24, display: 'flex', flexDirection: 'column', gap: '12px', boxShadow:'0 2px 8px #6B5BFF11' }}>
+                <div style={{ 
+                  width: window.innerWidth <= 768 ? '88%' : '90%', 
+                  maxWidth: 700, 
+                  background: 'rgba(255,255,255,0.95)', 
+                  borderRadius: 16, 
+                  padding: window.innerWidth <= 768 ? '14px 12px 16px 12px' : '18px 32px 24px 32px', 
+                  boxShadow: window.innerWidth <= 768 ? '0 6px 32px rgba(0,0,0,0.08)' : '0 4px 24px #0002', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  marginTop: 0,
+                  marginBottom: window.innerWidth <= 768 ? 40 : 0
+                }}>
+                    <div style={{ 
+                      minHeight: window.innerWidth <= 768 ? '20vh' : '32vh', 
+                      maxHeight: window.innerWidth <= 768 ? '26vh' : '44vh', 
+                      overflowY: 'auto', 
+                      background: '#f6f7fa', 
+                      borderRadius: 12, 
+                      padding: window.innerWidth <= 768 ? 10 : 16, 
+                      marginBottom: window.innerWidth <= 768 ? 12 : 24, 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      gap: '12px', 
+                      boxShadow: window.innerWidth <= 768 ? '0 3px 12px rgba(107, 91, 255, 0.15)' : '0 2px 8px #6B5BFF11' 
+                    }}>
                         {messages.map((msg, index) => (
                             <div key={index} style={{ alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
                                 <div style={{
@@ -318,20 +477,67 @@ export default function PracticePage() {
                         ))}
                     </div>
                     {/* Input Area - 麥克風放左側 */}
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', position: 'relative' }}>
-                        <div style={{ marginRight: 0 }}>
-                          <AudioRecorder onAudio={handleAudio} lang={lang} />
-                        </div>
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: window.innerWidth <= 768 ? '8px' : '12px', 
+                      alignItems: 'center', 
+                      position: 'relative',
+                      flexWrap: window.innerWidth <= 768 ? 'nowrap' : 'nowrap'
+                    }}>
+                        <button
+                            onClick={handleRecordVoice}
+                            disabled={isLoading}
+                            style={{
+                                padding: window.innerWidth <= 768 ? 12 : 16,
+                                borderRadius: '50%',
+                                border: 'none',
+                                background: (recording || recognizing) ? '#ff4d4d' : '#1877f2',
+                                color: '#fff',
+                                cursor: isLoading ? 'not-allowed' : 'pointer',
+                                fontSize: window.innerWidth <= 768 ? 18 : 20,
+                                flexShrink: 0,
+                                width: window.innerWidth <= 768 ? 44 : 52,
+                                height: window.innerWidth <= 768 ? 44 : 52,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            {(recording || recognizing) ? '停止' : '🎤'}
+                        </button>
                         <input 
                             type="text"
                             value={userText}
                             onChange={(e) => setUserText(e.target.value)}
                             placeholder={isLoading ? "AI正在思考..." : UI_TEXT.yourTurn[lang]}
                             disabled={isLoading}
-                            style={{ flex: 1, padding: '12px 16px', borderRadius: 12, border: '2px solid #ddd', fontSize: 16, outline: 'none', background: isLoading ? '#f0f0f0' : '#fff' }}
+                            style={{ 
+                              flex: 1, 
+                              padding: window.innerWidth <= 768 ? '10px 12px' : '12px 16px', 
+                              borderRadius: 12, 
+                              border: '2px solid #ddd', 
+                              fontSize: window.innerWidth <= 768 ? 14 : 16, 
+                              outline: 'none', 
+                              background: isLoading ? '#f0f0f0' : '#fff',
+                              minWidth: 0
+                            }}
                             onKeyDown={(e) => e.key === 'Enter' && handleSendText()}
                         />
-                        <button onClick={handleSendText} disabled={isLoading} style={{ padding: '12px 24px', borderRadius: 12, background: isLoading ? '#ccc' : '#6B5BFF', color: '#fff', border: 'none', fontWeight: 700, fontSize: 16, cursor: isLoading ? 'not-allowed' : 'pointer' }}>
+                        <button 
+                            onClick={handleSendText} 
+                            disabled={isLoading} 
+                            style={{ 
+                              padding: window.innerWidth <= 768 ? '10px 16px' : '12px 24px', 
+                              borderRadius: 12, 
+                              background: isLoading ? '#ccc' : '#6B5BFF', 
+                              color: '#fff', 
+                              border: 'none', 
+                              fontWeight: 700, 
+                              fontSize: window.innerWidth <= 768 ? 14 : 16, 
+                              cursor: isLoading ? 'not-allowed' : 'pointer',
+                              flexShrink: 0
+                            }}
+                        >
                             {isLoading ? "..." : UI_TEXT.send[lang]}
                         </button>
                         {isLoading && <div style={{ position: 'absolute', right: -36, top: '50%', transform: 'translateY(-50%)' }}><span className="loader" style={{ display: 'inline-block', width: 24, height: 24, border: '3px solid #6B5BFF', borderTop: '3px solid #fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} /></div>}
