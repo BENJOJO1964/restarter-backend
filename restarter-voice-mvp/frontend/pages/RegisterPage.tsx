@@ -768,6 +768,10 @@ export default function RegisterPage() {
     console.log('前端發送驗證碼:', verificationCode);
     console.log('前端發送 email:', email);
     
+    // 設置驗證中狀態，防止重複提交
+    setLoading(true);
+    setError('');
+    
     try {
       const registrationData = {
         nickname,
@@ -797,9 +801,11 @@ export default function RegisterPage() {
         // 驗證碼正確，直接完成註冊
         await completeRegistration();
       } else {
+        setLoading(false);
         setError(data.error || '驗證失敗');
       }
     } catch (err: any) {
+      setLoading(false);
       setError(err.message || '驗證失敗，請稍後再試');
     }
   };
@@ -1439,59 +1445,62 @@ export default function RegisterPage() {
                             value={verificationCode}
                             onChange={(e) => setVerificationCode(e.target.value)}
                             placeholder="請輸入 6 位數驗證碼"
+                            disabled={loading}
                             style={{
                               width: '150px',
                               padding: '8px 12px',
                               borderRadius: '6px',
                               border: 'none',
                               fontSize: '16px',
-                              textAlign: 'center'
+                              textAlign: 'center',
+                              opacity: loading ? 0.6 : 1,
+                              cursor: loading ? 'not-allowed' : 'text'
                             }}
                             maxLength={6}
                           />
                           <button
                             type="button"
                             onClick={handleEmailVerification}
-                            disabled={!verificationCode || verificationCode.length !== 6}
+                            disabled={!verificationCode || verificationCode.length !== 6 || loading}
                             style={{
-                              background: verificationCode && verificationCode.length === 6 ? '#10b981' : '#6b7280',
+                              background: loading ? '#6b7280' : (verificationCode && verificationCode.length === 6 ? '#10b981' : '#6b7280'),
                               color: 'white',
                               border: 'none',
                               padding: '8px 16px',
                               borderRadius: '6px',
                               fontSize: '14px',
                               fontWeight: 'bold',
-                              cursor: verificationCode && verificationCode.length === 6 ? 'pointer' : 'not-allowed',
+                              cursor: (verificationCode && verificationCode.length === 6 && !loading) ? 'pointer' : 'not-allowed',
                               transition: 'all 0.2s ease',
-                              transform: verificationCode && verificationCode.length === 6 ? 'scale(1)' : 'scale(1)',
-                              boxShadow: verificationCode && verificationCode.length === 6 ? '0 2px 8px rgba(16, 185, 129, 0.3)' : 'none'
+                              transform: (verificationCode && verificationCode.length === 6 && !loading) ? 'scale(1)' : 'scale(1)',
+                              boxShadow: (verificationCode && verificationCode.length === 6 && !loading) ? '0 2px 8px rgba(16, 185, 129, 0.3)' : 'none'
                             }}
                             onMouseEnter={(e) => {
-                              if (verificationCode && verificationCode.length === 6) {
+                              if (verificationCode && verificationCode.length === 6 && !loading) {
                                 e.currentTarget.style.background = '#059669';
                                 e.currentTarget.style.transform = 'scale(1.05)';
                                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
                               }
                             }}
                             onMouseLeave={(e) => {
-                              if (verificationCode && verificationCode.length === 6) {
+                              if (verificationCode && verificationCode.length === 6 && !loading) {
                                 e.currentTarget.style.background = '#10b981';
                                 e.currentTarget.style.transform = 'scale(1)';
                                 e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
                               }
                             }}
                             onMouseDown={(e) => {
-                              if (verificationCode && verificationCode.length === 6) {
+                              if (verificationCode && verificationCode.length === 6 && !loading) {
                                 e.currentTarget.style.transform = 'scale(0.95)';
                               }
                             }}
                             onMouseUp={(e) => {
-                              if (verificationCode && verificationCode.length === 6) {
+                              if (verificationCode && verificationCode.length === 6 && !loading) {
                                 e.currentTarget.style.transform = 'scale(1.05)';
                               }
                             }}
                           >
-                            驗證並註冊
+                            {loading ? '驗證中...' : '驗證並註冊'}
                           </button>
                         </div>
                         <button
