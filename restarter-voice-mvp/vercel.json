@@ -9,14 +9,18 @@
       }
     },
     {
-      "src": "backend/routes/*.js",
+      "src": "api/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/routes/$1.js"
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/health",
+      "dest": "/api/index.js"
     },
     {
       "src": "/(.*)",
@@ -24,7 +28,7 @@
     }
   ],
   "functions": {
-    "backend/routes/*.js": {
+    "api/index.js": {
       "maxDuration": 30
     }
   }
