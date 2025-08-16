@@ -23,6 +23,7 @@ module.exports = (req, res) => {
       '/api/coaching'
     ],
     method: req.method,
-    url: req.url
+    url: req.url,
+    build: 'success'
   });
 };
