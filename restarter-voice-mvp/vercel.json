@@ -16,5 +16,6 @@
       "dest": "/api/hello.js"
     }
   ],
-  "ignoreCommand": "echo 'Skipping frontend build'"
+  "buildCommand": "echo 'API only build - no frontend'",
+  "outputDirectory": "api"
 }
