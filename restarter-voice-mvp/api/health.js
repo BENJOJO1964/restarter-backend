@@ -9,19 +9,10 @@ module.exports = (req, res) => {
     return;
   }
 
-  // 主頁面
-  res.json({ 
-    message: 'Restarter Backend API', 
-    status: 'running',
+  res.json({
+    status: 'ok',
     timestamp: new Date().toISOString(),
-    endpoints: [
-      '/health',
-      '/api/tts',
-      '/api/gpt', 
-      '/api/whisper',
-      '/api/quotes',
-      '/api/coaching'
-    ],
+    message: 'Restarter Backend API is running on Vercel',
     method: req.method,
     url: req.url
   });
