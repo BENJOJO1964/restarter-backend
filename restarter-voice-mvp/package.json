@@ -2,15 +2,9 @@
   "name": "restarter-voice-mvp",
   "version": "1.0.0",
   "description": "Restarter Voice MVP - Full Stack Application",
-  "main": "api/index.js",
+  "main": "api/hello.js",
   "scripts": {
-    "build": "echo 'Build completed'",
-    "start": "node api/index.js",
-    "dev": "echo 'Development mode'"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "build": "echo 'Build completed'"
   },
   "engines": {
     "node": ">=18.0.0"
