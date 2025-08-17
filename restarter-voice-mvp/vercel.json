@@ -23,6 +23,10 @@
       "dest": "/api/hello.js"
     },
     {
+      "src": "/test",
+      "dest": "/api/test.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/frontend/$1"
     }
