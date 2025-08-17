@@ -12,8 +12,6 @@ module.exports = (req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    message: 'Restarter Backend API is running on Vercel',
-    method: req.method,
-    url: req.url
+    service: 'restarter-api'
   });
 };

@@ -23,8 +23,8 @@
       "dest": "/api/hello.js"
     },
     {
-      "src": "/test",
-      "dest": "/api/test.js"
+      "src": "/health",
+      "dest": "/api/health.js"
     },
     {
       "src": "/(.*)",
