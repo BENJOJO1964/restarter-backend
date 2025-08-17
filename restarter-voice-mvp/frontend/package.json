@@ -2,7 +2,7 @@
   "name": "restarter-frontend",
   "version": "1.0.0",
   "engines": {
-    "node": ">=18.0.0"
+    "node": "18.x"
   },
   "scripts": {
     "dev": "vite",
@@ -30,6 +30,6 @@
     "tailwindcss": "^4.1.10",
     "terser": "^5.43.1",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^5.4.12"
   }
 }
