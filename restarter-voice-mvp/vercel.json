@@ -6,8 +6,11 @@
       "use": "@vercel/node"
     },
     {
-      "src": "frontend/build.js",
-      "use": "@vercel/node"
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
@@ -25,15 +28,12 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/build.js"
+      "dest": "/frontend/$1"
     }
   ],
   "functions": {
     "api/*.js": {
       "maxDuration": 30
-    },
-    "frontend/build.js": {
-      "maxDuration": 60
     }
   }
 }
