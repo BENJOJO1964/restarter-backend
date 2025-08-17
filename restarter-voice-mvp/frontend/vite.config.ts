@@ -16,21 +16,11 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        },
-      },
-    },
-    chunkSizeWarningLimit: 1000,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
+    minify: 'esbuild',
+    target: 'es2015',
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],
