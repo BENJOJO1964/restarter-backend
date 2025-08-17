@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Restarter Voice MVP - Full Stack Application",
   "main": "api/hello.js",
-  "scripts": {
-    "build": "echo 'Build completed'"
-  },
   "engines": {
     "node": ">=18.0.0"
   },
