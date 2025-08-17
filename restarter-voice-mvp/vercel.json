@@ -18,10 +18,6 @@
     {
       "src": "/health",
       "dest": "/api/health.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/dist/$1"
     }
   ],
   "functions": {

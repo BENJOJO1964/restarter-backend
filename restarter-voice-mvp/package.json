@@ -1,12 +1,12 @@
 {
-  "name": "restarter-voice-mvp",
+  "name": "restarter-backend",
   "version": "1.0.0",
-  "description": "Restarter Voice MVP - Full Stack Application",
+  "description": "Restarter Backend API",
   "main": "api/hello.js",
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["restarter", "voice", "ai", "vercel"],
+  "keywords": ["restarter", "api", "backend", "vercel"],
   "author": "Ben Chen",
   "license": "MIT"
 }
