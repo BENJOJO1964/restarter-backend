@@ -1,31 +1,34 @@
 {
-  "name": "restarter-frontend",
+  "name": "restarter-backend",
   "version": "1.0.0",
-  "description": "Frontend for Restarter Voice AI platform",
-  "type": "module",
+  "description": "Backend API for Restarter Voice AI platform",
+  "main": "api/index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": ["restarter", "backend", "api"],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.1",
     "axios": "^1.10.0",
-    "firebase": "^11.9.1",
-    "react-i18next": "^14.1.2",
-    "i18next": "^23.11.5"
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.4.0",
+    "multer": "^2.0.1",
+    "nodemailer": "^7.0.5",
+    "openai": "^5.10.2",
+    "resend": "^4.7.0",
+    "stripe": "^18.4.0",
+    "ws": "^8.18.2"
   },
   "devDependencies": {
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
-    "@vitejs/plugin-react": "^4.6.0",
-    "typescript": "^5.8.3",
-    "vite": "^5.4.12",
-    "tailwindcss": "^4.1.10",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6"
+    "@types/node": "^24.0.4",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=18.0.0"
