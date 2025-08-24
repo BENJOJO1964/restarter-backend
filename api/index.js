@@ -1,98 +1,77 @@
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
-// CORS 設置
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
+// CORS Configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = process.env.ALLOWED_ORIGINS 
+      ? process.env.ALLOWED_ORIGINS.split(',') 
+      : ['https://your-frontend-domain.com'];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log(`CORS blocked request from: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Length', 'X-Requested-With']
+};
 
+// Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// 導入路由
-const ttsRouter = require('./routes/tts');
-const gptRoutes = require('./routes/gpt');
-const whisperRoutes = require('./routes/whisper');
-const quotesRoutes = require('./routes/quotes');
-const coachingRouter = require('./routes/coaching');
-const scenariosRouter = require('./routes/scenarios');
-const mindGardenRouter = require('./routes/mind-garden');
-const missionAiRouter = require('./routes/mission-ai');
-const storyRouter = require('./routes/story');
-const sendMessageRouter = require('./routes/send-message');
-const moodRouter = require('./routes/mood');
-const feedbackRouter = require('./routes/feedback');
-const subscriptionRouter = require('./routes/subscription');
-const weatherRouter = require('./routes/weather');
-const socialIntegrationRouter = require('./routes/social-integration-assessment');
-const emailVerificationRouter = require('./routes/email-verification');
-const adminFeedbackRouter = require('./routes/admin-feedback');
-
-// 設置路由
-app.use('/api/tts', ttsRouter);
-app.use('/api/gpt', gptRoutes);
-app.use('/api/whisper', whisperRoutes);
-app.use('/api/email-verification', emailVerificationRouter);
-app.use('/api/quotes', quotesRoutes);
-app.use('/api/coaching', coachingRouter);
-app.use('/api/scenarios', scenariosRouter);
-app.use('/api/mind-garden', mindGardenRouter);
-app.use('/api/mission-ai', missionAiRouter);
-app.use('/api/story', storyRouter);
-app.use('/api/send-message', sendMessageRouter);
-app.use('/api/mood', moodRouter);
-app.use('/api/feedback', feedbackRouter);
-app.use('/api/admin-feedback', adminFeedbackRouter);
-app.use('/api/subscription', subscriptionRouter);
-app.use('/api/weather', weatherRouter);
-app.use('/api/social-integration-assessment', socialIntegrationRouter);
-
-// 健康檢查
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok',
-    timestamp: new Date().toISOString()
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    service: 'restarter-backend'
   });
 });
 
-// 根端點
+// Main API endpoint
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Hello from Restarter Backend!',
+    status: 'working',
+    timestamp: new Date().toISOString(),
+    url: req.url,
+    method: req.method
+  });
+});
+
+// Root endpoint
 app.get('/', (req, res) => {
-  res.json({ 
-    message: 'Restarter Backend API', 
+  res.json({
+    message: 'Restarter Backend API',
     status: 'running',
     endpoints: [
-      '/api/tts',
-      '/api/gpt', 
-      '/api/whisper',
-      '/api/email-verification',
-      '/api/quotes',
-      '/api/coaching',
-      '/api/scenarios',
-      '/api/mind-garden',
-      '/api/mission-ai',
-      '/api/story',
-      '/api/send-message',
-      '/api/mood',
-      '/api/feedback',
-      '/api/subscription',
-      '/api/weather',
-      '/api/social-integration-assessment'
+      '/api/health',
+      '/api'
     ]
   });
 });
 
-// 處理favicon請求
-app.get('/favicon.ico', (req, res) => {
-  res.status(204).end();
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
 module.exports = app;
