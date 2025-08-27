@@ -74,4 +74,15 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-module.exports = app;
+module.exports = (req, res) => {
+  res.status(200).json({
+    message: 'Restarter Backend API',
+    status: 'running',
+    timestamp: new Date().toISOString(),
+    endpoints: [
+      '/api/hello',
+      '/api/health'
+    ],
+    service: 'restarter-backend'
+  });
+};
