@@ -8,6 +8,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080; // 使用 Railway 預設端口
 
+// 引入聊天路由
+const chatRouter = require('./chat');
+
 // CORS Configuration
 const corsOptions = {
   origin: function (origin, callback) {
@@ -36,6 +39,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 使用聊天路由
+app.use('/api', chatRouter);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
