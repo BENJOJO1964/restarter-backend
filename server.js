@@ -165,24 +165,34 @@ app.get('/favicon.ico', (req, res) => {
   res.status(204).end(); // 返回無內容狀態
 });
 
-const PORT = process.env.PORT || 3001;
-
-// 添加錯誤處理
-process.on('uncaughtException', (error) => {
-  console.error('未捕獲的異常:', error);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('未處理的Promise拒絕:', reason);
-});
-
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server listening on port ${PORT} and accepting external connections`);
+// Vercel無服務器環境處理
+if (process.env.VERCEL) {
+  // Vercel環境：導出app而不是啟動服務器
+  console.log('Vercel環境：導出Express應用');
   console.log('Environment:', process.env.NODE_ENV || 'development');
   console.log('Firebase initialized:', admin.apps.length > 0);
-}).on('error', (error) => {
-  console.error('服務器啟動失敗:', error);
-});
+  module.exports = app;
+} else {
+  // 本地開發環境：啟動服務器
+  const PORT = process.env.PORT || 3001;
+
+  // 添加錯誤處理
+  process.on('uncaughtException', (error) => {
+    console.error('未捕獲的異常:', error);
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('未處理的Promise拒絕:', reason);
+  });
+
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server listening on port ${PORT} and accepting external connections`);
+    console.log('Environment:', process.env.NODE_ENV || 'development');
+    console.log('Firebase initialized:', admin.apps.length > 0);
+  }).on('error', (error) => {
+    console.error('服務器啟動失敗:', error);
+  });
+}
 
 app.get('/health', (req, res) => {
   res.send({
