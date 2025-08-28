@@ -125,6 +125,8 @@ app.get('/', (req, res) => {
   res.json({ 
     message: 'Restarter Backend API', 
     status: 'running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
     endpoints: [
       '/api/tts',
       '/api/gpt', 
@@ -136,14 +138,12 @@ app.get('/', (req, res) => {
       '/api/mind-garden',
       '/api/mission-ai',
       '/api/story',
-
       '/api/send-message',
       '/api/mood',
       '/api/feedback',
       '/api/subscription',
       '/api/weather',
       '/api/social-integration-assessment',
-
     ]
   });
 });
@@ -154,8 +154,22 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
+
+// 添加錯誤處理
+process.on('uncaughtException', (error) => {
+  console.error('未捕獲的異常:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('未處理的Promise拒絕:', reason);
+});
+
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on port ${PORT} and accepting external connections`);
+  console.log('Environment:', process.env.NODE_ENV || 'development');
+  console.log('Firebase initialized:', admin.apps.length > 0);
+}).on('error', (error) => {
+  console.error('服務器啟動失敗:', error);
 });
 
 app.get('/health', (req, res) => {
