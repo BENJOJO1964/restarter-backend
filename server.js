@@ -8,13 +8,23 @@ const isTestMode = process.env.NODE_ENV === 'test' || process.env.TEST_MODE === 
 let serviceAccount;
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   // 從環境變量讀取服務帳戶密鑰
-  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  try {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  } catch (error) {
+    console.error('Firebase服務帳戶JSON解析失敗:', error.message);
+    serviceAccount = null;
+  }
 } else {
   // 本地開發時使用文件
-  serviceAccount = require('./serviceAccountKey.json');
+  try {
+    serviceAccount = require('./serviceAccountKey.json');
+  } catch (error) {
+    console.error('找不到serviceAccountKey.json文件:', error.message);
+    serviceAccount = null;
+  }
 }
 
-if (!admin.apps.length) {
+if (!admin.apps.length && serviceAccount) {
   try {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
@@ -25,9 +35,11 @@ if (!admin.apps.length) {
     if (isTestMode) {
       console.log('測試模式：繼續運行，跳過Firebase');
     } else {
-      throw error;
+      console.log('生產模式：繼續運行，但Firebase功能可能不可用');
     }
   }
+} else if (!serviceAccount) {
+  console.log('跳過Firebase初始化：缺少服務帳戶配置');
 }
 // server.js - WebSocket + REST API 入口
 const express = require('express');
