@@ -165,15 +165,11 @@ app.get('/favicon.ico', (req, res) => {
   res.status(204).end(); // 返回無內容狀態
 });
 
-// Vercel無服務器環境處理
-if (process.env.VERCEL) {
-  // Vercel環境：導出app而不是啟動服務器
-  console.log('Vercel環境：導出Express應用');
-  console.log('Environment:', process.env.NODE_ENV || 'development');
-  console.log('Firebase initialized:', admin.apps.length > 0);
-  module.exports = app;
-} else {
-  // 本地開發環境：啟動服務器
+// 始終導出app，讓Vercel可以處理
+module.exports = app;
+
+// 只在非Vercel環境中啟動服務器
+if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3001;
 
   // 添加錯誤處理
@@ -192,6 +188,10 @@ if (process.env.VERCEL) {
   }).on('error', (error) => {
     console.error('服務器啟動失敗:', error);
   });
+} else {
+  console.log('Vercel環境：Express應用已導出');
+  console.log('Environment:', process.env.NODE_ENV || 'development');
+  console.log('Firebase initialized:', admin.apps.length > 0);
 }
 
 app.get('/health', (req, res) => {
